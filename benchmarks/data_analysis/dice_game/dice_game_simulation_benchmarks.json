@@ -1,0 +1,38 @@
+[
+    {
+      "name": "dice_game_analysis",
+      "module": "benchmarks.data_analysis.dice_game.dice_game_simulation",
+      "conversations": [
+        {
+          "id": "dice_game_simulation",
+          "turns": [
+            {
+              "query": "Calculate both the win probability and the average number of rolls for a dice game using the simulation parameters (number of games and roll limit) provided in the variables. The game uses 3 dice. A player loses on a total of 3, 4, 5, 16, 17, or 18. They win on 7 or 11. Any other initial roll becomes a 'point'. On subsequent rolls, the player wins by rolling the same 'point' number again or by rolling a 7 or 11.",
+              "validator": "validate_q1",
+              "expected_function_calls": [],
+              "expected_variable_reads": [
+                "num_simulations",
+                "max_rolls"
+              ],
+              "expected_variable_writes": [
+                "win_probability",
+                "avg_rolls"
+              ]
+            },
+            {
+              "query": "What is the new win probability if the game rules are modified to make an initial roll of 8 or 9 an immediate loss? Please calculate this by running a new simulation using the same parameters.",
+              "validator": "validate_q2",
+              "expected_function_calls": [],
+              "expected_variable_reads": [
+                "num_simulations",
+                "max_rolls"
+              ],
+              "expected_variable_writes": [
+                "new_win_probability"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+]

@@ -1,0 +1,48 @@
+[
+    {
+      "name": "titanic_analysis",
+      "module": "benchmarks.data_analysis.Titanic.titanic_analysis",
+      "conversations": [
+        {
+          "id": "titanic_analysis",
+          "turns": [
+            {
+              "query": "Calculate survival rate by passenger class",
+              "validator": "validate_q1",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["titanic_df"],
+              "expected_variable_writes": ["survival_rate_by_class"]
+            },
+            {
+              "query": "Find average age of survivors vs non-survivors",
+              "validator": "validate_q2",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["titanic_df"],
+              "expected_variable_writes": ["avg_age_survived", "avg_age_not_survived"]
+            },
+            {
+              "query": "Analyze survival patterns by gender and class with cross-tabulation showing both counts and rates",
+              "validator": "validate_q3",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["titanic_df"],
+              "expected_variable_writes": ["survival_crosstab", "survival_rates_by_gender_class"]
+            },
+            {
+              "query": "Analyze fare distribution (median, 25th and 75th percentiles) for survivors by passenger class and gender, name the columns as '25%', '50%' and '75%' respectively.",
+              "validator": "validate_q4",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["titanic_df"],
+              "expected_variable_writes": ["fare_stats_survivors"]
+            },
+            {
+              "query": "Perform complex family survival analysis: create family size categories (Solo=1, Small=2-4, Large=5+), calculate survival rates by family size and by family size + class combination, then identify the best combination and store the best combination as a single string in the format 'FamilySize_Pclassst', for example 'Small_1'.",
+              "validator": "validate_q5",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["titanic_df"],
+              "expected_variable_writes": ["family_survival_rates", "family_class_survival_rates", "best_combination", "best_survival_rate"]
+            }
+          ]
+        }
+      ]
+    }
+]

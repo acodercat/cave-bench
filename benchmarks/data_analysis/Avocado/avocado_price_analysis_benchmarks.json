@@ -1,0 +1,50 @@
+[
+    {
+      "name": "avocado_price_analysis",
+      "module": "benchmarks.data_analysis.Avocado.avocado_price_analysis",
+      "description": "Analyze avocado price trends and patterns",
+      "requirements": "Analyze avocado price trends and patterns",
+      "conversations": [
+        {
+          "id": "avocado_price_analysis",
+          "turns": [
+            {
+              "query": "Analyze average avocado prices by type and year. Calculate the mean price for 'conventional' and 'organic' avocados for each year (2015-2018), then store the results in a DataFrame with years as index and type as columns",
+              "validator": "validate_q1",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["avocado_df"],
+              "expected_variable_writes": ["price_by_type_year"]
+            },
+            {
+              "query": "Find the top 5 regions with highest and lowest average avocado prices across all years and types. Store the highest priced regions in 'top_5_expensive_regions' and lowest priced regions in 'top_5_cheap_regions' as pandas Series with region names as index and average prices as values",
+              "validator": "validate_q2",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["avocado_df"],
+              "expected_variable_writes": ["top_5_expensive_regions", "top_5_cheap_regions"]
+            },
+            {
+              "query": "Analyze seasonal price patterns. Group data by month (extract from Date column) and calculate average prices for conventional vs organic avocados. Create a DataFrame 'seasonal_prices' with months (1-12) as index and 'conventional' and 'organic' as columns. Also identify the month with highest price difference between organic and conventional, storing it as 'max_price_diff_month'",
+              "validator": "validate_q3",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["avocado_df"],
+              "expected_variable_writes": ["seasonal_prices", "max_price_diff_month"]
+            },
+            {
+              "query": "Perform volume-price correlation analysis. Calculate the correlation between 'Total Volume' and 'AveragePrice' for each avocado type separately. Store correlations as 'conventional_volume_price_corr' and 'organic_volume_price_corr'. Also find the region with the highest total volume sold across all years and types, storing it as 'highest_volume_region'",
+              "validator": "validate_q4",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["avocado_df"],
+              "expected_variable_writes": ["conventional_volume_price_corr", "organic_volume_price_corr", "highest_volume_region"]
+            },
+            {
+              "query": "Conduct comprehensive market analysis: Create price volatility analysis by calculating the standard deviation of prices for each region-type combination, storing results in 'price_volatility' DataFrame with MultiIndex (region, type). Calculate year-over-year price growth rates for each type, storing in 'yoy_growth_rates' as a DataFrame with years as index and types as columns. Identify the most stable market (lowest price volatility) as 'most_stable_market' tuple (region, type). Finally, calculate the percentage of total volume that each bag size category (Small Bags, Large Bags, XLarge Bags) represents, storing as 'bag_size_distribution' Series",
+              "validator": "validate_q5",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["avocado_df"],
+              "expected_variable_writes": ["price_volatility", "yoy_growth_rates", "most_stable_market", "bag_size_distribution"]
+            }
+          ]
+        }
+      ]
+    }
+]

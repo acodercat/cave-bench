@@ -1,0 +1,51 @@
+[
+    {
+      "name": "hk_traffic_analysis",
+      "module": "benchmarks.data_analysis.HKTraffic.hk_traffic_analysis",
+      "conversations": [
+        {
+          "id": "hk_traffic_analysis",
+          "turns": [
+            {
+              "query": "Count road segments with forward_only direction",
+              "validator": "validate_q1",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["road_segment_df"],
+              "expected_variable_writes": ["forward_only_count"]
+            },
+            {
+              "query": "Count unique road segments with congestion_status equals to 2 on 2025-07-27",
+              "validator": "validate_q2",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["hourly_road_segment_traffic_df"],
+              "expected_variable_writes": ["congestion_count_2025_07_27"]
+            },
+            {
+              "query": "Find average speed for roads with road_level equals to 1 or 2 during peak hours from 2025-08-01 to 2025-08-04",
+              "validator": "validate_q3",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["hourly_road_segment_traffic_df", "road_segment_df"],
+              "expected_variable_writes": ["avg_speed_elevated_peak_hours"]
+            },
+            {
+              "query": "Calculate average congestion index for roads with road_level equals to 0 during weekdays from 2025-08-01 to 2025-08-04",
+              "validator": "validate_q4",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["hourly_road_segment_traffic_df", "road_segment_df"],
+              "expected_variable_writes": ["avg_congestion_ground_weekdays"]
+            },
+            {
+              "query": "Compare congestion patterns between roads with road_level equals to 1 or 2 (elevated) and roads with road_level equals to -1 (tunnel) during 2025-08-01 to 2025-08-04, and determine which road level has higher average congestion",
+              "validator": "validate_q5",
+              "expected_function_calls": [],
+              "expected_variable_reads": [
+                "hourly_road_segment_traffic_df",
+                "road_segment_df"
+              ],
+              "expected_variable_writes": ["avg_congestion_elevated", "avg_congestion_tunnel", "congestion_comparison_result"]
+            }
+          ]
+        }
+      ]
+    }
+]

@@ -1,0 +1,48 @@
+[
+    {
+      "name": "red_wine_quality_analysis",
+      "module": "benchmarks.data_analysis.RedWineQuality.red_wine_quality_analysis",
+      "conversations": [
+        {
+          "id": "red_wine_quality_analysis",
+          "turns": [
+            {
+              "query": "Calculate the distribution of wine quality scores and identify the most common quality rating. Store the distribution as 'quality_distribution' and the mode as 'most_common_quality'.",
+              "validator": "validate_q1",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["wine_df"],
+              "expected_variable_writes": ["quality_distribution", "most_common_quality"]
+            },
+            {
+              "query": "Calculate the average alcohol content for different quality categories: high quality wines (quality >= 7), medium quality wines (quality 5-6), and low quality wines (quality <= 4). Store as 'avg_alcohol_high', 'avg_alcohol_medium', and 'avg_alcohol_low'.",
+              "validator": "validate_q2",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["wine_df"],
+              "expected_variable_writes": ["avg_alcohol_high", "avg_alcohol_medium", "avg_alcohol_low"]
+            },
+            {
+              "query": "Calculate correlation coefficients between quality and key chemical factors (alcohol, volatile acidity, sulphates). Store the correlations as 'alcohol_correlation', 'volatile_acidity_correlation', and identify the strongest correlation factor as 'strongest_correlation_factor'.",
+              "validator": "validate_q3",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["wine_df"],
+              "expected_variable_writes": ["alcohol_correlation", "volatile_acidity_correlation", "strongest_correlation_factor"]
+            },
+            {
+              "query": "Create a binary classification where wines with quality >= 6 are 'good', others are 'poor'. Calculate mean alcohol and volatile acidity for good wines as 'mean_alcohol_good' and 'mean_volatile_acidity_good'. Then calculate prediction accuracy if we predict 'good' for wines with alcohol > mean_alcohol_good AND volatile_acidity < mean_volatile_acidity_good. Store accuracy as 'prediction_accuracy'.",
+              "validator": "validate_q4",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["wine_df"],
+              "expected_variable_writes": ["mean_alcohol_good", "mean_volatile_acidity_good", "prediction_accuracy"]
+            },
+            {
+              "query": "Perform advanced multi-factor analysis: 1) Create quality tiers Low (3-4), Medium (5-6), High (7-8). 2) Calculate average alcohol for each tier and store as 'tier_alcohol_averages'. 3) Find the tier with highest average alcohol as 'highest_alcohol_tier'. 4) Calculate what percentage of high-tier wines have above-average alcohol AND below-average volatile acidity, store as 'high_tier_criteria_percentage'.",
+              "validator": "validate_q5",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["wine_df"],
+              "expected_variable_writes": ["tier_alcohol_averages", "highest_alcohol_tier", "high_tier_criteria_percentage"]
+            }
+          ]
+        }
+      ]
+    }
+]
