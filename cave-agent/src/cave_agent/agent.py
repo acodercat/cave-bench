@@ -299,8 +299,9 @@ class CaveAgent:
     def build_system_prompt(self) -> str:
         """Build and format the system prompt with current runtime state."""
         return self.system_prompt_template.format(
-            functions=self.runtime.describe_functions(), 
-            variables=self.runtime.describe_variables(), 
+            functions=self.runtime.describe_functions(),
+            variables=self.runtime.describe_variables(),
+            types=self.runtime.describe_types(),
             agent_identity=self.agent_identity,
             instructions=self.instructions,
             current_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),

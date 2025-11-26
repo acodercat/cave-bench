@@ -119,22 +119,11 @@ async def main():
 
     # Define a class with methods
     class DataProcessor:
-        """A utility class for processing and filtering data collections.
-        
-        This class provides methods for basic data processing operations such as
-        sorting, removing duplicates, and filtering based on thresholds.
-        
-        Example:
-            >>> processor = DataProcessor()
-            >>> processor.process_list([3, 1, 2, 1, 3])
-            [1, 2, 3]
-            >>> processor.filter_numbers([1, 5, 3, 8, 2], 4)
-            [5, 8]
-        """
+        """A utility class for processing and filtering data collections."""
         def process_list(self, data: list) -> list:
             """Sort a list and remove duplicates"""
             return sorted(set(data))
-        
+
         def filter_numbers(self, data: list, threshold: int) -> list:
             """Filter numbers greater than threshold"""
             return [x for x in data if x > threshold]
@@ -143,42 +132,30 @@ async def main():
     processor = DataProcessor()
     numbers = [3, 1, 4, 1, 5, 9, 2, 6, 5]
 
-    # Create runtime with variables and functions
+    # Create runtime with variables
+    # Use include_type_schema=True to expose methods to the LLM
     runtime = PythonRuntime(
         variables=[
             Variable(
                 name="processor",
                 value=processor,
-                description="Data processing tool with various methods"
+                description="Data processing tool",
+                include_type_schema=True,  # Show methods in <types> section
+                include_type_doc=True,     # Include class docstring
             ),
             Variable(
                 name="numbers",
                 value=numbers,
                 description="Input list of numbers"
             ),
-            Variable(
-                name="processed_data",
-                description="Store processed data in this variable"
-            ),
-            Variable(
-                name="filtered_data",
-                description="Store filtered data in this variable"
-            )
         ]
     )
 
     # Create agent
     agent = CaveAgent(model, runtime=runtime)
 
-    # Process data
-    await agent.run("Use processor to sort and deduplicate numbers")
-    processed_data = agent.runtime.get_variable_value('processed_data')
-    print("Processed data:", processed_data)
-
-    # Filter data
-    await agent.run("Filter numbers greater than 4")
-    filtered_data = agent.runtime.get_variable_value('filtered_data')
-    print("Filtered data:", filtered_data)
+    # Process data - LLM can see processor.process_list() and processor.filter_numbers()
+    await agent.run("Use processor to sort and deduplicate numbers, then filter values > 4")
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -241,10 +218,39 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
+### Type Schema Control
+
+Control how type information is exposed to the LLM:
+
+```python
+# Default: no type info (minimal prompt)
+Variable('data', my_object, 'Description')
+
+# Show methods/fields in <types> section
+Variable('processor', processor, 'Tool', include_type_schema=True)
+
+# Show docstring only (useful for complex types like pandas DataFrames)
+Variable('df', dataframe, 'Data', include_type_doc=True)
+
+# Show both methods and docstring
+Variable('light', smart_light, 'Smart light', include_type_schema=True, include_type_doc=True)
+```
+
+When enabled, types appear in a dedicated `<types>` section:
+```
+<types>
+DataProcessor:
+  doc: A utility class for processing data.
+  methods:
+    - process_list(data: list) -> list
+    - filter_numbers(data: list, threshold: int) -> list
+</types>
+```
+
 ## Key Features
 
 - **🤖 Code-Based Function Calling**: Leverages LLM's natural coding abilities instead of rigid JSON schemas
-- **🛡️ Secure Runtime Environment**: 
+- **🛡️ Secure Runtime Environment**:
   - Inject Python objects, variables, and functions as tools
   - Rule-based security validation prevents dangerous code execution
   - Flexible security rules: ImportRule, FunctionRule, AttributeRule, RegexRule
@@ -255,6 +261,7 @@ if __name__ == "__main__":
 - **🛡️ Execution Control**: Configurable step limits and error handling to prevent infinite loops
 - **🎯 Unmatched Flexibility**: JSON schemas break with dynamic workflows. Python code adapts to any situation - conditional logic, loops, and complex data transformations.
 - **🌐 Flexible LLM Support**: Works with any LLM provider via OpenAI-compatible APIs or LiteLLM
+- **📋 Type Schema Control**: Fine-grained control over exposing type methods and docstrings to the LLM
 
 ## Real-World Examples
 

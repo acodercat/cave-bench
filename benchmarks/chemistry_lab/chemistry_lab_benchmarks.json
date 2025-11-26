@@ -1,0 +1,309 @@
+[
+  {
+    "name": "chemistry_lab_calculations",
+    "module": "benchmarks.chemistry_lab.chemistry_lab",
+    "description": "You are a chemistry lab assistant helping with calculations and safety checks.",
+    "conversations": [
+      {
+        "id": "dilution_preparation",
+        "turns": [
+          {
+            "query": "I need to prepare 100 mL of 0.5 M HCl solution from the 6.0 M HCl stock in our inventory. Calculate the dilution and tell me how much water I need to add.",
+            "validator": "validate_dilution",
+            "expected_function_calls": [
+              {
+                "name": "calculate_dilution",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "initial_molarity",
+                    "value": 6.0,
+                    "type": "float"
+                  },
+                  {
+                    "name": "initial_volume_ml",
+                    "type": "float"
+                  },
+                  {
+                    "name": "final_volume_ml",
+                    "value": 100.0,
+                    "type": "float"
+                  }
+                ]
+              }
+            ],
+            "expected_variable_reads": ["chemical_inventory"],
+            "expected_variable_writes": ["final_molarity", "water_needed_ml"]
+          }
+        ]
+      },
+      {
+        "id": "ph_measurement",
+        "turns": [
+          {
+            "query": "I have a 0.01 M HCl solution. Calculate its pH and classify it.",
+            "validator": "validate_ph",
+            "expected_function_calls": [
+              {
+                "name": "calculate_ph",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "hydrogen_ion_concentration",
+                    "value": 0.01,
+                    "type": "float"
+                  }
+                ]
+              }
+            ],
+            "expected_variable_reads": [],
+            "expected_variable_writes": ["solution_ph", "ph_classification"]
+          }
+        ]
+      },
+      {
+        "id": "precipitation_reaction",
+        "turns": [
+          {
+            "query": "I'm mixing 0.01 moles of AgNO3 with 0.02 moles of NaCl. The reaction is AgNO3 + NaCl → AgCl + NaNO3 (1:1:1:1 stoichiometry). Determine the limiting reagent and calculate the maximum moles of AgCl precipitate that can form.",
+            "validator": "validate_limiting_reagent",
+            "expected_function_calls": [
+              {
+                "name": "calculate_limiting_reagent",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "reactants",
+                    "value": {
+                      "AgNO3": 0.01,
+                      "NaCl": 0.02
+                    },
+                    "type": "dict"
+                  },
+                  {
+                    "name": "stoichiometry",
+                    "value": {
+                      "AgNO3": 1,
+                      "NaCl": 1,
+                      "AgCl": 1,
+                      "NaNO3": 1
+                    },
+                    "type": "dict"
+                  }
+                ]
+              }
+            ],
+            "expected_variable_reads": [],
+            "expected_variable_writes": ["limiting_reagent", "max_AgCl_moles"]
+          }
+        ]
+      },
+      {
+        "id": "gas_pressure_calculation",
+        "turns": [
+          {
+            "query": "I have 2.0 moles of nitrogen gas in a 10 liter container at 298 Kelvin. Calculate the pressure in atmospheres using the ideal gas law.",
+            "validator": "validate_gas_law",
+            "expected_function_calls": [
+              {
+                "name": "ideal_gas_law",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "volume_liters",
+                    "value": 10.0,
+                    "type": "float"
+                  },
+                  {
+                    "name": "moles",
+                    "value": 2.0,
+                    "type": "float"
+                  },
+                  {
+                    "name": "temperature_kelvin",
+                    "value": 298.0,
+                    "type": "float"
+                  }
+                ]
+              }
+            ],
+            "expected_variable_reads": [],
+            "expected_variable_writes": ["gas_pressure_atm"]
+          }
+        ]
+      },
+      {
+        "id": "acid_base_titration",
+        "turns": [
+          {
+            "query": "I'm performing a titration with 25 mL of 0.1 M HCl and I've added 25 mL of 0.1 M NaOH. Analyze whether I'm at the equivalence point.",
+            "validator": "validate_titration",
+            "expected_function_calls": [
+              {
+                "name": "titration_analysis",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "acid_volume_ml",
+                    "value": 25.0,
+                    "type": "float"
+                  },
+                  {
+                    "name": "acid_molarity",
+                    "value": 0.1,
+                    "type": "float"
+                  },
+                  {
+                    "name": "base_volume_ml",
+                    "value": 25.0,
+                    "type": "float"
+                  },
+                  {
+                    "name": "base_molarity",
+                    "value": 0.1,
+                    "type": "float"
+                  }
+                ]
+              }
+            ],
+            "expected_variable_reads": [],
+            "expected_variable_writes": ["at_equivalence_point", "titration_status"]
+          }
+        ]
+      },
+      {
+        "id": "safety_and_procedure",
+        "turns": [
+          {
+            "query": "Before I start my experiment, I need to check if it's safe to mix HCl with NaOH. Check the safety database and tell me the hazard level.",
+            "validator": "validate_safety",
+            "expected_function_calls": [
+              {
+                "name": "check_safety_compatibility",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "chemical1",
+                    "value": "HCl",
+                    "type": "str"
+                  },
+                  {
+                    "name": "chemical2",
+                    "value": "NaOH",
+                    "type": "str"
+                  },
+                  {
+                    "name": "safety_data",
+                    "type": "dict"
+                  }
+                ]
+              }
+            ],
+            "expected_variable_reads": ["safety_database"],
+            "expected_variable_writes": ["safe_to_mix", "hazard_level"]
+          }
+        ]
+      },
+      {
+        "id": "multi_step_experiment",
+        "turns": [
+          {
+            "query": "I want to prepare a diluted HCl solution for a pH experiment. First, check our chemical inventory to see what concentration of HCl we have available.",
+            "expected_function_calls": [],
+            "expected_variable_reads": ["chemical_inventory"],
+            "expected_variable_writes": ["stock_HCl_molarity", "stock_HCl_volume"]
+          },
+          {
+            "query": "Now prepare 50 mL of 0.1 M HCl from our stock solution. Calculate how much stock and water I need.",
+            "expected_function_calls": [
+              {
+                "name": "calculate_dilution",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "initial_molarity",
+                    "value": 6.0,
+                    "type": "float"
+                  },
+                  {
+                    "name": "initial_volume_ml",
+                    "type": "float"
+                  },
+                  {
+                    "name": "final_volume_ml",
+                    "value": 50.0,
+                    "type": "float"
+                  }
+                ]
+              }
+            ],
+            "expected_variable_reads": ["stock_HCl_molarity"],
+            "expected_variable_writes": ["diluted_molarity", "stock_volume_needed", "water_volume"]
+          },
+          {
+            "query": "Calculate the pH of this 0.1 M HCl solution.",
+            "expected_function_calls": [
+              {
+                "name": "calculate_ph",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "hydrogen_ion_concentration",
+                    "value": 0.1,
+                    "type": "float"
+                  }
+                ]
+              }
+            ],
+            "expected_variable_reads": [],
+            "expected_variable_writes": ["final_ph"]
+          }
+        ]
+      },
+      {
+        "id": "complex_stoichiometry",
+        "turns": [
+          {
+            "query": "I'm running a combustion analysis. I have 5.0 grams of methane (CH4, molecular weight 16 g/mol) that I want to completely burn with oxygen. The balanced equation is CH4 + 2O2 → CO2 + 2H2O. First, calculate how many moles of methane I have.",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": ["methane_moles"]
+          },
+          {
+            "query": "Now determine how many moles of O2 I need for complete combustion, and calculate how many moles of CO2 will be produced.",
+            "expected_function_calls": [],
+            "expected_variable_reads": ["methane_moles"],
+            "expected_variable_writes": ["oxygen_needed_moles", "co2_produced_moles"]
+          },
+          {
+            "query": "If I only have 0.5 moles of O2 available instead of what's needed, use the limiting reagent function to determine which is limiting and how much CO2 I can actually produce.",
+            "expected_function_calls": [
+              {
+                "name": "calculate_limiting_reagent",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "reactants",
+                    "type": "dict"
+                  },
+                  {
+                    "name": "stoichiometry",
+                    "value": {
+                      "CH4": 1,
+                      "O2": 2,
+                      "CO2": 1,
+                      "H2O": 2
+                    },
+                    "type": "dict"
+                  }
+                ]
+              }
+            ],
+            "expected_variable_reads": ["methane_moles"],
+            "expected_variable_writes": ["limiting_reagent_combustion", "actual_co2_produced"]
+          }
+        ]
+      }
+    ]
+  }
+]

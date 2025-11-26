@@ -1,6 +1,6 @@
 from typing import (
     Callable, List, Dict, Any, Optional, Set, Union,
-    get_args, get_origin, ForwardRef, TYPE_CHECKING
+    get_args, get_origin, ForwardRef
 )
 from IPython.core.interactiveshell import InteractiveShell
 from IPython.utils.capture import capture_output
@@ -9,14 +9,7 @@ from .security_checker import SecurityChecker, SecurityError
 from traitlets.config import Config
 from enum import Enum
 from dataclasses import is_dataclass, fields as dataclass_fields, MISSING
-
-# Lazy import for optional Pydantic support
-try:
-    from pydantic import BaseModel as PydanticBaseModel
-    HAS_PYDANTIC = True
-except ImportError:
-    PydanticBaseModel = None  # type: ignore
-    HAS_PYDANTIC = False
+from pydantic import BaseModel
 
 class ExecutionResult:
     """
@@ -96,10 +89,7 @@ class PythonExecutor:
                 )
             
             return ExecutionResult(stdout=output.stdout)
-            
-        except SecurityError:
-            # Re-raise security errors as-is
-            raise
+
         except Exception as e:
             return ExecutionResult(error=e)
     
@@ -115,7 +105,7 @@ class PythonExecutor:
         
     @staticmethod
     def create_ipython_config(error_feedback_mode: ErrorFeedbackMode = ErrorFeedbackMode.PLAIN) -> Config:
-        """"Create a clean IPython configuration optimized for code execution."""
+        """Create a clean IPython configuration optimized for code execution."""
         config = Config()
         config.InteractiveShell.cache_size = 0 
         config.InteractiveShell.history_length = 0
@@ -134,30 +124,45 @@ class PythonExecutor:
 
 class Variable:
     """Represents a variable in the Python runtime environment."""
-    name: str
-    description: Optional[str] = None
-    value: Optional[Any] = None
-    doc: Optional[str] = None
-    type: str
 
-    def __init__(self, name: str, value: Optional[Any] = None, description: Optional[str] = None, include_doc: bool = True):
-        """Initialize the variable."""
+    name: str
+    description: Optional[str]
+    value: Optional[Any]
+    type: str
+    include_type_schema: bool
+    include_type_doc: bool
+
+    def __init__(
+        self,
+        name: str,
+        value: Optional[Any] = None,
+        description: Optional[str] = None,
+        include_type_schema: bool = False,
+        include_type_doc: bool = False,
+    ):
+        """
+        Initialize the variable.
+
+        Args:
+            name: Variable name
+            value: The value to store
+            description: Optional description of the variable
+            include_type_schema: Whether to include type methods/fields in types section
+            include_type_doc: Whether to include type docstring in types section
+        """
         self.name = name
         self.value = value
         self.description = description
-        self.type = type(self.value).__name__
+        self.type = type(self.value).__name__ if self.value is not None else "NoneType"
+        self.include_type_schema = include_type_schema
+        self.include_type_doc = include_type_doc
 
-        if include_doc and hasattr(self.value, "__doc__") and self.value.__doc__ and self.value.__doc__.strip():
-            self.doc = self.value.__doc__.strip()
-        
-    def __str__(self):
-        """Return a string representation of the variable."""
+    def __str__(self) -> str:
+        """Return a string representation of the variable (without inline schema)."""
         parts = [f"- name: {self.name}"]
         parts.append(f"  type: {self.type}")
         if self.description:
             parts.append(f"  description: {self.description}")
-        if self.doc:
-            parts.append(f"  doc: {self.doc}")
 
         return "\n".join(parts)
 
@@ -169,6 +174,110 @@ class TypeSchemaExtractor:
     Supports Pydantic models, dataclasses, and enums with recursive
     type discovery. Thread-safe through use of local state.
     """
+
+    @classmethod
+    def extract_from_instance(cls, value: Any, include_doc: bool = True) -> Optional[str]:
+        """
+        Extract type schema from a value/instance.
+
+        For class instances, extracts either:
+        - Field schema (for Pydantic models, dataclasses)
+        - Method signatures (for regular classes)
+
+        Args:
+            value: The value/instance to analyze
+            include_doc: Whether to include docstring in schema
+
+        Returns:
+            Formatted schema string or None for simple types
+        """
+        if value is None:
+            return None
+
+        value_type = type(value)
+
+        # Skip built-in types
+        if value_type in (str, int, float, bool, bytes, list, dict, tuple, set, frozenset):
+            return None
+
+        # Handle Enum instances
+        if isinstance(value, Enum):
+            return cls._format_enum_schema(value_type)
+
+        # Handle Pydantic model instances
+        if isinstance(value, BaseModel):
+            processed: Set[str] = set()
+            schemas: Dict[str, str] = {}
+            return cls._format_pydantic_schema(value_type, processed, schemas, include_doc)
+
+        # Handle dataclass instances
+        if is_dataclass(value) and not isinstance(value, type):
+            processed: Set[str] = set()
+            schemas: Dict[str, str] = {}
+            return cls._format_dataclass_schema(value_type, processed, schemas, include_doc)
+
+        # Handle regular class instances - extract method signatures
+        if hasattr(value_type, '__dict__'):
+            return cls._format_class_methods(value_type, include_doc)
+
+        return None
+
+    @classmethod
+    def _format_class_methods(cls, class_type: type, include_doc: bool = True) -> Optional[str]:
+        """
+        Extract public method signatures from a class.
+
+        Args:
+            class_type: The class to analyze
+            include_doc: Whether to include docstring
+
+        Returns:
+            Formatted method signatures or None if no methods found
+        """
+        methods = []
+
+        for name, method in inspect.getmembers(class_type, predicate=inspect.isfunction):
+            # Skip private and magic methods
+            if name.startswith('_'):
+                continue
+
+            try:
+                sig = inspect.signature(method)
+                # Format parameters (skip 'self')
+                params = []
+                for param_name, param in sig.parameters.items():
+                    if param_name == 'self':
+                        continue
+                    param_str = param_name
+                    if param.annotation != inspect.Parameter.empty:
+                        param_str += f": {cls._format_type_annotation(param.annotation)}"
+                    if param.default != inspect.Parameter.empty:
+                        param_str += f" = {param.default!r}"
+                    params.append(param_str)
+
+                # Format return type
+                return_str = ""
+                if sig.return_annotation != inspect.Signature.empty:
+                    return_str = f" -> {cls._format_type_annotation(sig.return_annotation)}"
+
+                method_sig = f"{name}({', '.join(params)}){return_str}"
+                methods.append(f"    - {method_sig}")
+            except (ValueError, TypeError):
+                # Skip methods that can't be inspected
+                continue
+
+        if not methods:
+            return None
+
+        lines = [f"{class_type.__name__}:"]
+
+        # Add docstring if available and requested
+        if include_doc and class_type.__doc__ and class_type.__doc__.strip():
+            lines.append(f"  doc: {class_type.__doc__.strip()}")
+
+        lines.append("  methods:")
+        lines.extend(methods)
+        return "\n".join(lines)
 
     @classmethod
     def extract_from_signature(cls, func: Callable) -> Dict[str, str]:
@@ -265,7 +374,8 @@ class TypeSchemaExtractor:
         cls,
         type_hint: Any,
         processed: Set[str],
-        schemas: Dict[str, str]
+        schemas: Dict[str, str],
+        include_doc: bool = True
     ) -> Optional[str]:
         """
         Extract schema information from a type.
@@ -274,17 +384,18 @@ class TypeSchemaExtractor:
             type_hint: Type to extract schema from
             processed: Set of already processed type names
             schemas: Dictionary to store extracted schemas
+            include_doc: Whether to include docstring
 
         Returns:
             Formatted schema string or None
         """
-        # Handle Pydantic models (only if pydantic is available)
-        if HAS_PYDANTIC and isinstance(type_hint, type) and issubclass(type_hint, PydanticBaseModel):
-            return cls._format_pydantic_schema(type_hint, processed, schemas)
+        # Handle Pydantic models
+        if isinstance(type_hint, type) and issubclass(type_hint, BaseModel):
+            return cls._format_pydantic_schema(type_hint, processed, schemas, include_doc)
 
         # Handle dataclasses
         if is_dataclass(type_hint) and isinstance(type_hint, type):
-            return cls._format_dataclass_schema(type_hint, processed, schemas)
+            return cls._format_dataclass_schema(type_hint, processed, schemas, include_doc)
 
         # Handle Enums
         if inspect.isclass(type_hint) and issubclass(type_hint, Enum):
@@ -297,7 +408,8 @@ class TypeSchemaExtractor:
         cls,
         model: type,
         processed: Set[str],
-        schemas: Dict[str, str]
+        schemas: Dict[str, str],
+        include_doc: bool = True
     ) -> str:
         """
         Format a Pydantic model schema.
@@ -306,43 +418,32 @@ class TypeSchemaExtractor:
             model: Pydantic model class
             processed: Set of already processed type names
             schemas: Dictionary to store extracted schemas
+            include_doc: Whether to include docstring
 
         Returns:
             Formatted schema string
         """
         lines = [f"{model.__name__}:"]
 
-        # Support both Pydantic v1 and v2
-        if hasattr(model, 'model_fields'):
-            # Pydantic v2
-            for field_name, field_info in model.model_fields.items():
-                field_type = field_info.annotation
-                type_str = cls._format_type_annotation(field_type)
+        # Add docstring if available and requested
+        if include_doc and model.__doc__ and model.__doc__.strip():
+            lines.append(f"  doc: {model.__doc__.strip()}")
 
-                field_line = f"  - {field_name}: {type_str}"
+        lines.append("  fields:")
 
-                if field_info.description:
-                    field_line += f"  # {field_info.description}"
+        for field_name, field_info in model.model_fields.items():
+            field_type = field_info.annotation
+            type_str = cls._format_type_annotation(field_type)
 
-                lines.append(field_line)
+            field_line = f"    - {field_name}: {type_str}"
 
-                # Recursively process field types
-                cls._process_type(field_type, processed, schemas)
-        elif hasattr(model, '__fields__'):
-            # Pydantic v1
-            for field_name, field_info in model.__fields__.items():
-                field_type = field_info.outer_type_
-                type_str = cls._format_type_annotation(field_type)
+            if field_info.description:
+                field_line += f"  # {field_info.description}"
 
-                field_line = f"  - {field_name}: {type_str}"
+            lines.append(field_line)
 
-                if field_info.field_info.description:
-                    field_line += f"  # {field_info.field_info.description}"
-
-                lines.append(field_line)
-
-                # Recursively process field types
-                cls._process_type(field_type, processed, schemas)
+            # Recursively process field types
+            cls._process_type(field_type, processed, schemas)
 
         return "\n".join(lines)
 
@@ -351,7 +452,8 @@ class TypeSchemaExtractor:
         cls,
         dataclass_type: type,
         processed: Set[str],
-        schemas: Dict[str, str]
+        schemas: Dict[str, str],
+        include_doc: bool = True
     ) -> str:
         """
         Format a dataclass schema.
@@ -360,15 +462,22 @@ class TypeSchemaExtractor:
             dataclass_type: Dataclass type
             processed: Set of already processed type names
             schemas: Dictionary to store extracted schemas
+            include_doc: Whether to include docstring
 
         Returns:
             Formatted schema string
         """
         lines = [f"{dataclass_type.__name__}:"]
 
+        # Add docstring if available and requested
+        if include_doc and dataclass_type.__doc__ and dataclass_type.__doc__.strip():
+            lines.append(f"  doc: {dataclass_type.__doc__.strip()}")
+
+        lines.append("  fields:")
+
         for field in dataclass_fields(dataclass_type):
             type_str = cls._format_type_annotation(field.type)
-            field_line = f"  - {field.name}: {type_str}"
+            field_line = f"    - {field.name}: {type_str}"
 
             if field.default is not MISSING:
                 field_line += f" = {field.default!r}"
@@ -494,19 +603,16 @@ class Function:
         
         if self.description:
             parts.append(f"  description: {self.description}")
-        
+
         if self.doc:
             parts.append(self._format_docstring())
-        
-        if self.type_schemas:
-            parts.append(self._format_type_schemas())
-        
+
         return "\n".join(parts)
-    
+
     def _format_docstring(self) -> str:
         """
         Format the docstring with proper indentation.
-        
+
         Returns:
             Formatted docstring
         """
@@ -515,48 +621,40 @@ class Function:
             lines.append(f"    {line}")
         return "\n".join(lines)
     
-    def _format_type_schemas(self) -> str:
-        """
-        Format type schemas with proper indentation.
-        
-        Returns:
-            Formatted type schemas
-        """
-        lines = ["  types:"]
-        for type_name, schema in self.type_schemas.items():
-            for line in schema.split('\n'):
-                lines.append(f"    {line}")
-        return "\n".join(lines)
-    
 class PythonRuntime:
     """
     A Python runtime that executes code snippets in an IPython environment.
     Provides a controlled execution environment with registered functions and objects.
     """
+
+    _executor: PythonExecutor
+    _functions: Dict[str, Function]
+    _variables: Dict[str, Variable]
+
     def __init__(
         self,
-        functions: List[Function] = [],
-        variables: List[Variable] = [],
+        functions: Optional[List[Function]] = None,
+        variables: Optional[List[Variable]] = None,
         security_checker: Optional[SecurityChecker] = None,
         error_feedback_mode: ErrorFeedbackMode = ErrorFeedbackMode.PLAIN,
     ):
         """
         Initialize runtime with executor and optional initial resources.
-        
+
         Args:
             functions: List of functions to inject into runtime
             variables: List of variables to inject into runtime
             security_checker: Security checker instance to use for code execution
+            error_feedback_mode: Error feedback mode for execution errors
         """
-            
         self._executor = PythonExecutor(security_checker=security_checker, error_feedback_mode=error_feedback_mode)
-        self._functions: Dict[str, Function] = {}
-        self._variables: Dict[str, Variable] = {}
+        self._functions = {}
+        self._variables = {}
 
-        for function in functions:
+        for function in (functions or []):
             self.inject_function(function)
-        
-        for variable in variables:
+
+        for variable in (variables or []):
             self.inject_variable(variable)
 
     def inject_function(self, function: Function):
@@ -587,24 +685,106 @@ class PythonRuntime:
         """Generate formatted variable descriptions for system prompt."""
         if not self._variables:
             return "No variables available"
-        
+
         descriptions = []
         for variable in self._variables.values():
             descriptions.append(str(variable))
-        
+
         return "\n".join(descriptions)
-    
+
     def describe_functions(self) -> str:
         """Generate formatted function descriptions for system prompt."""
         if not self._functions:
             return "No functions available"
-        
+
         descriptions = []
         for function in self._functions.values():
             descriptions.append(str(function))
         
         return "\n".join(descriptions)
-    
+
+    def describe_types(self) -> str:
+        """
+        Generate deduplicated type schemas from both functions and variables.
+
+        Collects all unique type schemas and returns them in a single section.
+        - If ANY variable of a type has include_type_schema=True, show full schema
+        - If ANY variable of a type has include_type_doc=True, show doc
+        - If include_type_schema=False but include_type_doc=True, show doc only
+        """
+        type_schemas: Dict[str, str] = {}
+        processed_types: Set[str] = set()
+
+        # Group variables by type and determine settings
+        # ANY True wins for both include_type_schema and include_type_doc
+        type_include_schema: Dict[str, bool] = {}
+        type_include_doc: Dict[str, bool] = {}
+        type_sample_value: Dict[str, Any] = {}
+
+        for variable in self._variables.values():
+            if variable.value is None:
+                continue
+
+            # Skip if both are False
+            if not variable.include_type_schema and not variable.include_type_doc:
+                continue
+
+            type_name = variable.type
+
+            # Store sample value for schema generation
+            if type_name not in type_sample_value:
+                type_sample_value[type_name] = variable.value
+                type_include_schema[type_name] = variable.include_type_schema
+                type_include_doc[type_name] = variable.include_type_doc
+            else:
+                # If ANY variable wants schema, include it
+                if variable.include_type_schema:
+                    type_include_schema[type_name] = True
+                # If ANY variable wants doc, include it
+                if variable.include_type_doc:
+                    type_include_doc[type_name] = True
+
+        # Generate schemas for variable types
+        for type_name, value in type_sample_value.items():
+            include_schema = type_include_schema.get(type_name, False)
+            include_doc = type_include_doc.get(type_name, False)
+
+            if include_schema:
+                # Full schema with/without doc
+                schema = TypeSchemaExtractor.extract_from_instance(value, include_doc)
+            elif include_doc:
+                # Doc only (no methods/fields)
+                schema = self._format_doc_only(type_name, value)
+            else:
+                schema = None
+
+            if schema:
+                type_schemas[type_name] = schema
+                processed_types.add(type_name)
+
+        # Collect from functions (include doc by default)
+        for function in self._functions.values():
+            for type_name, schema in function.type_schemas.items():
+                if type_name not in processed_types:
+                    type_schemas[type_name] = schema
+                    processed_types.add(type_name)
+
+        if not type_schemas:
+            return ""
+
+        lines = []
+        for schema in type_schemas.values():
+            lines.append(schema)
+
+        return "\n".join(lines)
+
+    def _format_doc_only(self, type_name: str, value: Any) -> Optional[str]:
+        """Format type with doc only (no methods/fields)."""
+        value_type = type(value)
+        if value_type.__doc__ and value_type.__doc__.strip():
+            return f"{type_name}:\n  doc: {value_type.__doc__.strip()}"
+        return None
+
     def reset(self):
         """Reset the runtime."""
         self._executor.reset()

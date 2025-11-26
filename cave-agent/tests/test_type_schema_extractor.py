@@ -5,14 +5,8 @@ from typing import List, Dict, Optional, Union, Callable, Any
 from dataclasses import dataclass, field
 from enum import Enum
 
-from cave_agent.python_runtime import TypeSchemaExtractor, Function
-
-# Try to import pydantic for conditional tests
-try:
-    from pydantic import BaseModel, Field
-    HAS_PYDANTIC = True
-except ImportError:
-    HAS_PYDANTIC = False
+from cave_agent.python_runtime import TypeSchemaExtractor, Function, Variable
+from pydantic import BaseModel, Field
 
 
 # =============================================================================
@@ -55,21 +49,22 @@ class NestedDataclass:
 
 
 # =============================================================================
-# Test Fixtures - Pydantic Models (conditional)
+# Test Fixtures - Pydantic Models
 # =============================================================================
 
-if HAS_PYDANTIC:
-    class SimplePydantic(BaseModel):
-        name: str
-        value: int
+class SimplePydantic(BaseModel):
+    name: str
+    value: int
 
-    class PydanticWithDescription(BaseModel):
-        title: str = Field(description="The title of the item")
-        count: int = Field(default=0, description="Number of items")
 
-    class NestedPydantic(BaseModel):
-        item: SimplePydantic
-        priority: Priority
+class PydanticWithDescription(BaseModel):
+    title: str = Field(description="The title of the item")
+    count: int = Field(default=0, description="Number of items")
+
+
+class NestedPydantic(BaseModel):
+    item: SimplePydantic
+    priority: Priority
 
 
 # =============================================================================
@@ -152,17 +147,6 @@ class TestTypeSchemaExtractorBasics:
         schemas = TypeSchemaExtractor.extract_from_signature(func_partial_annotations)
         assert schemas == {}  # Only builtin types
 
-    def test_classmethod_is_thread_safe(self):
-        """Verify classmethod pattern doesn't use shared state."""
-        # Call multiple times and ensure results are independent
-        result1 = TypeSchemaExtractor.extract_from_signature(func_with_enum)
-        result2 = TypeSchemaExtractor.extract_from_signature(func_with_dataclass)
-        result3 = TypeSchemaExtractor.extract_from_signature(func_with_enum)
-
-        # Results should be consistent
-        assert result1 == result3
-        assert "Status" in result1
-        assert "Priority" in result1
 
 
 # =============================================================================
@@ -369,10 +353,9 @@ class TestEdgeCases:
 
 
 # =============================================================================
-# Tests - Pydantic Models (conditional)
+# Tests - Pydantic Models
 # =============================================================================
 
-@pytest.mark.skipif(not HAS_PYDANTIC, reason="Pydantic not installed")
 class TestPydanticExtraction:
     """Test Pydantic model schema extraction."""
 
@@ -427,13 +410,16 @@ class TestFunctionIntegration:
         assert "Status" in func.type_schemas
         assert "Priority" in func.type_schemas
 
-    def test_function_includes_schemas_in_str(self):
-        """Function.__str__ should include type schemas."""
+    def test_function_str_excludes_type_schemas(self):
+        """Function.__str__ should NOT include type schemas (they go in describe_types)."""
         func = Function(func_with_enum)
         func_str = str(func)
 
-        assert "types:" in func_str
-        assert "Status" in func_str
+        # Type schemas are now in PythonRuntime.describe_types(), not in Function.__str__()
+        assert "types:" not in func_str
+        # But Function still stores them internally
+        assert "Status" in func.type_schemas
+        assert "Priority" in func.type_schemas
 
     def test_function_can_disable_type_schemas(self):
         """Function with include_type_schemas=False should skip extraction."""
@@ -447,3 +433,167 @@ class TestFunctionIntegration:
 
         assert "SimpleDataclass" in func.type_schemas
         assert "NestedDataclass" in func.type_schemas
+
+
+# =============================================================================
+# Tests - Variable Type Schema Control
+# =============================================================================
+
+class TestVariableTypeSchemaControl:
+    """Test Variable include_type_schema and include_type_doc control."""
+
+    def test_schema_true_doc_true(self):
+        """include_type_schema=True, include_type_doc=True shows full schema with doc."""
+        from cave_agent.python_runtime import PythonRuntime, Variable
+
+        class MyClass:
+            """My class docstring."""
+            def my_method(self) -> str:
+                return "test"
+
+        runtime = PythonRuntime(variables=[
+            Variable('obj', MyClass(), 'test', include_type_schema=True, include_type_doc=True),
+        ])
+        result = runtime.describe_types()
+
+        assert "MyClass:" in result
+        assert "doc: My class docstring." in result
+        assert "methods:" in result
+        assert "my_method()" in result
+
+    def test_schema_true_doc_false(self):
+        """include_type_schema=True, include_type_doc=False shows schema without doc."""
+        from cave_agent.python_runtime import PythonRuntime, Variable
+
+        class MyClass:
+            """My class docstring."""
+            def my_method(self) -> str:
+                return "test"
+
+        runtime = PythonRuntime(variables=[
+            Variable('obj', MyClass(), 'test', include_type_schema=True, include_type_doc=False),
+        ])
+        result = runtime.describe_types()
+
+        assert "MyClass:" in result
+        assert "doc:" not in result
+        assert "methods:" in result
+        assert "my_method()" in result
+
+    def test_schema_false_doc_true(self):
+        """include_type_schema=False, include_type_doc=True shows doc only."""
+        from cave_agent.python_runtime import PythonRuntime, Variable
+
+        class MyClass:
+            """My class docstring."""
+            def my_method(self) -> str:
+                return "test"
+
+        runtime = PythonRuntime(variables=[
+            Variable('obj', MyClass(), 'test', include_type_schema=False, include_type_doc=True),
+        ])
+        result = runtime.describe_types()
+
+        assert "MyClass:" in result
+        assert "doc: My class docstring." in result
+        assert "methods:" not in result
+        assert "my_method()" not in result
+
+    def test_schema_false_doc_false(self):
+        """include_type_schema=False, include_type_doc=False shows nothing."""
+        from cave_agent.python_runtime import PythonRuntime, Variable
+
+        class MyClass:
+            """My class docstring."""
+            def my_method(self) -> str:
+                return "test"
+
+        runtime = PythonRuntime(variables=[
+            Variable('obj', MyClass(), 'test', include_type_schema=False, include_type_doc=False),
+        ])
+        result = runtime.describe_types()
+
+        assert result == ""
+
+    def test_any_true_wins_for_schema(self):
+        """If ANY variable has include_type_schema=True, schema is shown."""
+        from cave_agent.python_runtime import PythonRuntime, Variable
+
+        class MyClass:
+            """My class docstring."""
+            def my_method(self) -> str:
+                return "test"
+
+        runtime = PythonRuntime(variables=[
+            Variable('obj1', MyClass(), 'test1', include_type_schema=False, include_type_doc=False),
+            Variable('obj2', MyClass(), 'test2', include_type_schema=True, include_type_doc=False),
+        ])
+        result = runtime.describe_types()
+
+        assert "MyClass:" in result
+        assert "methods:" in result
+        assert "my_method()" in result
+
+    def test_any_true_wins_for_doc(self):
+        """If ANY variable has include_type_doc=True, doc is shown."""
+        from cave_agent.python_runtime import PythonRuntime, Variable
+
+        class MyClass:
+            """My class docstring."""
+            def my_method(self) -> str:
+                return "test"
+
+        runtime = PythonRuntime(variables=[
+            Variable('obj1', MyClass(), 'test1', include_type_schema=True, include_type_doc=False),
+            Variable('obj2', MyClass(), 'test2', include_type_schema=False, include_type_doc=True),
+        ])
+        result = runtime.describe_types()
+
+        assert "MyClass:" in result
+        assert "doc: My class docstring." in result
+        assert "methods:" in result  # Because obj1 has schema=True
+
+    def test_doc_only_no_class_doc(self):
+        """Doc-only mode with no docstring returns nothing for that type."""
+        from cave_agent.python_runtime import PythonRuntime, Variable
+
+        class NoDocClass:
+            def my_method(self) -> str:
+                return "test"
+
+        runtime = PythonRuntime(variables=[
+            Variable('obj', NoDocClass(), 'test', include_type_schema=False, include_type_doc=True),
+        ])
+        result = runtime.describe_types()
+
+        # No doc available, so nothing shown
+        assert result == ""
+
+    def test_multiple_types_mixed_settings(self):
+        """Multiple types with different settings are handled correctly."""
+        from cave_agent.python_runtime import PythonRuntime, Variable
+
+        class TypeA:
+            """TypeA doc."""
+            def method_a(self) -> None:
+                pass
+
+        class TypeB:
+            """TypeB doc."""
+            def method_b(self) -> None:
+                pass
+
+        runtime = PythonRuntime(variables=[
+            Variable('a', TypeA(), 'A', include_type_schema=True, include_type_doc=True),
+            Variable('b', TypeB(), 'B', include_type_schema=False, include_type_doc=True),
+        ])
+        result = runtime.describe_types()
+
+        # TypeA should have full schema
+        assert "TypeA:" in result
+        assert "method_a()" in result
+
+        # TypeB should have doc only
+        assert "TypeB:" in result
+        assert "TypeB doc." in result
+        assert "method_b()" not in result

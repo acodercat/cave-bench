@@ -15,7 +15,9 @@ from utils import load_model_config
 
 
 benchmark_paths = [
-    "./benchmarks/data_analysis/HeartAttack/heart_attack_analysis_benchmarks.json",
+    # "./benchmarks/data_analysis/HeartAttack/heart_attack_analysis_benchmarks.json",
+    # "/home/codercat/Desktop/Workplace/Lab/cave-bench/benchmarks/chemistry_lab/chemistry_lab_benchmarks.json"
+    "/home/codercat/Desktop/Workplace/Lab/cave-bench/benchmarks/smart_home/smart_home_benchmarks.json"
     # "./benchmarks/data_analysis/Avocado/avocado_price_analysis_benchmarks.json",
     # "./benchmarks/data_analysis/Titanic/titanic_analysis_benchmarks.json",
     # "./benchmarks/data_analysis/RedWineQuality/red_wine_quality_analysis_benchmarks.json",
