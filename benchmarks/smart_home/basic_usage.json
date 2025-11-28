@@ -1,0 +1,45 @@
+[
+  {
+    "name": "smart_home_automation",
+    "module": "benchmarks.smart_home.basic_usage",
+    "description": "Control smart home devices (lights, thermostat, locks, camera, speakers) by manipulating objects and calling their methods to automate home scenes.",
+    "conversations": [
+      {
+        "id": "movie_mode",
+        "turns": [
+          {
+            "query": "I'm going to watch a movie in the living room. Set the mood - dim the lights to 20% brightness.",
+            "validator": "validate_movie_mode",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          }
+        ]
+      },
+      {
+        "id": "leaving_home_automation",
+        "turns": [
+          {
+            "query": "I'm leaving home. Check all doors and lock any that are unlocked. Then turn off all lights in the house, but make sure the security camera stays on and starts recording.",
+            "validator": "validate_leaving_home",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          }
+        ]
+      },
+      {
+        "id": "goodnight_routine",
+        "turns": [
+          {
+            "query": "It's bedtime and the house is at 20°C. I want it warmer for sleeping - set the thermostat to 22°C and calculate how many minutes it will take to reach that temperature (it heats at 0.5°C per 10 minutes), storing the result in warmup_time_minutes. Then turn off all lights except the bedroom light - dim that to 20% for reading. Lock all doors and ensure the security camera is recording.",
+            "validator": "validate_goodnight_routine",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          }
+        ]
+      }
+    ]
+  }
+]

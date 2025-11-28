@@ -3,7 +3,7 @@
 from dataclasses import dataclass, field, asdict
 from typing import Dict, Any, List, Optional, Callable
 from cave_agent.python_runtime import Variable
-
+from cave_agent.python_runtime import Type
 
 @dataclass
 class ToolCall:
@@ -83,12 +83,13 @@ class ExpectedFunctionCall:
 class BenchmarkTurn:
     """A single turn in a benchmark conversation."""
 
-    query: str
+    query: str = ""  # Optional if pre_turn_hook provides the query
     expected_function_calls: List[ExpectedFunctionCall] = field(default_factory=list)
     reference_response: str = ""
     validator: Optional[str] = None
     expected_variable_reads: List[str] = field(default_factory=list)
     expected_variable_writes: List[str] = field(default_factory=list)
+    pre_turn_hook: Optional[str] = None  # Hook to call before turn (modifies state, returns query)
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'BenchmarkTurn':
@@ -98,12 +99,13 @@ class BenchmarkTurn:
             for call in data.get('expected_function_calls', [])
         ]
         return cls(
-            query=data['query'],
+            query=data.get('query', ''),
             expected_function_calls=expected_calls,
             reference_response=data.get('reference_response', ''),
             validator=data.get('validator'),
             expected_variable_reads=data.get('expected_variable_reads', []),
-            expected_variable_writes=data.get('expected_variable_writes', [])
+            expected_variable_writes=data.get('expected_variable_writes', []),
+            pre_turn_hook=data.get('pre_turn_hook')
         )
 
 
@@ -126,11 +128,13 @@ class BenchmarkConversation:
 
 @dataclass
 class BenchmarkScenario:
-    """Scenario module contents with tools, variables, validators, and optional prompts."""
+    """Scenario module contents with tools, variables, validators, hooks, and optional prompts."""
 
     tools: List[Callable] = field(default_factory=list)
     variables: List[Variable] = field(default_factory=list)
     validators: Dict[str, Callable] = field(default_factory=dict)
+    hooks: Dict[str, Callable] = field(default_factory=dict)  # Pre-turn hooks for state modification
+    types: List[Type] = field(default_factory=list)
     description: Optional[str] = None  # Scenario-specific agent identity/description
     requirements: Optional[str] = None  # Scenario-specific requirements
 
@@ -155,6 +159,8 @@ class BenchmarkScenario:
             tools=getattr(module, "tools", []),
             variables=getattr(module, "variables", []),
             validators=getattr(module, "validators", {}),
+            hooks=getattr(module, "hooks", {}),
+            types=getattr(module, "types", []),
             description=description,
             requirements=requirements
         )

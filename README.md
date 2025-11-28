@@ -78,7 +78,7 @@ def validate_q1(
     turn: BenchmarkTurn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:
-    result = runtime.get_variable_value("result")
+    result = runtime.get_variable("result")
     if result == expected_value:
         return ValidatorResult(True, "Correct!")
     return ValidatorResult(False, f"Expected {expected_value}, got {result}")

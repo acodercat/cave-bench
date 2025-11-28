@@ -74,7 +74,7 @@ def validate_q1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the mean petal length by species.
     """
-    mean_petal_by_species = runtime.get_variable_value("mean_petal_by_species")
+    mean_petal_by_species = runtime.get_variable("mean_petal_by_species")
     
     if mean_petal_by_species is None:
         return ValidatorResult(
@@ -120,9 +120,9 @@ def validate_q2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the extreme sepal length analysis.
     """
-    max_sepal_sample = runtime.get_variable_value("max_sepal_sample")
-    min_sepal_sample = runtime.get_variable_value("min_sepal_sample")
-    feature_differences = runtime.get_variable_value("feature_differences")
+    max_sepal_sample = runtime.get_variable("max_sepal_sample")
+    min_sepal_sample = runtime.get_variable("min_sepal_sample")
+    feature_differences = runtime.get_variable("feature_differences")
     
     if any(var is None for var in [max_sepal_sample, min_sepal_sample, feature_differences]):
         return ValidatorResult(
@@ -168,9 +168,9 @@ def validate_q3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the correlation analysis.
     """
-    correlation_matrix = runtime.get_variable_value("correlation_matrix")
-    highest_corr_pair = runtime.get_variable_value("highest_corr_pair")
-    highest_corr_value = runtime.get_variable_value("highest_corr_value")
+    correlation_matrix = runtime.get_variable("correlation_matrix")
+    highest_corr_pair = runtime.get_variable("highest_corr_pair")
+    highest_corr_value = runtime.get_variable("highest_corr_value")
     
     if any(var is None for var in [correlation_matrix, highest_corr_pair, highest_corr_value]):
         return ValidatorResult(
@@ -207,9 +207,9 @@ def validate_q4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the comprehensive statistical analysis.
     """
-    species_stats = runtime.get_variable_value("species_stats")
-    cv_by_feature = runtime.get_variable_value("cv_by_feature")
-    most_discriminative_feature = runtime.get_variable_value("most_discriminative_feature")
+    species_stats = runtime.get_variable("species_stats")
+    cv_by_feature = runtime.get_variable("cv_by_feature")
+    most_discriminative_feature = runtime.get_variable("most_discriminative_feature")
     
     if any(var is None for var in [species_stats, cv_by_feature, most_discriminative_feature]):
         return ValidatorResult(
@@ -250,10 +250,10 @@ def validate_q5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the advanced shape analysis.
     """
-    shape_features_df = runtime.get_variable_value("shape_features_df")
-    f_ratios = runtime.get_variable_value("f_ratios")
-    best_shape_feature = runtime.get_variable_value("best_shape_feature")
-    best_feature_combination = runtime.get_variable_value("best_feature_combination")
+    shape_features_df = runtime.get_variable("shape_features_df")
+    f_ratios = runtime.get_variable("f_ratios")
+    best_shape_feature = runtime.get_variable("best_shape_feature")
+    best_feature_combination = runtime.get_variable("best_feature_combination")
     
     if any(var is None for var in [shape_features_df, f_ratios, best_shape_feature]):
         return ValidatorResult(

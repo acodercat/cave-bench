@@ -64,7 +64,7 @@ def validate_q1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the calculation of average altitude for NEW_TOWN stations.
     """
-    avg_altitude_new_town = runtime.get_variable_value("avg_altitude_new_town")
+    avg_altitude_new_town = runtime.get_variable("avg_altitude_new_town")
     expected = correct_answers["q1"]
     
     if avg_altitude_new_town is not None and round(avg_altitude_new_town, 2) == expected:
@@ -82,7 +82,7 @@ def validate_q2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the highest NO2 concentration for station_id 5 on 2025-07-25.
     """
-    max_no2_station5_2025_07_25 = runtime.get_variable_value("max_no2_station5_2025_07_25")
+    max_no2_station5_2025_07_25 = runtime.get_variable("max_no2_station5_2025_07_25")
     expected = correct_answers["q2"]
     
     if max_no2_station5_2025_07_25 is not None and max_no2_station5_2025_07_25 == expected:
@@ -100,7 +100,7 @@ def validate_q3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates finding the station with the highest single PM10 reading.
     """
-    max_pm10_station_name = runtime.get_variable_value("max_pm10_station_name")
+    max_pm10_station_name = runtime.get_variable("max_pm10_station_name")
     expected = correct_answers["q3"]
 
     if max_pm10_station_name is not None and max_pm10_station_name.strip().lower() == expected.strip().lower():
@@ -118,7 +118,7 @@ def validate_q4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the average PM2.5 calculation for the 'Southern' station on 2025-07-26.
     """
-    southern_avg_pm25_2025_07_26 = runtime.get_variable_value("southern_avg_pm25_2025_07_26")
+    southern_avg_pm25_2025_07_26 = runtime.get_variable("southern_avg_pm25_2025_07_26")
     expected = correct_answers["q4"]
     
     if southern_avg_pm25_2025_07_26 is not None and round(southern_avg_pm25_2025_07_26, 1) == expected:
@@ -136,8 +136,8 @@ def validate_q5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the average PM2.5 for Central on 2025-07-26 and comparison with Southern.
     """
-    central_avg_pm25_2025_07_26 = runtime.get_variable_value("central_avg_pm25_2025_07_26")
-    comparison_result = runtime.get_variable_value("comparison_result")
+    central_avg_pm25_2025_07_26 = runtime.get_variable("central_avg_pm25_2025_07_26")
+    comparison_result = runtime.get_variable("comparison_result")
     expected_central_avg = correct_answers["q5_central_avg"]
     expected_comparison = correct_answers["q5_comparison"]
     

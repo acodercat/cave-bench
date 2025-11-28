@@ -63,6 +63,7 @@ class OpenAIServerModel(Model):
         params = {
             "model": self.model_id,
             "messages": messages,
+            "tool_choice": "none",
             **self.kwargs,
         }
             
@@ -134,6 +135,7 @@ class LiteLLMModel(Model):
             "api_base": self.base_url,
             "api_key": self.api_key,
             "messages": messages,
+            "tool_choice": "none",
             **self.kwargs,
         }
         

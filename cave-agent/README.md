@@ -89,10 +89,10 @@ async def main():
     agent = CaveAgent(model, runtime=runtime)
 
     await agent.run("Add buy groceries and call mom to my tasks")
-    print(f"Current tasks: {runtime.get_variable_value('tasks')}")
+    print(f"Current tasks: {runtime.get_variable('tasks')}")
 
     await agent.run("Mark groceries done and remind me about mom")
-    print(f"Final state: {runtime.get_variable_value('tasks')}")
+    print(f"Final state: {runtime.get_variable('tasks')}")
 
     response = await agent.run("What's my progress?")
     print(response.content)
@@ -107,7 +107,7 @@ if __name__ == "__main__":
 import asyncio
 from cave_agent import CaveAgent
 from cave_agent.models import LiteLLMModel
-from cave_agent.python_runtime import PythonRuntime, Function, Variable
+from cave_agent.python_runtime import PythonRuntime, Variable, Type
 
 async def main():
     # Initialize LLM model
@@ -117,45 +117,68 @@ async def main():
         base_url="your-base-url"
     )
 
-    # Define a class with methods
-    class DataProcessor:
-        """A utility class for processing and filtering data collections."""
-        def process_list(self, data: list) -> list:
-            """Sort a list and remove duplicates"""
-            return sorted(set(data))
+    # Define smart home device classes
+    class Light:
+        """A smart light with brightness control."""
+        def __init__(self, name: str, is_on: bool = False, brightness: int = 100):
+            self.name = name
+            self.is_on = is_on
+            self.brightness = brightness
 
-        def filter_numbers(self, data: list, threshold: int) -> list:
-            """Filter numbers greater than threshold"""
-            return [x for x in data if x > threshold]
+        def turn_on(self):
+            """Turn the light on."""
+            self.is_on = True
 
-    # Prepare context
-    processor = DataProcessor()
-    numbers = [3, 1, 4, 1, 5, 9, 2, 6, 5]
+        def turn_off(self):
+            """Turn the light off."""
+            self.is_on = False
 
-    # Create runtime with variables
-    # Use include_type_schema=True to expose methods to the LLM
+        def set_brightness(self, brightness: int):
+            """Set brightness level (0-100)."""
+            self.brightness = max(0, min(100, brightness))
+            if self.brightness > 0:
+                self.is_on = True
+
+    class Thermostat:
+        """A smart thermostat."""
+        def __init__(self, current_temp: int = 20, target_temp: int = 20):
+            self.current_temp = current_temp
+            self.target_temp = target_temp
+
+        def set_temperature(self, temp: int):
+            """Set target temperature."""
+            self.target_temp = temp
+
+    # Create device instances
+    living_room_light = Light("Living Room", is_on=True, brightness=80)
+    bedroom_light = Light("Bedroom", is_on=False)
+    thermostat = Thermostat(current_temp=20, target_temp=20)
+
+    # Create runtime with variables and type schemas
     runtime = PythonRuntime(
+        types=[
+            Type(Light),
+            Type(Thermostat),
+        ],
         variables=[
-            Variable(
-                name="processor",
-                value=processor,
-                description="Data processing tool",
-                include_type_schema=True,  # Show methods in <types> section
-                include_type_doc=True,     # Include class docstring
-            ),
-            Variable(
-                name="numbers",
-                value=numbers,
-                description="Input list of numbers"
-            ),
-        ]
+            Variable("living_room_light", living_room_light, "Smart light in living room"),
+            Variable("bedroom_light", bedroom_light, "Smart light in bedroom"),
+            Variable("thermostat", thermostat, "Home thermostat"),
+        ],
     )
 
     # Create agent
     agent = CaveAgent(model, runtime=runtime)
 
-    # Process data - LLM can see processor.process_list() and processor.filter_numbers()
-    await agent.run("Use processor to sort and deduplicate numbers, then filter values > 4")
+    # Control smart home - LLM can manipulate objects directly
+    await agent.run("Dim the living room light to 20% and set thermostat to 22°C")
+
+    # Validate the changes by getting variables from runtime
+    light = runtime.get_variable("living_room_light")
+    thermostat = runtime.get_variable("thermostat")
+
+    print(f"Living room light: {light.brightness}% brightness, {'ON' if light.is_on else 'OFF'}")
+    print(f"Thermostat: {thermostat.target_temp}°C")
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -218,32 +241,51 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-### Type Schema Control
+### Type Injection
 
-Control how type information is exposed to the LLM:
+Types from Variables and Functions are automatically injected into the runtime namespace, allowing the LLM to use `isinstance()` checks and create new instances. By default, type schemas are hidden from the prompt.
+
+To expose type information to the LLM, use explicit `Type` injection:
 
 ```python
-# Default: no type info (minimal prompt)
-Variable('data', my_object, 'Description')
+from cave_agent.python_runtime import PythonRuntime, Variable, Type
 
-# Show methods/fields in <types> section
-Variable('processor', processor, 'Tool', include_type_schema=True)
+class Light:
+    """A smart light device."""
+    def turn_on(self) -> str: ...
+    def turn_off(self) -> str: ...
 
-# Show docstring only (useful for complex types like pandas DataFrames)
-Variable('df', dataframe, 'Data', include_type_doc=True)
+light = Light()
 
-# Show both methods and docstring
-Variable('light', smart_light, 'Smart light', include_type_schema=True, include_type_doc=True)
+# Types auto-injected but schema hidden (default)
+runtime = PythonRuntime(
+    variables=[Variable("light", light, "A smart light")],
+)
+
+# Explicitly show type schema in <types> section
+runtime = PythonRuntime(
+    types=[Type(Light)],  # Schema shown by default
+    variables=[Variable("light", light, "A smart light")],
+)
+
+# Control schema and doc separately
+runtime = PythonRuntime(
+    types=[
+        Type(Light, include_schema=True, include_doc=False),  # Methods only
+        Type(Lock, include_schema=False, include_doc=True),   # Docstring only
+    ],
+    variables=[...],
+)
 ```
 
 When enabled, types appear in a dedicated `<types>` section:
 ```
 <types>
-DataProcessor:
-  doc: A utility class for processing data.
+Light:
+  doc: A smart light device.
   methods:
-    - process_list(data: list) -> list
-    - filter_numbers(data: list, threshold: int) -> list
+    - turn_on() -> str
+    - turn_off() -> str
 </types>
 ```
 
@@ -261,7 +303,7 @@ DataProcessor:
 - **🛡️ Execution Control**: Configurable step limits and error handling to prevent infinite loops
 - **🎯 Unmatched Flexibility**: JSON schemas break with dynamic workflows. Python code adapts to any situation - conditional logic, loops, and complex data transformations.
 - **🌐 Flexible LLM Support**: Works with any LLM provider via OpenAI-compatible APIs or LiteLLM
-- **📋 Type Schema Control**: Fine-grained control over exposing type methods and docstrings to the LLM
+- **📋 Type Injection**: Auto-inject types for `isinstance()` checks; explicit Type injection to expose schemas to the LLM
 
 ## Real-World Examples
 

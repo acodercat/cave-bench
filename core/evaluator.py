@@ -9,7 +9,7 @@ from core.types import (
 )
 from core.tracker import FunctionCallTracker
 from cave_agent import CaveAgent, LogLevel, Model
-from cave_agent.python_runtime import PythonRuntime, Function, Variable
+from cave_agent.python_runtime import PythonRuntime, Function, Variable, Type
 from core.prompts import DEFAULT_AGENT_IDENTITY, DEFAULT_INSTRUCTIONS
 
 
@@ -81,6 +81,7 @@ class BenchmarkEvaluator:
         self,
         functions: List[Callable],
         variables: List[Variable],
+        types: List[Type],
         description: str | None = None,
         requirements: str | None = None
     ) -> CaveAgent:
@@ -99,11 +100,12 @@ class BenchmarkEvaluator:
         functions = [Function(f) for f in functions]
         runtime = PythonRuntime(
             functions=functions,
-            variables=variables
+            variables=variables,
+            types=types
         )
 
         if description:
-            instructions = DEFAULT_INSTRUCTIONS + "\n TASK DESCRIPTION: \n" + description + "\n"
+            instructions = DEFAULT_INSTRUCTIONS + "\nTASK DESCRIPTION: \n" + description + "\n"
         else:
             instructions = DEFAULT_INSTRUCTIONS
 
@@ -116,7 +118,7 @@ class BenchmarkEvaluator:
             max_steps=100,
             max_history=200,
             max_execution_result_length=10000,
-            log_level=LogLevel.DEBUG,
+            log_level=LogLevel.INFO,
             agent_identity=DEFAULT_AGENT_IDENTITY,
             instructions=instructions
         )
@@ -182,6 +184,7 @@ class BenchmarkEvaluator:
         agent = self._create_agent(
             functions=scenario.tools,
             variables=scenario.variables,
+            types=scenario.types,
             description=scenario.description,
             requirements=scenario.requirements
         )
@@ -190,7 +193,7 @@ class BenchmarkEvaluator:
         turn_results = []
         for turn in conversation.turns:
             result = await self._evaluate_turn(
-                turn, agent, function_names, scenario.validators
+                turn, agent, function_names, scenario.validators, scenario.hooks
             )
             turn_results.append(result)
             self.metrics.total_steps += result.metrics.steps
@@ -224,16 +227,30 @@ class BenchmarkEvaluator:
         return missing_required_calls
 
     async def _evaluate_turn(self, turn: BenchmarkTurn,
-                       agent: CaveAgent, function_names: List[str], validators: Dict[str, Callable] | None = None) -> TurnResult:
+                       agent: CaveAgent, function_names: List[str],
+                       validators: Dict[str, Callable] | None = None,
+                       hooks: Dict[str, Callable] | None = None) -> TurnResult:
         """Evaluate a single turn within a conversation and return detailed metrics."""
         if validators is None:
             validators = {}
+        if hooks is None:
+            hooks = {}
 
         query = turn.query
         reference_response = turn.reference_response
         expected_calls = turn.expected_function_calls
         expected_variable_reads = turn.expected_variable_reads
         expected_variable_writes = turn.expected_variable_writes
+
+        # Call pre-turn hook if specified (injects randomness / modifies state)
+        if turn.pre_turn_hook:
+            if turn.pre_turn_hook not in hooks:
+                raise KeyError(f"Hook '{turn.pre_turn_hook}' not found. Available hooks: {list(hooks.keys())}")
+            hook_result = hooks[turn.pre_turn_hook](agent.runtime, turn)
+            # Hook can return a new query string, or None to use the original
+            if hook_result is not None:
+                query = hook_result
+                logger.debug(f"Pre-turn hook modified query to: {query[:100]}...")
 
         # Initialize metrics
         turn_metrics = TurnMetrics()

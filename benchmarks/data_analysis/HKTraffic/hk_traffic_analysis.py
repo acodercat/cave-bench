@@ -64,7 +64,7 @@ def validate_q1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the count of forward_only road segments.
     """
-    forward_only_count = runtime.get_variable_value("forward_only_count")
+    forward_only_count = runtime.get_variable("forward_only_count")
     expected = correct_answers["q1"]
     
     if forward_only_count is not None and forward_only_count == expected:
@@ -82,7 +82,7 @@ def validate_q2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the count of road segments with heavy congestion on 2025-07-27.
     """
-    congestion_count_2025_07_27 = runtime.get_variable_value("congestion_count_2025_07_27")
+    congestion_count_2025_07_27 = runtime.get_variable("congestion_count_2025_07_27")
     expected = correct_answers["q2"]
     
     if congestion_count_2025_07_27 is not None and congestion_count_2025_07_27 == expected:
@@ -100,7 +100,7 @@ def validate_q3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the average speed for elevated roads during peak hours.
     """
-    avg_speed_elevated_peak_hours = runtime.get_variable_value("avg_speed_elevated_peak_hours")
+    avg_speed_elevated_peak_hours = runtime.get_variable("avg_speed_elevated_peak_hours")
     expected = correct_answers["q3"]
     
     if avg_speed_elevated_peak_hours is not None and round(avg_speed_elevated_peak_hours) == expected:
@@ -118,7 +118,7 @@ def validate_q4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the average congestion index for ground level roads during weekdays.
     """
-    avg_congestion_ground_weekdays = runtime.get_variable_value("avg_congestion_ground_weekdays")
+    avg_congestion_ground_weekdays = runtime.get_variable("avg_congestion_ground_weekdays")
     expected = correct_answers["q4"]
     
     if avg_congestion_ground_weekdays is not None and round(avg_congestion_ground_weekdays,1) == expected:
@@ -135,9 +135,9 @@ def validate_q5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the congestion comparison between elevated and tunnel roads.
     """
-    avg_congestion_elevated = runtime.get_variable_value("avg_congestion_elevated")
-    avg_congestion_tunnel = runtime.get_variable_value("avg_congestion_tunnel")
-    congestion_comparison_result = runtime.get_variable_value("congestion_comparison_result")
+    avg_congestion_elevated = runtime.get_variable("avg_congestion_elevated")
+    avg_congestion_tunnel = runtime.get_variable("avg_congestion_tunnel")
+    congestion_comparison_result = runtime.get_variable("congestion_comparison_result")
     
     expected_elevated = correct_answers["q5_elevated_congestion"]
     expected_tunnel = correct_answers["q5_tunnel_congestion"]

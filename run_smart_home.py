@@ -15,16 +15,9 @@ from utils import load_model_config
 
 
 benchmark_paths = [
-    # "./benchmarks/data_analysis/HeartAttack/heart_attack_analysis_benchmarks.json",
-    # "/home/codercat/Desktop/Workplace/Lab/cave-bench/benchmarks/chemistry_lab/chemistry_lab_benchmarks.json"
-    "/home/codercat/Desktop/Workplace/Lab/cave-bench/benchmarks/smart_home/evening_home_routine.json"
-    # "./benchmarks/data_analysis/Avocado/avocado_price_analysis_benchmarks.json",
-    # "./benchmarks/data_analysis/Titanic/titanic_analysis_benchmarks.json",
-    # "./benchmarks/data_analysis/RedWineQuality/red_wine_quality_analysis_benchmarks.json",
-    # "./benchmarks/data_analysis/Placement/placement_analysis_benchmarks.json",
-    # "./benchmarks/data_analysis/Iris/iris_analysis_benchmarks.json",
-    # "./benchmarks/data_analysis/HKTraffic/hk_traffic_analysis_benchmarks.json",
-    # "./benchmarks/data_analysis/HKAirQuality/air_quality_analysis_benchmarks.json",
+    "/home/codercat/Desktop/Workplace/Lab/cave-bench/benchmarks/smart_home/work_from_home_day.json"
+    # "/home/codercat/Desktop/Workplace/Lab/cave-bench/benchmarks/smart_home/basic_usage.json"
+    # "/home/codercat/Desktop/Workplace/Lab/cave-bench/benchmarks/smart_home/morning_routine_weather_adaptive.json"
 ]
 
 async def evaluate_model(model_name: str):
@@ -46,7 +39,7 @@ async def evaluate_model(model_name: str):
     model = LiteLLMModel(**model_config, custom_llm_provider='openai')
     
     # Run evaluation
-    output_file = f"./results/data_analysis_{model_config['model_id']}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    output_file = f"./results/smart_home_{model_config['model_id']}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     benchmark_scenarios = []
     for benchmark_path in benchmark_paths:
         benchmark_scenario = json.loads(Path(benchmark_path).read_text())

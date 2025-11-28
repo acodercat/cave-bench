@@ -1,3 +1,22 @@
 # Model configurations for Agent Performance Evaluator
 
 
+[gemini3]
+model_id = "gemini-3-pro-preview"
+api_key = "AIzaSyBWJQVKWjKOwjlyBAEXWI28wcP9c3FiT_s"
+base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
+temperature = 1
+
+
+[kimi-k2]
+model_id = "kimi-k2"
+api_key = "sk-bJL4pRKdjSZFMCd727AeB7Fd79Fe4eBaBaD41cA033BfB282"
+base_url = "https://oneapi.hkgai.net/v1"
+temperature = 1
+
+
+[qwen3-max]
+model_id = "qwen3-max"
+api_key = "sk-8898a87b8e7b4e399d6fc5ee804c4666"
+base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+temperature = 0.3

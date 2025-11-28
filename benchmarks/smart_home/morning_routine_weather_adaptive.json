@@ -1,0 +1,30 @@
+[
+    {
+      "name": "morning_routine_weather_adaptive",
+      "module": "benchmarks.smart_home.morning_routine_weather_adaptive",
+      "description": "Control smart home devices (lights, thermostat, locks, camera, speakers) by manipulating objects and calling their methods to automate home scenes.",
+      "conversations": [
+        {
+            "id": "morning_routine_weather_adaptive",
+            "turns": [
+              {
+                "query": "Good morning! Check the outdoor temperature sensor. If it's below 18°C, it's a cold morning - set the thermostat to 23°C to warm up quickly. If it's 18°C or above, just set it to 21°C. Also check the living room humidity.",
+                "validator": "validate_morning_climate_check",
+                "expected_function_calls": []
+              },
+              {
+                "query": "Now prepare for my morning. Open the bedroom blinds to let light in. Check the coffee maker - if water level is at least 20% and beans level is at least 10%, brew 2 cups of coffee. Otherwise just report what needs refilling. Also turn on the kitchen light to 60% brightness.",
+                "validator": "validate_morning_prep",
+                "expected_function_calls": []
+              },
+              {
+                "query": "I'm about to leave for work. Close all the blinds for privacy during the day. Make sure the robot vacuum has enough battery (at least 50%) and the dustbin isn't too full (less than 80%) - if both conditions are met, start cleaning the living room in quiet mode. Turn off the coffee maker and kitchen light. Set thermostat to eco mode at 18°C to save energy while I'm away. Lock the front door and close the garage door if it's open.",
+                "validator": "validate_leaving_for_work",
+                "expected_function_calls": []
+              }
+            ]
+        }
+      ]
+    }
+  ]
+  

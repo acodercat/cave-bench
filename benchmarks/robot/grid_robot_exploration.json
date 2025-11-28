@@ -1,0 +1,59 @@
+[
+  {
+    "name": "grid_robot_exploration",
+    "module": "benchmarks.robot.grid_robot_exploration",
+    "description": "Step-by-step robot exploration with randomness. Robot can only move ONCE per turn and may slip!",
+    "conversations": [
+      {
+        "id": "step_by_step_exploration",
+        "turns": [
+          {
+            "pre_turn_hook": "hook_initial_turn",
+            "expected_function_calls": []
+          },
+          {
+            "pre_turn_hook": "hook_exploration_turn",
+            "expected_function_calls": []
+          },
+          {
+            "pre_turn_hook": "hook_exploration_turn",
+            "expected_function_calls": []
+          },
+          {
+            "pre_turn_hook": "hook_exploration_turn",
+            "expected_function_calls": []
+          },
+          {
+            "pre_turn_hook": "hook_exploration_turn",
+            "expected_function_calls": []
+          },
+          {
+            "pre_turn_hook": "hook_exploration_turn",
+            "expected_function_calls": []
+          },
+          {
+            "pre_turn_hook": "hook_exploration_turn",
+            "expected_function_calls": []
+          },
+          {
+            "pre_turn_hook": "hook_exploration_turn",
+            "expected_function_calls": []
+          },
+          {
+            "pre_turn_hook": "hook_exploration_turn",
+            "expected_function_calls": []
+          },
+          {
+            "pre_turn_hook": "hook_exploration_turn",
+            "expected_function_calls": []
+          },
+          {
+            "pre_turn_hook": "hook_final_turn",
+            "validator": "validate_explore_and_return",
+            "expected_function_calls": []
+          }
+        ]
+      }
+    ]
+  }
+]

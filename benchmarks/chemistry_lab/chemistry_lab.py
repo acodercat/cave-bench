@@ -490,8 +490,8 @@ def validate_dilution_calculation(
 ) -> ValidatorResult:
     """Validate dilution calculation accuracy."""
     try:
-        final_molarity = runtime.get_variable_value("final_molarity")
-        water_needed = runtime.get_variable_value("water_needed_ml")
+        final_molarity = runtime.get_variable("final_molarity")
+        water_needed = runtime.get_variable("water_needed_ml")
 
         # Expected values (0.5 M HCl diluted from 6.0 M, 100 mL final volume)
         # C1V1 = C2V2 → V1 = C2V2/C1 = (0.5 * 100) / 6.0 = 8.33 mL
@@ -525,8 +525,8 @@ def validate_ph_calculation(
 ) -> ValidatorResult:
     """Validate pH calculation."""
     try:
-        ph_value = runtime.get_variable_value("solution_ph")
-        classification = runtime.get_variable_value("ph_classification")
+        ph_value = runtime.get_variable("solution_ph")
+        classification = runtime.get_variable("ph_classification")
 
         # Expected: pH of 0.01 M HCl = -log10(0.01) = 2.0 (strongly acidic)
         expected_ph = 2.0
@@ -554,8 +554,8 @@ def validate_limiting_reagent(
 ) -> ValidatorResult:
     """Validate limiting reagent identification."""
     try:
-        limiting = runtime.get_variable_value("limiting_reagent")
-        max_product = runtime.get_variable_value("max_AgCl_moles")
+        limiting = runtime.get_variable("limiting_reagent")
+        max_product = runtime.get_variable("max_AgCl_moles")
 
         # Expected: AgNO3 + NaCl → AgCl + NaNO3
         # 0.01 mol AgNO3, 0.02 mol NaCl → AgNO3 is limiting
@@ -585,7 +585,7 @@ def validate_gas_law(
 ) -> ValidatorResult:
     """Validate ideal gas law calculation."""
     try:
-        pressure = runtime.get_variable_value("gas_pressure_atm")
+        pressure = runtime.get_variable("gas_pressure_atm")
 
         # Expected: PV = nRT → P = nRT/V
         # n=2.0 mol, T=298 K, V=10 L, R=0.08206
@@ -612,8 +612,8 @@ def validate_titration(
 ) -> ValidatorResult:
     """Validate titration analysis."""
     try:
-        equivalence = runtime.get_variable_value("at_equivalence_point")
-        status = runtime.get_variable_value("titration_status")
+        equivalence = runtime.get_variable("at_equivalence_point")
+        status = runtime.get_variable("titration_status")
 
         # Expected: 25 mL of 0.1 M HCl + 25 mL of 0.1 M NaOH
         # Moles equal → at equivalence
@@ -642,8 +642,8 @@ def validate_safety_check(
 ) -> ValidatorResult:
     """Validate safety compatibility check."""
     try:
-        safe = runtime.get_variable_value("safe_to_mix")
-        hazard = runtime.get_variable_value("hazard_level")
+        safe = runtime.get_variable("safe_to_mix")
+        hazard = runtime.get_variable("hazard_level")
 
         # Expected: HCl + NaOH → NOT safe (exothermic), high hazard
         expected_safe = False

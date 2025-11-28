@@ -1,0 +1,30 @@
+[
+    {
+        "name": "movie_night_with_baby",
+        "module": "benchmarks.smart_home.movie_night_with_baby",
+        "description": "Control smart home devices (lights, thermostat, locks, camera, speakers) by manipulating objects and calling their methods to automate home scenes.",
+        "conversations": [
+            {
+                "id": "movie_night_with_baby",
+                "turns": [
+                  {
+                    "query": "We're starting a movie night but the baby is sleeping in the nursery. First, check the nursery temperature sensor - if it's not between 20-22°C, adjust the thermostat to 21°C. Turn on the nursery camera recording to monitor the baby. Enable do-not-disturb on the doorbell so it won't ring and wake the baby.",
+                    "validator": "validate_baby_safety_setup",
+                    "expected_function_calls": []
+                  },
+                  {
+                    "query": "Now set up the living room for the movie. Turn on the TV and set input to 'Netflix'. Dim the living room lights to 15% for ambiance. Close the living room blinds completely. Set the living room speaker volume to 35% (low volume because of the baby) and start it playing. ",
+                    "validator": "validate_movie_setup",
+                    "expected_function_calls": []
+                  },
+                  {
+                    "query": "The movie is over and we're going to bed. Turn off all entertainment - TV and speaker. Turn off all lights in the house. Make sure the nursery is still being monitored (camera recording). Keep the doorbell in do-not-disturb mode overnight. Check all doors (front and back) and lock any that are unlocked.",
+                    "validator": "validate_movie_night_end",
+                    "expected_function_calls": []
+                  }
+                ]
+            }
+        ]
+      }
+  ]
+  
