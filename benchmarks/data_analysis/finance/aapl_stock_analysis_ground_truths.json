@@ -1,0 +1,22 @@
+[
+    {
+      "scenario": "aapl_stock_analysis",
+      "module": "benchmarks.data_analysis.finance.aapl_stock_analysis",
+      "description": "Analyze AAPL stock data for 2024.",
+      "requirements": "You are a financial analyst. You are given a dataset of AAPL stock data for 2024. You need to analyze the data and answer the questions.",
+      "conversations": [
+        {
+          "id": "aapl_stock_analysis_2024",
+          "turns": [
+            {
+              "query": "Identify the month with the highest total trading volume.",
+              "validator": "validate_q5",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["aapl_df"],
+              "expected_variable_writes": ["highest_vol_month", "highest_vol_month_volume"]
+            }
+          ]
+        }
+      ]
+    }
+]

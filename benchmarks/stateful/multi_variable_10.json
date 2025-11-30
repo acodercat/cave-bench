@@ -1,0 +1,25 @@
+[
+    {
+        "name": "multi_variable_10",
+        "module": "benchmarks.stateful.multi_variable_10",
+        "description": "Test stateful management of 10 variables with diverse types.",
+        "conversations": [
+            {
+                "id": "product_lifecycle",
+                "turns": [
+                    {"query": "We're adding a new laptop to our inventory. It's called 'Laptop' in the Electronics category, we have 50 units available out of 100 total stock. Price is $999.99 with a 10% discount rate. It's in stock and featured. Customer reviews are 5, 4, 5 stars. The metadata should include brand 'TechCo' and year 2024.", "validator": "validate_product_init"},
+                    {"query": "We just sold 5 laptops! Update the inventory accordingly, apply the discount to the current price, add a new 4-star review, and record the sale of 5 units in the metadata.", "validator": "validate_product_sale"},
+                    {"query": "We're upgrading this to a Pro model. Append ' Pro' to the product name, make it a 'Premium Electronics' category, increase the price by 20%, bump the discount rate to 20%, remove it from featured items, and mark it as upgraded in the metadata.", "validator": "validate_product_update"}
+                ]
+            },
+            {
+                "id": "inventory_cycle",
+                "turns": [
+                    {"query": "Adding a new phone to inventory. Product name is 'Phone', category 'Mobile', 200 available quantity, 500 total stock. Price $599, no discount yet. It's in stock but not featured. No reviews yet. Metadata just has color as black.", "validator": "validate_inventory_init"},
+                    {"query": "Great news! A shipment doubled our phone quantity, we received 200 more units for total stock. It's now a featured product! Someone left a 5-star review. Mark it as restocked in the metadata.", "validator": "validate_inventory_restock"},
+                    {"query": "We're discontinuing this phone model. Add '[CLEARANCE]' to the product name, set quantity and stock to zero, cut the price in half, set 50% discount rate, mark as out of stock and not featured. Add clearance flag to metadata.", "validator": "validate_inventory_clearance"}
+                ]
+            }
+        ]
+    }
+]

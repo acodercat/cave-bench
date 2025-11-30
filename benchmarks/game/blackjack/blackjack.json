@@ -1,7 +1,7 @@
 [
   {
     "name": "blackjack",
-    "module": "benchmarks.blackjack.blackjack",
+    "module": "benchmarks.game.blackjack.blackjack",
     "description": "Play a game of Blackjack with step-by-step decisions. Each turn requires ONE decision based on current cards.",
     "conversations": [
       {

@@ -1,0 +1,32 @@
+[
+    {
+        "name": "aapl_googl_comparative_analysis",
+        "module": "benchmarks.data_analysis.finance.comparative_analysis",
+        "description": "Compare AAPL and GOOGL stock performance using large historical datasets.",
+        "conversations": [
+            {
+                "id": "comparative_stock_analysis",
+                "turns": [
+                    {
+                        "query": "What is the total return percentage for AAPL and GOOGL over their entire history? Which stock performed better?",
+                        "validator": "validate_total_returns",
+                        "expected_variable_reads": ["aapl_df", "googl_df"],
+                        "expected_variable_writes": ["aapl_total_return", "googl_total_return", "better_performer"]
+                    },
+                    {
+                        "query": "Merge both stock DataFrames on their overlapping dates. Keep only Date and Close price for each stock (rename to aapl_close and googl_close).",
+                        "validator": "validate_merged_data",
+                        "expected_variable_reads": ["aapl_df", "googl_df"],
+                        "expected_variable_writes": ["merged_df"]
+                    },
+                    {
+                        "query": "Using the merged data, calculate the daily return percentage for each stock and add them as new columns (aapl_return, googl_return). Also compute the correlation between these daily returns.",
+                        "validator": "validate_daily_returns",
+                        "expected_variable_reads": ["merged_df"],
+                        "expected_variable_writes": ["correlation"]
+                    }
+                ]
+            }
+        ]
+    }
+]

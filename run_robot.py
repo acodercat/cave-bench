@@ -13,10 +13,6 @@ from cave_agent.models import LiteLLMModel
 from runner import evaluate
 from utils import load_model_config
 
-# Enable the game UI
-from benchmarks.robot.grid_robot_exploration import enable_ui
-enable_ui()
-
 benchmark_paths = [
     "/home/codercat/Desktop/Workplace/Lab/cave-bench/benchmarks/robot/grid_robot_exploration.json"
 ]

@@ -118,7 +118,7 @@ class BenchmarkEvaluator:
             max_steps=100,
             max_history=200,
             max_execution_result_length=10000,
-            log_level=LogLevel.INFO,
+            log_level=LogLevel.DEBUG,
             agent_identity=DEFAULT_AGENT_IDENTITY,
             instructions=instructions
         )

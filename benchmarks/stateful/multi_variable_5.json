@@ -1,0 +1,25 @@
+[
+    {
+        "name": "multi_variable_5",
+        "module": "benchmarks.stateful.multi_variable_5",
+        "description": "Test stateful management of 5 variables with diverse types.",
+        "conversations": [
+            {
+                "id": "user_profile",
+                "turns": [
+                    {"query": "I need to create a new user account. The username is 'alice', she's 25 years old, starting balance is $100.50, mark her as active, and give her the 'new' and 'premium' tags.", "validator": "validate_profile_init"},
+                    {"query": "Alice just verified her email. Please update her username to include '_updated' at the end, she also had a birthday so increment her age, add $50 to her balance as a bonus, and add 'verified' to her tags.", "validator": "validate_profile_update"},
+                    {"query": "We need to process some changes: convert Alice's username to uppercase, apply a 10% fee to her balance, deactivate her account, and remove the 'new' tag since she's no longer a new user.", "validator": "validate_profile_modify"}
+                ]
+            },
+            {
+                "id": "reset_operations",
+                "turns": [
+                    {"query": "Create another user profile for Bob. He's 30 years old, has $500 in his account, is currently active, and has admin privileges.", "validator": "validate_reset_init"},
+                    {"query": "Something went wrong with Bob's data - all his values got duplicated. His username repeated twice, age doubled, balance doubled, and his admin tag appears twice now.", "validator": "validate_reset_double"},
+                    {"query": "Bob requested account deletion. Clear all his information - empty username, zero out age and balance, deactivate the account, and remove all tags.", "validator": "validate_reset_clear"}
+                ]
+            }
+        ]
+    }
+]

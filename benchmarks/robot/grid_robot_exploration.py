@@ -19,10 +19,7 @@ Key Innovations:
 
 from typing import Dict, List, Any, Optional, Tuple, Set
 from dataclasses import dataclass
-from enum import Enum
-import math
 import random
-
 from cave_agent.python_runtime import Variable, PythonRuntime, Type
 from core.validation import ValidatorResult
 from core.types import BenchmarkTurn, ToolCall
@@ -1125,35 +1122,6 @@ validators = {
 # Track turn number across hooks
 _turn_number = 0
 
-# UI enabled flag
-_ui_enabled = False
-
-
-def enable_ui():
-    """Enable the game UI for visual rendering."""
-    global _ui_enabled
-    from benchmarks.robot.ui import create_game_ui, start_ui
-    create_game_ui(width=8, height=8)
-    start_ui()  # Start the Live display
-    _ui_enabled = True
-
-
-def disable_ui():
-    """Disable the game UI."""
-    global _ui_enabled
-    from benchmarks.robot.ui import stop_ui
-    stop_ui()  # Stop the Live display
-    _ui_enabled = False
-
-
-def _update_ui(runtime: PythonRuntime):
-    """Update UI from runtime state (in-place update)."""
-    global _turn_number
-    if not _ui_enabled:
-        return
-
-    from benchmarks.robot.ui import update_ui_from_runtime
-    update_ui_from_runtime(runtime, _turn_number)
 
 
 def hook_exploration_turn(runtime: PythonRuntime, turn: BenchmarkTurn) -> str:
@@ -1236,8 +1204,6 @@ After your action, the turn ends. You'll see the result next turn.
 
 What do you want to do?"""
 
-    # Update UI if enabled
-    _update_ui(runtime)
 
     return query
 
@@ -1277,9 +1243,6 @@ Start by scanning your surroundings with robot.scan_adjacent(), then decide your
 
 What do you want to do?"""
 
-    # Update UI if enabled
-    _update_ui(runtime)
-
     return query
 
 
@@ -1287,7 +1250,7 @@ def hook_final_turn(runtime: PythonRuntime, turn: BenchmarkTurn) -> str:
     """
     Hook for final turn - mission completion.
     """
-    global _turn_number, _ui_enabled
+    global _turn_number
     _turn_number += 1
 
     robot = runtime.get_variable("robot")
@@ -1327,15 +1290,6 @@ If you have items and are at base (0,0):
 3. Set mission_complete = True
 
 Complete the mission!"""
-
-    # Update UI if enabled (final update before stopping)
-    _update_ui(runtime)
-
-    # Stop the UI after final turn
-    if _ui_enabled:
-        from benchmarks.robot.ui import stop_ui
-        stop_ui()
-        _ui_enabled = False
 
     return query
 

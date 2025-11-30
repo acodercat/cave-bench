@@ -1,0 +1,25 @@
+[
+    {
+        "name": "multi_variable_15",
+        "module": "benchmarks.stateful.multi_variable_15",
+        "description": "Test stateful management of 15 variables with diverse types.",
+        "conversations": [
+            {
+                "id": "book_lifecycle",
+                "turns": [
+                    {"query": "I'm adding a new book to our catalog. Title is 'Python Guide' by John Smith, published by TechBooks in 2023. It has 450 pages, first edition, priced at $49.99. Rating is 4.5 stars, weighs 1.2kg. It's available, not a bestseller yet, but has an ebook version. Genres are programming and education. Chapters include Intro, Basics, and Advanced. ISBN is 123-456 and it's in English.", "validator": "validate_book_init"},
+                    {"query": "We're releasing a second edition! Add '2nd Edition' to the title, publisher is now 'TechBooks Pro'. Update year to 2024, 550 pages now, edition 2. Price goes up to $59.99, rating improved to 4.7, weight is now 1.4kg. It's now a bestseller! Add 'reference' as a new genre, add an 'Expert' chapter, and mark it as updated in the info.", "validator": "validate_book_update"},
+                    {"query": "Holiday sale time! Add '[SALE]' prefix to the title, reduce the price by 20%, add 'sale' to the genres, and record the 20% discount in the book's info.", "validator": "validate_book_discount"}
+                ]
+            },
+            {
+                "id": "course_lifecycle",
+                "turns": [
+                    {"query": "Creating a new online course called 'Web Development' by Jane Doe on the LearnOnline platform. Year 2024, no page count since it's video-based, first edition. Price is $199, no ratings yet, no physical weight. It's available, not a bestseller, no ebook. Genres: web, frontend, backend. No chapters yet. Info shows 40 hours of content for beginners.", "validator": "validate_course_init"},
+                    {"query": "The course is gaining traction! We've added 10 lessons, received a 4.8 star average rating, and it's now a bestseller. Added three chapters: HTML, CSS, and JavaScript. We've enrolled 1000 students - add that to the info.", "validator": "validate_course_progress"},
+                    {"query": "Course is now complete! Add '[COMPLETE]' to the title, we have 20 lessons total now, releasing edition 2, price increases to $249. Rating is up to 4.9, now has ebook materials. Add 'fullstack' genre, add React and Node chapters. Mark as complete in the info.", "validator": "validate_course_complete"}
+                ]
+            }
+        ]
+    }
+]

@@ -1,0 +1,81 @@
+[
+    {
+        "name": "scientific_types",
+        "module": "benchmarks.stateful.scientific_types",
+        "description": "Test stateful management of scientific types: DataFrame, ndarray, Series.",
+        "conversations": [
+            {
+                "id": "dataframe_ops",
+                "turns": [
+                    {"query": "Add a new column 'total' to df that is price * quantity.", "validator": "validate_df_add_column"},
+                    {"query": "Filter df to keep only rows where total > 1000.", "validator": "validate_df_filter"},
+                    {"query": "Sort df by total in descending order.", "validator": "validate_df_sort"}
+                ]
+            },
+            {
+                "id": "dataframe_groupby",
+                "turns": [
+                    {"query": "Group df by category and sum the price. Store in result_df.", "validator": "validate_df_groupby"},
+                    {"query": "Count the number of unique categories. Store in result_value.", "validator": "validate_df_groupby_count"},
+                    {"query": "Find the maximum category total. Store in result_value.", "validator": "validate_df_groupby_max"}
+                ]
+            },
+            {
+                "id": "dataframe_merge",
+                "turns": [
+                    {"query": "Merge df and df2 on product column. Store in result_df.", "validator": "validate_df_merge"},
+                    {"query": "Filter result_df to keep only rows where supplier is 'SupA'.", "validator": "validate_df_merge_filter"},
+                    {"query": "Calculate the sum of prices in result_df. Store in result_value.", "validator": "validate_df_merge_sum"}
+                ]
+            },
+            {
+                "id": "ndarray_ops",
+                "turns": [
+                    {"query": "Multiply all elements in matrix by 2.", "validator": "validate_array_multiply"},
+                    {"query": "Add 10 to all elements in matrix.", "validator": "validate_array_add"},
+                    {"query": "Transpose the matrix.", "validator": "validate_array_transpose"}
+                ]
+            },
+            {
+                "id": "ndarray_reshape",
+                "turns": [
+                    {"query": "Reshape array to shape (2, 4). Store in result_array.", "validator": "validate_array_reshape"},
+                    {"query": "Sum result_array along axis 1 (row sums). Store in result_array.", "validator": "validate_array_sum_axis"},
+                    {"query": "Calculate the total sum of result_array. Store in result_value.", "validator": "validate_array_total"}
+                ]
+            },
+            {
+                "id": "ndarray_boolean",
+                "turns": [
+                    {"query": "Filter array to get values > 10. Store in result_array.", "validator": "validate_array_bool_filter"},
+                    {"query": "Replace values < 10 in array with 0.", "validator": "validate_array_bool_replace"},
+                    {"query": "Calculate the mean of non-zero values in array. Store in result_value.", "validator": "validate_array_bool_mean"}
+                ]
+            },
+            {
+                "id": "series_ops",
+                "turns": [
+                    {"query": "Add 5 to all values in series.", "validator": "validate_series_add"},
+                    {"query": "Clip series values to range [80, 100].", "validator": "validate_series_clip"},
+                    {"query": "Calculate the mean of series. Store in result_value.", "validator": "validate_series_mean"}
+                ]
+            },
+            {
+                "id": "series_index",
+                "turns": [
+                    {"query": "Select values at indices 'b', 'c', 'd' from series. Store in result_array.", "validator": "validate_series_select"},
+                    {"query": "Multiply values at indices 'b', 'c', 'd' in series by 2.", "validator": "validate_series_multiply"},
+                    {"query": "Calculate the sum of series. Store in result_value.", "validator": "validate_series_sum"}
+                ]
+            },
+            {
+                "id": "series_boolean",
+                "turns": [
+                    {"query": "Filter series to get values > 90. Store in result_array.", "validator": "validate_series_bool_filter"},
+                    {"query": "Count values > 90 in series. Store in result_value.", "validator": "validate_series_bool_count"},
+                    {"query": "Find the maximum value in series. Store in result_value.", "validator": "validate_series_max"}
+                ]
+            }
+        ]
+    }
+]

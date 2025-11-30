@@ -7,4 +7,6 @@ requires-python = ">=3.12"
 dependencies = [
     "pandas>=2.2.3",
     "cave-agent[all] @ file:///${PROJECT_ROOT}/cave-agent",
+    "textual>=6.6.0",
+    "yfinance>=0.2.66",
 ]
