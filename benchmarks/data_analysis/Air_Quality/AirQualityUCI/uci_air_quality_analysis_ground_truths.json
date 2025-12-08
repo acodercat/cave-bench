@@ -1,0 +1,49 @@
+[
+    {
+      "scenario": "uci_air_quality_analysis",
+      "module": "benchmarks.data_analysis.Air_Quality.AirQualityUCI.uci_air_quality_analysis",
+      "description": "Analyze the AirQualityUCI dataset to explore temporal patterns, sensor correlations, and weather impacts.",
+      "conversations": [
+        {
+          "id": "air_quality",
+          "turns": [
+            {
+              "query": "Load the dataset. First, drop any columns that do not have a proper name. Second, drop any rows where 'Date' or 'Time' is missing (NaN), as we cannot perform time series analysis without timestamps. Next, replace all occurrences of -200 with NaN in the remaining data. Finally, fill these sensor missing values using linear interpolation. Store the cleaned DataFrame in 'air_quality_cleaned'.",
+              "validator": "validate_q1",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Using the cleaned data, perform a daily cycle analysis. Calculate the average 'CO(GT)' concentration for each hour of the day (0-23). Store the result in a Series named 'hourly_co_avg' indexed by hour.",
+              "validator": "validate_q2",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Compare the average 'NOx(GT)' levels between Winter (months 12, 1, 2) and Summer (months 6, 7, 8). Store the result in a dictionary named 'seasonal_nox' with keys 'Winter' and 'Summer'.",
+              "validator": "validate_q3",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Analyze the impact of weather. Calculate the Pearson correlation coefficient between Temperature 'T' and the sensor response 'PT08.S1(CO)'. Store the result in variable 'temp_sensor_corr'.",
+              "validator": "validate_q4",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Use PCA to identify the most dominant pollutant trend. First, select all numeric sensor/pollutant columns (excluding Date, Time, T, RH, AH). Standardize the data (mean=0, std=1). Then, perform PCA and extract the loadings of the first principal component (PC1). Identify the feature name that has the highest absolute loading on PC1. Store this column name as a string in 'pc1_dominant_feature'.",
+              "validator": "validate_q5",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            }
+          ]
+        }
+      ]
+    }
+]
