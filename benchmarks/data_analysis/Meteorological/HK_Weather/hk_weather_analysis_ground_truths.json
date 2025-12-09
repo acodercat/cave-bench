@@ -1,0 +1,49 @@
+[
+    {
+      "scenario": "hk_weather_analysis",
+      "module": "benchmarks.data_analysis.Meteorological.HK_Weather.hk_weather_anlaysis",
+      "description": "Analyze Hong Kong 2025 meteorological data to understand regional climate patterns, pollution transport, and urban heat island effects.",
+      "conversations": [
+        {
+          "id": "hk_weather_analysis",
+          "turns": [
+            {
+              "query": "Investigate the 'Dry Haze' phenomenon related to cross-border pollution. Calculate the probability of a 'Dry Haze Event' (Visibility < 8000m AND Humidity < 80%) occurring during Winter Monsoon winds (North/Northwest: 315°-360° or 0°-45°) compared to Summer Monsoon winds (South/Southwest: 135°-225°). Store the ratio (Winter Prob / Summer Prob) in the variable 'monsoon_haze_ratio'.",
+              "validator": "validate_q1",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Quantify the Urban Heat Island (UHI) intensity. First, filter data for nighttime hours (20:00 to 05:59). Find the station with the highest average nighttime temperature and the one with the lowest. Calculate the difference between these two averages and store it in 'uhi_intensity'.",
+              "validator": "validate_q2",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Analyze wind turbulence. Calculate the average 'Gust Factor' (Wind Gust / Wind Speed) for all records where Wind Speed > 10 km/h. Find the station with the highest average Gust Factor. Join with the station table to retrieve its English Name and store it in 'max_gust_station', and store its average Gust Factor in 'avg_gust_factor'.",
+              "validator": "validate_q3",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Verify the atmospheric lapse rate in Hong Kong's terrain. Calculate the Pearson correlation coefficient between the station's 'Altitude' and its yearly average 'Temperature'. Store the result in 'altitude_temp_corr', and the slope of the linear regression line in 'slope'.",
+              "validator": "validate_q4",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Identify extreme heat risks. Find the single date (YYYY-MM-DD) that had the highest total count of 'Heat Stress Events' across all stations. A Heat Stress Event is defined as a single observation where Temperature > 33 AND Humidity > 75. Store the date string in 'max_heat_date', and the count in 'heat_stress_count'.",
+              "validator": "validate_q5",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            }
+          ]
+        }
+      ]
+    }
+]
