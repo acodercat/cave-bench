@@ -55,3 +55,6 @@ dmypy.json
 
 # Claude code
 .claude/
+benchmarks/data_analysis/Geospatial/NYC_TCL/yellow_tripdata_2025_01.csv
+benchmarks/data_analysis/Meteorological/HK_Weather/hk_weather_2025.csv
+benchmarks/data_analysis/Meteorological/HK_Weather/hk_weather_stations.csv
