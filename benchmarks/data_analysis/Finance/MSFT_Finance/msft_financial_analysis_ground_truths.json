@@ -1,0 +1,119 @@
+[
+    {
+      "scenario": "msft_financial_analysis",
+      "module": "benchmarks.data_analysis.Finance.MSFT.msft_financial_analysis",
+      "description": "Analyze MSFT financial statements (Balance Sheet, Income Statement, Cash Flow) to calculate key financial metrics.",
+      "conversations": [
+        {
+          "id": "msft_analysis_01",
+          "turns": [
+            {
+              "query": "Calculate the Year-over-Year (YoY) growth rate of 'Total Assets' for 2025. Store the result in 'yoy_2025_growth_rate'.",
+              "validator": "validate_q1",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Identify the fiscal year with the highest YoY growth rate for 'Total Revenue'. Store the year in 'highest_yoy_growth_rate_year' and the growth rate in 'highest_yoy_growth_rate'.",
+              "validator": "validate_q2",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Calculate the 'Working Capital' (Current Assets - Current Liabilities) for 2024. Store the result in 'working_capital_2024'.",
+              "validator": "validate_q3",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Calculate the 'Gross Margin' (Gross Profit / Total Revenue) for ALL available years. Store the result in a DataFrame named 'gross_margin' with columns ['Year', 'Gross_Margin_%'].",
+              "validator": "validate_q4",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Calculate the 'Operating Margin' (Operating Income / Total Revenue) for 2025. Store the result in 'operating_margin'.",
+              "validator": "validate_q5",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Calculate the 'Quick Ratio' ((Current Assets - Inventory) / Current Liabilities) for ALL years. Store the result in a DataFrame named 'quick_ratio' with columns ['Year', 'Quick_Ratio'].",
+              "validator": "validate_q6",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Calculate 'Free Cash Flow' (Operating Cash Flow + Capital Expenditure) for 2025. Store the result in 'free_cash_flow_2025'.",
+              "validator": "validate_q7",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Calculate 'Asset Turnover' (Total Revenue / Total Assets) for 2024. Store the result in 'asset_turnover_2024'.",
+              "validator": "validate_q8",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Calculate 'Inventory Turnover' (Reconciled Cost of Revenue / Inventory) for 2024. Store the result in 'inventory_turnover_2024'.",
+              "validator": "validate_q9",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Calculate 'Return on Assets' (Net Income / Total Assets) for ALL available years. Store the result in a DataFrame named 'roa' with columns ['Year', 'RoA_%'].",
+              "validator": "validate_q10",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Calculate 'Return on Equity' (Net Income / Stockholders Equity) for ALL available years. Store the result in a DataFrame named 'roe' with columns ['Year', 'RoE_%'].",
+              "validator": "validate_q11",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Calculate 'Days Sales Outstanding' (DSO) for the most recent year. Formula: (Net Receivables / Total Revenue) * 365. Store the result in 'dso_recent'.",
+              "validator": "validate_q12",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Calculate the 'FCF Conversion Ratio' (Free Cash Flow / Net Income) for 2025. Store the result in 'fcf_conversion_ratio'.",
+              "validator": "validate_q13",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Perform a Dupont Analysis for 2025. Calculate Net Margin, Asset Turnover, and Financial Leverage. Store the results in 'net_margin_2025', 'asset_turnover_2025', and 'financial_leverage_2025'.",
+              "validator": "validate_q14",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Calculate the 'Rule of 40' score for 2025. Formula: (Revenue Growth Rate + Free Cash Flow Margin). Store the result in 'rule_of_40'.",
+              "validator": "validate_q15",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            }
+          ]
+        }
+      ]
+    }
+]

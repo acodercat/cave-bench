@@ -16,8 +16,6 @@ from utils import load_model_config
 
 benchmark_paths = [
     # "./benchmarks/data_analysis/HeartAttack/heart_attack_analysis_benchmarks.json",
-    # "/home/codercat/Desktop/Workplace/Lab/cave-bench/benchmarks/chemistry_lab/chemistry_lab_benchmarks.json"
-    "/home/codercat/Desktop/Workplace/Lab/cave-bench/benchmarks/data_analysis/finance/comparative_analysis.json"
     # "./benchmarks/data_analysis/Avocado/avocado_price_analysis_benchmarks.json",
     # "./benchmarks/data_analysis/Titanic/titanic_analysis_benchmarks.json",
     # "./benchmarks/data_analysis/RedWineQuality/red_wine_quality_analysis_benchmarks.json",
@@ -25,6 +23,7 @@ benchmark_paths = [
     # "./benchmarks/data_analysis/Iris/iris_analysis_benchmarks.json",
     # "./benchmarks/data_analysis/HKTraffic/hk_traffic_analysis_benchmarks.json",
     # "./benchmarks/data_analysis/HKAirQuality/air_quality_analysis_benchmarks.json",
+    "./benchmarks/data_analysis/Finance/AAPL/aapl_stock_analysis_ground_truths.json"
 ]
 
 async def evaluate_model(model_name: str):
@@ -62,10 +61,10 @@ async def evaluate_kimi_k2():
     """Evaluate Kimi K2 model."""
     await evaluate_model("kimi-k2")
 
-async def evaluate_qwen3_max():
-    """Evaluate Qwen3 Max model."""
-    await evaluate_model("qwen3-max")
+async def evaluate_qwen3next():
+    """Evaluate Qwen3Next model."""
+    await evaluate_model("qwen3next")
 
 if __name__ == "__main__":
     # Choose which model to evaluate
-    asyncio.run(evaluate_qwen3_max())
+    asyncio.run(evaluate_qwen3next())

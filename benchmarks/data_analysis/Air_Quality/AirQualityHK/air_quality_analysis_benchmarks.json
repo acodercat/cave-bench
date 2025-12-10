@@ -1,0 +1,54 @@
+[
+    {
+      "name": "air_quality_analysis",
+      "module": "benchmarks.data_analysis.HKAirQuality.air_quality_analysis",
+      "conversations": [
+        {
+          "id": "air_quality_analysis",
+          "turns": [
+            {
+              "query": "Calculate average altitude for target area type stations",
+              "validator": "validate_q1",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["target_area_type_q1", "air_quality_station_df"],
+              "expected_variable_writes": ["avg_altitude_new_town"]
+            },
+            {
+              "query": "Find the highest NO2 concentration for target station id on target date",
+              "validator": "validate_q2",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["target_station_id_q2", "target_date_q2", "hourly_station_air_quality_df"],
+              "expected_variable_writes": ["max_no2_station5_2025_07_25"]
+            },
+            {
+              "query": "Find the English name of the station with the highest PM10 value",
+              "validator": "validate_q3",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["hourly_station_air_quality_df", "air_quality_station_df"],
+              "expected_variable_writes": ["max_pm10_station_name"]
+            },
+            {
+              "query": "Calculate average PM2.5 for the same station in question 3 on target date",
+              "validator": "validate_q4",
+              "expected_function_calls": [],
+              "expected_variable_reads": ["target_date_q4_q5", "hourly_station_air_quality_df", "air_quality_station_df"],
+              "expected_variable_writes": ["southern_avg_pm25_2025_07_26"]
+            },
+            {
+              "query": "Calculate average PM2.5 for target station on the same date, and compare the result with question 4, return the station name of the higher PM2.5 station",
+              "validator": "validate_q5",
+              "expected_function_calls": [],
+              "expected_variable_reads": [
+                "target_name_en_q5",
+                "target_date_q4_q5",
+                "southern_avg_pm25_2025_07_26",
+                "hourly_station_air_quality_df",
+                "air_quality_station_df"
+              ],
+              "expected_variable_writes": ["central_avg_pm25_2025_07_26", "comparison_result"]
+            }
+          ]
+        }
+      ]
+    }
+]

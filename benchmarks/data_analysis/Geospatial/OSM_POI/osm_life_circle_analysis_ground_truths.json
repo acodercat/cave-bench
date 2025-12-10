@@ -1,0 +1,49 @@
+[
+    {
+      "scenario": "osm_life_circle_analysis",
+      "module": "benchmarks.data_analysis.Geospatial.OSM_POI.osm_life_circle_analysis",
+      "description": "Deep spatial analysis of Hong Kong OSM data.",
+      "conversations": [
+        {
+          "id": "osm_analysis_hk",
+          "turns": [
+            {
+              "query": "Identify the district with the worst 'Food Swamp Index'. Calculate the index for each district as: Count(Fast Food) / (Count(Fast Food) + Count(Supermarket)). Find the district with the highest index value. Store the result as a tuple (district_name, index_value) in the variable 'worst_food_swamp'",
+              "validator": "validate_q1",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Evaluate the functional diversity of the 'Central and Western' district. Calculate the Shannon Entropy of the 'category' distribution for POIs in that district. Store the result in 'diversity_entropy'.",
+              "validator": "validate_q2",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Analyze the spatial clustering of coffee shops. Filter for category='cafe'. Calculate the Euclidean distance in meters from each cafe to its nearest *other* cafe neighbor. Store the average of these nearest neighbor distances in 'avg_nn_dist'.",
+              "validator": "validate_q3",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Find the 'Most Competitive Node'. For every POI in the dataset, count how many *other* POIs of the *same category* exist within a Euclidean radius of 0.005 degrees. Identify the POI ID with the highest count and store it in 'most_competitive_id'.",
+              "validator": "validate_q4",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Assess the 'Fast Food Exposure' for schools. For each school, identify all 'fast_food' POIs located within a 0.005 degree radius. Calculate an exposure score by summing the inverse distances (1/distance_in_meters) to these nearby fast food spots. Identify the school with the highest exposure score. Store the result as a tuple (school_id, score) in 'riskiest_school'.",
+              "validator": "validate_q5",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            }
+          ]
+        }
+      ]
+    }
+]

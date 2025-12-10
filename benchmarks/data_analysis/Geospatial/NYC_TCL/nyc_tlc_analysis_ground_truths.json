@@ -1,0 +1,49 @@
+[
+    {
+      "scenario": "nyc_tlc_analysis_2025",
+      "module": "benchmarks.data_analysis.Geospatial.NYC_TCL.nyc_tlc_analysis",
+      "description": "Analyze 2025 January NYC Yellow Taxi trip data focusing on network hubs, tipping behavior, and congestion fees.",
+      "conversations": [
+        {
+          "id": "nyc_tlc_analysis_2025",
+          "turns": [
+            {
+                "query": "Traffic Congestion Analysis: Identify the zone with the slowest traffic flow. First, calculate the duration of each trip in hours. Then, calculate the speed (miles per hour) for each trip (trip_distance / duration). Filter out trips with invalid duration (<= 0) or distance (<= 0). Calculate the average speed for trips originating from each PULocationID. Find the zone with the lowest average speed. Store the ID as 'slowest_zone_id' and the speed as 'slowest_zone_speed'.",
+                "validator": "validate_q1",
+                "expected_function_calls": [],
+                "expected_variable_reads": [],
+                "expected_variable_writes": []
+            },
+            {
+                "query": "Spatial Tidal Analysis: Identify the primary 'Commuter Source' during the Morning Rush (06:00 - 10:00). Calculate the 'Net Outflow' for each zone (Count of Pickups minus Count of Dropoffs) during this window. Find the Zone ID with the highest positive Net Outflow and store it as 'top_source_zone_id'.",
+                "validator": "validate_q2",
+                "expected_function_calls": [],
+                "expected_variable_reads": [],
+                "expected_variable_writes": []
+            },
+            {
+                "query": "Economic Impact Analysis: Analyze the 'Regressive Burden' of the fixed Congestion Surcharge. Calculate the average 'Surcharge Burden' (congestion_surcharge / fare_amount) for 'Short Trips' (trip_distance < 2 miles) vs 'Long Trips' (trip_distance > 10 miles). Store the results in a Series 'surcharge_burden_by_distance' with index ['Short Trips', 'Long Trips'].",
+                "validator": "validate_q3",
+                "expected_function_calls": [],
+                "expected_variable_reads": [],
+                "expected_variable_writes": []
+            },
+            {
+                "query": "Network Complexity Analysis: Calculate the 'Zone Connectivity Entropy' for each Pickup Zone to measure diversity of destinations. For each PULocationID, calculate the Shannon Entropy of its destination distribution (probability of going to each DOLocationID). Identify the zone with the highest entropy value. Store the Zone ID as 'top_entropy_zone_id' and the entropy value as 'top_entropy_value'.",
+                "validator": "validate_q4",
+                "expected_function_calls": [],
+                "expected_variable_reads": [],
+                "expected_variable_writes": []
+            },
+            {
+                "query": "Operational Efficiency Analysis: Identify the 'Sink Zone' with the highest risk of empty return trips (Deadheading). Calculate the 'Imbalance Ratio' = (Dropoffs - Pickups) / (Dropoffs + Pickups) for each zone. Filter for zones with significant activity (Total Operations > 50). Find the Zone ID with the highest Imbalance Ratio (closest to 1.0). Store the ID as 'top_sink_zone_id' and the ratio as 'sink_imbalance_ratio'.",
+                "validator": "validate_q5",
+                "expected_function_calls": [],
+                "expected_variable_reads": [],
+                "expected_variable_writes": []
+            }
+          ]
+        }
+      ]
+    }
+]
