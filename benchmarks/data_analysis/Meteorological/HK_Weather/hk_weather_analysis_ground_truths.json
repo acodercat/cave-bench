@@ -1,49 +1,49 @@
 [
-    {
-      "scenario": "hk_weather_analysis",
-      "module": "benchmarks.data_analysis.Meteorological.HK_Weather.hk_weather_anlaysis",
-      "description": "Analyze Hong Kong 2025 meteorological data to understand regional climate patterns, pollution transport, and urban heat island effects.",
-      "conversations": [
-        {
-          "id": "hk_weather_analysis",
-          "turns": [
-            {
-              "query": "Investigate the 'Dry Haze' phenomenon related to cross-border pollution. Calculate the probability of a 'Dry Haze Event' (Visibility < 8000m AND Humidity < 80%) occurring during Winter Monsoon winds (North/Northwest: 315°-360° or 0°-45°) compared to Summer Monsoon winds (South/Southwest: 135°-225°). Store the ratio (Winter Prob / Summer Prob) in the variable 'monsoon_haze_ratio'.",
-              "validator": "validate_q1",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Quantify the Urban Heat Island (UHI) intensity. First, filter data for nighttime hours (20:00 to 05:59). Find the station with the highest average nighttime temperature and the one with the lowest. Calculate the difference between these two averages and store it in 'uhi_intensity'.",
-              "validator": "validate_q2",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Analyze wind turbulence. Calculate the average 'Gust Factor' (Wind Gust / Wind Speed) for all records where Wind Speed > 10 km/h. Find the station with the highest average Gust Factor. Join with the station table to retrieve its English Name and store it in 'max_gust_station', and store its average Gust Factor in 'avg_gust_factor'.",
-              "validator": "validate_q3",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Verify the atmospheric lapse rate in Hong Kong's terrain. Calculate the Pearson correlation coefficient between the station's 'Altitude' and its yearly average 'Temperature'. Store the result in 'altitude_temp_corr', and the slope of the linear regression line in 'slope'.",
-              "validator": "validate_q4",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Identify extreme heat risks. Find the single date (YYYY-MM-DD) that had the highest total count of 'Heat Stress Events' across all stations. A Heat Stress Event is defined as a single observation where Temperature > 33 AND Humidity > 75. Store the date string in 'max_heat_date', and the count in 'heat_stress_count'.",
-              "validator": "validate_q5",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            }
-          ]
-        }
-      ]
-    }
+  {
+    "scenario": "hk_weather_analysis",
+    "module": "benchmarks.data_analysis.Meteorological.HK_Weather.hk_weather_anlaysis",
+    "requirements": "You are a Senior Climatologist specializing in Hong Kong's micro-climates and urban meteorology.\n\nANALYSIS SPECIFICATIONS:\n\n1. Pollution Transport (Dry Haze):\n   - Event: 'Dry Haze' defined as Visibility < 8000m AND Humidity < 80%\n   - Seasons:\n     * Winter Monsoon: Wind Direction 315°-360° or 0°-45°\n     * Summer Monsoon: Wind Direction 135°-225°\n   - Metric: Ratio = Probability(Winter) / Probability(Summer)\n\n2. Urban Heat Island (UHI) Intensity:\n   - Scope: Nighttime hours only (20:00 to 05:59)\n   - Metric: Difference between the Max Station Average Temp and Min Station Average Temp\n\n3. Turbulence Profiling:\n   - Metric: 'Gust Factor' = Wind Gust / Wind Speed\n   - Condition: Valid only where Wind Speed > 10 km/h\n   - Goal: Identify Station Name with highest average Gust Factor\n\n4. Topographic Lapse Rate:\n   - Analysis: Linear relationship between Station Altitude and Yearly Average Temperature\n   - Metrics: Pearson Correlation Coefficient and Regression Slope\n\n5. Extreme Heat Stress:\n   - Event: Single observation where Temp > 33°C AND Humidity > 75%\n   - Aggregation: Sum of events across all stations per day\n   - Goal: Date with the maximum daily count",
+    "conversations": [
+      {
+        "id": "hk_weather_analysis",
+        "turns": [
+          {
+            "query": "I need to assess the seasonal influence on air quality. Please calculate the probability ratio of 'Dry Haze' events occurring during the Winter Monsoon versus the Summer Monsoon based on the wind direction definitions.",
+            "validator": "validate_q1",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Quantify the magnitude of the Urban Heat Island effect in Hong Kong. Determine the temperature spread between the hottest and coolest stations specifically during nighttime hours.",
+            "validator": "validate_q2",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Identify the weather station most susceptible to wind turbulence. Find the location with the highest average 'Gust Factor', considering only moments with significant wind speed.",
+            "validator": "validate_q3",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Verify the atmospheric lapse rate for the region. Perform a correlation and regression analysis to determine the relationship between station altitude and average temperature.",
+            "validator": "validate_q4",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Determine the peak risk date for oppressive heat. Identify the single date in the dataset that recorded the highest aggregate number of 'Heat Stress' events across all monitoring stations.",
+            "validator": "validate_q5",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          }
+        ]
+      }
+    ]
+  }
 ]

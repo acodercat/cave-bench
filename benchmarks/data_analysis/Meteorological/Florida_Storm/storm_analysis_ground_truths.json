@@ -1,0 +1,49 @@
+[
+    {
+      "scenario": "storm_analysis_benchmark",
+      "module": "benchmarks.data_analysis.Meteorological.Florida_Storm.storm_analysis",
+      "requirements": "You are a Senior Meteorological Data Scientist.\n\nANALYSIS SPECIFICATIONS:\n\n1. Glass Jaw Analysis:\n   - Event: 'Thunderstorm Wind'\n   - Condition: Magnitude < 50 knots\n   - Significance: Count >= 2\n   - Metric: Average Property Damage\n\n2. Temporal Analysis:\n   - Event: 'Flash Flood' with Damage > 0\n   - Calculation: END_TIME - BEGIN_TIME\n   - Unit: Minutes\n\n3. Pareto Distribution:\n   - Scope: Events with Damage > 0\n   - Goal: % of top events needed to reach 80% of total sum\n   - Method: Round up to the next integer number of events if the 80% threshold falls between events\n   - Calculation: (number of events needed / total events with damage > 0) * 100\n\n4. Intensity Comparison:\n   - Targets: 'Tropical Storm' vs 'Hurricane (Typhoon)'\n   - Metric: Average Property Damage\n   - Ratio: Hurricane Avg / TS Avg\n\n5. Risk Scoring (Damped Mean):\n   - Formula: (Total Casualties + alpha * Global Mean) / (Count + alpha)\n   - Casualties: Direct Deaths + Direct Injuries\n   - Global Mean: All Casualties / All Events count\n   - Alpha: 10",
+      "conversations": [
+        {
+          "id": "storm_analysis",
+          "turns": [
+            {
+              "query": "I need to identify the 'Glass Jaw' county—that is, the area showing the highest average damage even from low-intensity 'Thunderstorm Wind' events. Please filter for statistically significant counties as defined in the specs.",
+              "validator": "validate_q1",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Analyze the duration of damaging 'Flash Flood' events. Calculate the average time in minutes between the start and end of these specific floods.",
+              "validator": "validate_q2",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Verify if the dataset follows the 'Pareto Principle' (80/20 rule). Calculate the percentage of the most destructive events required to account for 80% of the total property damage.",
+              "validator": "validate_q3",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Compare the economic intensity of 'Tropical Storms' versus 'Hurricanes (Typhoons)'. Calculate the average damage for each and determine the damage multiplier.",
+              "validator": "validate_q4",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            },
+            {
+              "query": "Perform a risk modeling analysis to find the deadliest event type. Use the Bayesian Smoothing (Damped Mean) formula provided in the requirements to handle sample size imbalances.",
+              "validator": "validate_q5",
+              "expected_function_calls": [],
+              "expected_variable_reads": [],
+              "expected_variable_writes": []
+            }
+          ]
+        }
+      ]
+    }
+]

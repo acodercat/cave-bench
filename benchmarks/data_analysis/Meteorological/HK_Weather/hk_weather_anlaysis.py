@@ -208,45 +208,50 @@ variables = [
     ),
 
     # Output Variables for Agents
+    # Q1 Variables
     Variable(
         name="monsoon_haze_ratio",
         value=0.0,
-        description="Float. The ratio of Dry Haze probability (Winter Monsoon / Summer Monsoon)."
+        description="Float. Store the calculated ratio of Dry Haze probability (Winter Monsoon / Summer Monsoon) of question 1."
     ),
+    # Q2 Variables
     Variable(
         name="uhi_intensity",
         value=0.0,
-        description="Float. The temperature difference between the hottest and coldest stations during nighttime (20:00-05:59)."
+        description="Float. Store the calculated temperature difference between the hottest and coldest stations during nighttime (20:00-05:59) of question 2."
     ),
+    # Q3 Variables
     Variable(
         name="max_gust_station",
         value="",
-        description="String. The English name of the station with the highest average Gust Factor (Gust/Speed)."
+        description="String. Store the English name of the station with the highest average Gust Factor (Gust/Speed) of question 3."
     ),
     Variable(
         name="avg_gust_factor",
         value=0.0,
-        description="Float. The average Gust Factor (Gust/Speed) for the station with the highest average Gust Factor."
+        description="Float. Store the average Gust Factor (Gust/Speed) for the station with the highest average Gust Factor of question 3."
     ),
+    # Q4 Variables
     Variable(
         name="altitude_temp_corr",
         value=0.0,
-        description="Float. The Pearson correlation coefficient between station altitude and average temperature."
+        description="Float. Store the Pearson correlation coefficient between station altitude and average temperature of question 4."
     ),
     Variable(
         name="slope",
         value=0.0,
-        description="Float. The slope of the linear regression line between station altitude and average temperature."
+        description="Float. Store the slope of the linear regression line between station altitude and average temperature of question 4."
     ),
+    # Q5 Variables
     Variable(
         name="heat_stress_count",
         value=0,
-        description="Int. The number of Heat Stress Events (Temp>33, Hum>75) on the date with the highest frequency."
+        description="Int. Store the number of Heat Stress Events (Temp>33, Hum>75) on the date with the highest frequency of question 5."
     ),
     Variable(
         name="max_heat_date",
         value="",
-        description="String. The date (YYYY-MM-DD) with the highest frequency of Heat Stress Events (Temp>33, Hum>75)."
+        description="String. Store the date (YYYY-MM-DD) with the highest frequency of Heat Stress Events (Temp>33, Hum>75) of question 5."
     )
 ]
 
