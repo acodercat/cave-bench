@@ -425,26 +425,26 @@ variables = [
     Variable(
         name="mean_close_price", 
         value=0.0, 
-        description="Float. The arithmetic mean of the 'Close' price for AAPL in 2024."
+        description="Float. Store the arithmetic mean of the 'Close' price for AAPL in 2024 of question 1."
     ),
 
     # Q2: High / Low
     Variable(
         name="year_high", 
         value=0.0, 
-        description="Float. The maximum value found in the 'High' price for AAPL in 2024."
+        description="Float. Store the maximum value found in the 'High' price for AAPL in 2024 of question 2."
     ),
     Variable(
         name="year_low", 
         value=0.0, 
-        description="Float. The minimum value found in the 'Low' price for AAPL in 2024."
+        description="Float. Store the minimum value found in the 'Low' price for AAPL in 2024 of question 2."
     ),
 
     # Q3: Daily Returns
     Variable(
         name="average_daily_returns", 
         value=0.0, 
-        description="Float. The average of daily percentage returns (calculated based on 'Close' price) for AAPL in 2024."
+        description="Float. Store the average of daily percentage returns (calculated based on 'Close' price) for AAPL in 2024 of question 3."
     ),
 
     # Q4: Monthly Resample
@@ -452,7 +452,7 @@ variables = [
         name="average_monthly_close", 
         value=pd.Series(dtype=float), 
         description="""
-        pandas Series. The average 'Close' price resampled by Month.
+        pandas Series. Store the average 'Close' price resampled by Month of question 4.
         - Index: PeriodIndex or DatetimeIndex (Monthly)
         - Values: Float (Average Close Price)
         """
@@ -462,12 +462,12 @@ variables = [
     Variable(
         name="highest_vol_month", 
         value="", 
-        description="String. The month (e.g., '2024-06', 'June') with the highest Total Volume."
+        description="String. Store the month (e.g., '2024-06', 'June') with the highest Total Volume of question 5."
     ),
     Variable(
         name="highest_vol_month_volume", 
         value=0, 
-        description="Int. The total aggregated volume for the month with the highest trading volume for AAPL in 2024."
+        description="Int. Store the total aggregated volume for the month with the highest trading volume for AAPL in 2024 of question 5."
     ),
 
     # Q6: Quarterly Performance
@@ -475,7 +475,7 @@ variables = [
         name="quarterly_performance", 
         value=pd.DataFrame(), 
         description="""
-        pandas DataFrame. Absolute price change per quarter.
+        pandas DataFrame. Store the Absolute price change per quarter of question 6.
         - Index: DatetimeIndex (e.g., 2024-03-31, 2024-06-30, 2024-09-30, 2024-12-31) representing quarter end dates
         - Columns: ['price_change'] (Float, Last Close - First Open for each quarter)
         - Should contain 4 rows for the 4 quarters of 2024
@@ -494,7 +494,7 @@ variables = [
         name="sma_20", 
         value=pd.DataFrame(), 
         description="""
-        pandas DataFrame. 20-day Simple Moving Average.
+        pandas DataFrame. Store the 20-day Simple Moving Average of question 7.
         - Index: DatetimeIndex (Date is the index, not a column)
         - Columns: ['SMA_20'] (Float)
         """
@@ -505,7 +505,7 @@ variables = [
         name="ema_20", 
         value=pd.DataFrame(), 
         description="""
-        pandas DataFrame. 20-day Exponential Moving Average.
+        pandas DataFrame. Store the 20-day Exponential Moving Average of question 8.
         - Index: DatetimeIndex (Date is the index, not a column)
         - Columns: ['EMA_20'] (Float)
         """
@@ -516,7 +516,7 @@ variables = [
         name="rolling_volatility", 
         value=pd.DataFrame(), 
         description="""
-        pandas DataFrame. 20-day Rolling Annualized Volatility.
+        pandas DataFrame. Store the 20-day Rolling Annualized Volatility of question 9.
         Calculation: Rolling Std Dev of Daily Returns * sqrt(252).
         - Index: DatetimeIndex (Date is the index, not a column)
         - Columns: ['Vol_20_ann'] (Float)
@@ -527,33 +527,33 @@ variables = [
     Variable(
         name="big_move_days", 
         value=[], 
-        description="List of Strings. Dates (YYYY-MM-DD) where the absolute daily return of 'Close' was > 4%."
+        description="List of Strings. Store the Dates (YYYY-MM-DD) where the absolute daily return of 'Close' was > 4% of question 10."
     ),
 
     # Q11: Correlation
     Variable(
         name="vol_return_corr", 
         value=0.0, 
-        description="Float. Pearson correlation coefficient between Daily Volume and Absolute Daily Returns."
+        description="Float. Store the Pearson correlation coefficient between Daily Volume and Absolute Daily Returns of question 11."
     ),
 
     # Q12: Max Drawdown
     Variable(
         name="max_drawdown", 
         value=0.0, 
-        description="Float. The Maximum Drawdown (MDD) of the 'Close' price for AAPL up to 2024-11-25 (in percentage)."
+        description="Float. Store the Maximum Drawdown (MDD) of the 'Close' price for AAPL up to 2024-11-25 (in percentage) of question 12."
     ),
 
     # Q13: Cross Over
     Variable(
         name="golden_cross_dates", 
         value=[], 
-        description="List of Strings. Dates (YYYY-MM-DD) where 20-day SMA crossed ABOVE 50-day SMA."
+        description="List of Strings. Store the Dates (YYYY-MM-DD) where 20-day SMA crossed ABOVE 50-day SMA of question 13."
     ),
     Variable(
         name="death_cross_dates", 
         value=[], 
-        description="List of Strings. Dates (YYYY-MM-DD) where 20-day SMA crossed BELOW 50-day SMA."
+        description="List of Strings. Store the Dates (YYYY-MM-DD) where 20-day SMA crossed BELOW 50-day SMA of question 13."
     ),
 
     # Q14: RSI
@@ -561,7 +561,7 @@ variables = [
         name="rsi_14", 
         value=pd.DataFrame(), 
         description="""
-        pandas DataFrame. 14-day Relative Strength Index.
+        pandas DataFrame. Store the 14-day Relative Strength Index of question 14.
         - Index: DatetimeIndex (Date is the index, not a column)
         - Columns: ['RSI_14'] (Float)
         """
@@ -571,12 +571,12 @@ variables = [
     Variable(
         name="portfolio_value", 
         value=0.0, 
-        description="Float. The final value of a $10,000 investment made on the first day and held until the last day."
+        description="Float. Store the final value of a $10,000 investment made on the first day and held until the last day of question 15."
     ),
     Variable(
         name="portfolio_returns", 
         value=0.0, 
-        description="Float. The percentage return of the portfolio at the end of the year."
+        description="Float. Store the percentage return of the portfolio at the end of the year of question 15."
     )
 ]
 

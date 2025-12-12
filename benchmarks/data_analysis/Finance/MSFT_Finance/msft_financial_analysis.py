@@ -870,31 +870,31 @@ variables = [
     Variable(
         name="yoy_2025_growth_rate", 
         value=0.0, 
-        description="Float. YoY growth rate of Total Assets for 2025."
+        description="Float. Store the YoY growth rate of Total Assets for 2025 of question 1."
     ),
     # Q2
     Variable(
         name="highest_yoy_growth_rate_year", 
         value=0, 
-        description="Int. The fiscal year with the highest YoY growth rate for Total Revenue."
+        description="Int. Store the fiscal year with the highest YoY growth rate for Total Revenue of question 2."
     ),
     Variable(
         name="highest_yoy_growth_rate", 
         value=0.0, 
-        description="Float. The YoY growth rate for the fiscal year with the highest YoY growth rate for Total Revenue."
+        description="Float. Store the YoY growth rate for the fiscal year with the highest YoY growth rate for Total Revenue of question 2."
     ),
     # Q3
     Variable(
         name="working_capital_2024", 
         value=0.0, 
-        description="Float. Working Capital (Current Assets - Current Liabilities) for 2024."
+        description="Float. Store the Working Capital (Current Assets - Current Liabilities) for 2024 of question 3."
     ),
     # Q4
     Variable(
         name="gross_margin", 
         value=pd.DataFrame(),
         description="""
-        pandas DataFrame representing the Gross Margin for all available years.
+        pandas DataFrame storing the Gross Margin for all available years of question 4.
         - Index: Default integer index (0, 1, 2, 3...)
         - Columns: ['Year', 'Gross_Margin_%']
           - 'Year': Integer, fiscal year (e.g., 2022, 2023, 2024, 2025)
@@ -905,14 +905,14 @@ variables = [
     Variable(
         name="operating_margin",
         value=0.0,
-        description="Float. Operating Margin (Operating Income / Total Revenue) for 2025."
+        description="Float. Store the Operating Margin (Operating Income / Total Revenue) for 2025 of question 5."
     ),
     # Q6
     Variable(
         name="quick_ratio", 
         value=pd.DataFrame(), 
         description="""
-        pandas DataFrame representing the Quick Ratio for all available years.
+        pandas DataFrame storing the Quick Ratio for all available years of question 6.
         - Index: Default integer index (0, 1, 2, 3...)
         - Columns: ['Year', 'Quick_Ratio']
           - 'Year': Integer, fiscal year (e.g., 2025, 2024, 2023, 2022)
@@ -922,24 +922,24 @@ variables = [
     Variable(
         name="free_cash_flow_2025", 
         value=0.0, 
-        description="Float. Free Cash Flow (Operating Cash Flow + Capital Expenditure) for 2025."),
+        description="Float. Store the Free Cash Flow (Operating Cash Flow + Capital Expenditure) for 2025 of question 7."),
     # Q8
     Variable(
         name="asset_turnover_2024",
         value=0.0,
-        description="Float. Asset Turnover (Total Revenue / Total Assets) for 2024."
+        description="Float. Store the Asset Turnover (Total Revenue / Total Assets) for 2024 of question 8."
     ),
     # Q9
     Variable(
         name="inventory_turnover_2024", 
         value=0.0, 
-        description="Float. Inventory Turnover (Reconciled Cost of Revenue / Inventory) for 2024."),
+        description="Float. Store the Inventory Turnover (Reconciled Cost of Revenue / Inventory) for 2024 of question 9."),
     # Q10
     Variable(
         name="roa", 
         value=pd.DataFrame(), 
         description="""
-        pandas DataFrame representing the Return on Assets for all available years.
+        pandas DataFrame storing the Return on Assets for all available years of question 10.
         - Index: Default integer index (0, 1, 2, 3...)
         - Columns: ['Year', 'RoA_%']
           - 'Year': Integer, fiscal year (e.g., 2022, 2023, 2024, 2025)
@@ -950,7 +950,7 @@ variables = [
         name="roe", 
         value=pd.DataFrame(), 
         description="""
-        pandas DataFrame representing the Return on Equity for all available years.
+        pandas DataFrame storing the Return on Equity for all available years of question 11.
         - Index: Default integer index (0, 1, 2, 3...)
         - Columns: ['Year', 'RoE_%']
           - 'Year': Integer, fiscal year (e.g., 2022, 2023, 2024, 2025)
@@ -960,31 +960,31 @@ variables = [
     Variable(
         name="dso_recent",
         value=0.0,
-        description="Float. Days Sales Outstanding (Net Receivables / Total Revenue) * 365 for the most recent year."
+        description="Float. Store the Days Sales Outstanding (Net Receivables / Total Revenue) * 365 for the most recent year of question 12."
     ),
     # Q13
     Variable(
         name="fcf_conversion_ratio", 
         value=0.0, 
-        description="Float. FCF Conversion Ratio (Free Cash Flow / Net Income) for 2025."),
+        description="Float. Store the FCF Conversion Ratio (Free Cash Flow / Net Income) for 2025 of question 13."),
     # Q14
     Variable(
         name="net_margin_2025",
         value=0.0,
-        description="Float. Net Margin (Net Income / Total Revenue) for 2025."),
+        description="Float. Store the Net Margin (Net Income / Total Revenue) for 2025 of question 14."),
     Variable(
         name="asset_turnover_2025",
         value=0.0,
-        description="Float. Asset Turnover (Total Revenue / Total Assets) for 2025."),
+        description="Float. Store the Asset Turnover (Total Revenue / Total Assets) for 2025 of question 14."),
     Variable(
         name="financial_leverage_2025", 
         value=0.0, 
-        description="Float. Financial Leverage (Total Assets / Stockholders Equity) for 2025."),
+        description="Float. Store the Financial Leverage (Total Assets / Stockholders Equity) for 2025 of question 14."),
     # Q15
     Variable(
         name="rule_of_40",
         value=0.0,
-        description="Float. Rule of 40 (Revenue Growth Rate + Free Cash Flow Margin) for 2025."),
+        description="Float. Store the Rule of 40 (Revenue Growth Rate + Free Cash Flow Margin) for 2025 of question 15."),
 ]
 
 validators = {

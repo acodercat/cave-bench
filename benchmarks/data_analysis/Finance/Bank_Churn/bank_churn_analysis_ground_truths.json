@@ -1,119 +1,119 @@
 [
-    {
-      "scenario": "bank_churn_analysis",
-      "module": "benchmarks.data_analysis.Finance.Bank_Churn.bank_churn_analysis",
-      "description": "Analyze Bank Customer Churn data.",
-      "conversations": [
-        {
-          "id": "bank_churn_analysis_full",
-          "turns": [
-            {
-              "query": "Count the total number of customers in the dataset and store it as 'total_customers'.",
-              "validator": "validate_q1",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Identify the number of unique geographical locations and their customer counts. Store the unique count in 'unique_geos' and the customer counts Series in 'unique_geo_customer_counts'.",
-              "validator": "validate_q2",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Calculate the average Credit Score of female customers. Store as 'avg_credit_score_female'.",
-              "validator": "validate_q3",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Calculate the overall churn rate (mean of 'Exited') in percentage. Store as 'churn_rate_pct'.",
-              "validator": "validate_q4",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Find the average Balance of customers who have exited (Exited=1). Store as 'avg_balance_exited'.",
-              "validator": "validate_q5",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Count how many Female customers reside in France. Store the count as 'female_france_count'.",
-              "validator": "validate_q6",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Calculate the churn rate by Geography. Store the resulting Series as 'geo_churn_rates'.",
-              "validator": "validate_q7",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Compare the average Estimated Salary of Active vs. Inactive members. Store the Series as 'active_inactive_salary'.",
-              "validator": "validate_q8",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Calculate the percentage of customers who have a Balance of 0. Store as 'zero_balance_pct'.",
-              "validator": "validate_q9",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Identify the Surname that appears most frequently. Store the name string as 'top_surname'.",
-              "validator": "validate_q10",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Calculate the churn rate for customers with 3 or more products. Store as 'multi_product_churn_rate'.",
-              "validator": "validate_q11",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Calculate the Pearson correlation between Age and CreditScore. Store as 'age_credit_corr'.",
-              "validator": "validate_q12",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Create Age groups (bins: 18-30, 31-40, 41-50, 51-60, 60+) and identify the group with the highest churn count. Store the group label as 'risky_age_group' and the count as 'risky_age_group_churn_count'.",
-              "validator": "validate_q13",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Create a Pivot Table showing mean 'Exited' rates with 'Geography' as index and 'Gender' as columns. Store as 'geo_gender_pivot'.",
-              "validator": "validate_q14",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            },
-            {
-              "query": "Segment 'CreditScore' into 3 equal quantiles ('Low', 'Medium', 'High'). Find the (Geography, Credit_Segment) group with the highest churn rate. Store the group tuple in 'group_with_highest_churn_rate' and the rate in 'churn_rate_for_group'.",
-              "validator": "validate_q15",
-              "expected_function_calls": [],
-              "expected_variable_reads": [],
-              "expected_variable_writes": []
-            }
-          ]
-        }
-      ]
-    }
+  {
+    "scenario": "bank_churn_analysis",
+    "module": "benchmarks.data_analysis.Finance.Bank_Churn.bank_churn_analysis",
+    "requirements": "You are a Senior Customer Retention Analyst.\n\nANALYSIS SPECIFICATIONS:\n\n1. Population Overview:\n   - Metrics: Total Customer Count, Unique Geography Count, Distribution of Customers per Geography\n   - Specific Segment: Female customers residing in France\n\n2. Financial Health & Engagement:\n   - Creditworthiness: Average Credit Score for Females\n   - Capital Flight: Average Balance of customers who Exited (Exited=1)\n   - Unengaged Accounts: Percentage of customers with Balance = 0\n   - Earning Potential: Compare Average Estimated Salary (Active Members vs. Inactive Members)\n\n3. Churn Risk Metrics:\n   - Global Churn: Mean of 'Exited' column\n   - Product Density Risk: Churn rate for customers holding >= 3 products\n   - Regional Risk: Churn rates aggregated by Geography\n\n4. Advanced Segmentation:\n   - Age Cohorts: Bins [18-30, 31-40, 41-50, 51-60, 60+]. Goal: Identify group with highest *count* of churners.\n   - Demographics Matrix: Pivot Table (Index=Geography, Columns=Gender, Values=Mean Exited)\n   - Credit Tiers: Segment CreditScore into 3 equal quantiles (Low, Medium, High). Goal: Identify the (Geography, Credit_Tier) tuple with the highest Churn Rate.\n\n5. Statistical Relationships:\n   - Correlation: Pearson coefficient between Age and CreditScore\n   - Nominal Analysis: Most frequent Surname",
+    "conversations": [
+      {
+        "id": "bank_churn_analysis_full",
+        "turns": [
+          {
+            "query": "Start by establishing the baseline size of our dataset. How many total customers are we analyzing?",
+            "validator": "validate_q1",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Map out the geographical footprint. Determine the number of unique regions served and the customer distribution across these locations.",
+            "validator": "validate_q2",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Assess the credit profile of our female demographic. Calculate their average credit score.",
+            "validator": "validate_q3",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Determine the topline attrition metric. What is the overall churn rate for the bank?",
+            "validator": "validate_q4",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Quantify the financial impact of customer loss. Calculate the average account balance held by customers who have already exited.",
+            "validator": "validate_q5",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Size a specific target market for a new campaign: Female customers living in France.",
+            "validator": "validate_q6",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Analyze regional performance. Calculate the churn rates specifically broken down by Geography.",
+            "validator": "validate_q7",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Compare the economic status of our user base. Check the average estimated salary difference between Active and Inactive members.",
+            "validator": "validate_q8",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Evaluate account utilization. What percentage of our customers are holding a zero balance?",
+            "validator": "validate_q9",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Perform a nominal analysis on customer identity. Identify the most common surname in the database.",
+            "validator": "validate_q10",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Investigate the 'over-banked' segment. Calculate the churn rate specifically for customers holding a high number of products (3 or more).",
+            "validator": "validate_q11",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Check for correlations between customer age and their credit score using the Pearson method.",
+            "validator": "validate_q12",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Conduct a cohort analysis based on the defined age bins. Identify which age group contributes the highest absolute number of churned customers.",
+            "validator": "validate_q13",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Create a multi-dimensional view of attrition. Generate a pivot table comparing churn rates across both Geography and Gender.",
+            "validator": "validate_q14",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Identify the highest-risk micro-segment. By dividing credit scores into three tiers and combining this with geography, find the specific group with the highest churn rate.",
+            "validator": "validate_q15",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          }
+        ]
+      }
+    ]
+  }
 ]

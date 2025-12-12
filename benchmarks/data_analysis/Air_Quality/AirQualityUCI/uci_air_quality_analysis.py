@@ -187,7 +187,7 @@ variables = [
     Variable(
         name="air_quality_cleaned",
         value=pd.DataFrame(),
-        description="""DataFrame after dropping unnamed columns, dropping invalid rows, replacing -200 with NaN, and interpolating missing values.
+        description="""Store the DataFrame after dropping unnamed columns, dropping invalid rows, replacing -200 with NaN, and interpolating missing values of question 1.
         Columns and their dtypes (in order):
         - Date: object (string, format: "M/D/YYYY" e.g., "3/10/2004")
         - Time: object (string, format: "HH:MM:SS" e.g., "18:00:00")
@@ -227,22 +227,22 @@ variables = [
     Variable(
         name="hourly_co_avg",
         value=pd.Series(dtype=float),
-        description="Series containing average CO(GT) for each hour (0-23)."
+        description="Store the Series containing average CO(GT) for each hour (0-23) of question 2."
     ),
     Variable(
         name="seasonal_nox",
         value={},
-        description="Dictionary with keys 'Winter' and 'Summer' containing average NOx(GT) levels."
+        description="Store the Dictionary with keys 'Winter' and 'Summer' containing average NOx(GT) levels of question 3."
     ),
     Variable(
         name="temp_sensor_corr",
         value=0.0,
-        description="Pearson correlation coefficient between Temperature (T) and PT08.S1(CO)."
+        description="Store the Pearson correlation coefficient between Temperature (T) and PT08.S1(CO) of question 4."
     ),
     Variable(
         name="pc1_dominant_feature",
         value="",
-        description="The name of the feature (column) that has the highest absolute loading on the first principal component (PC1)."
+        description="Store the name of the feature (column) that has the highest absolute loading on the first principal component (PC1) of question 5."
     ),
 ]
 

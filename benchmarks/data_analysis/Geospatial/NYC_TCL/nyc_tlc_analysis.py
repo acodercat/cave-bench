@@ -201,46 +201,46 @@ variables = [
     Variable(
         name="slowest_zone_id",
         value=0,
-        description="Int. The PULocationID with the lowest average speed.",
+        description="Int. Store the PULocationID with the lowest average speed of question 1.",
     ),
     Variable(
         name="slowest_zone_speed",
         value=0.0,
-        description="Float. The average speed (mph) of the slowest zone.",
+        description="Float. Store the average speed (mph) of the slowest zone of question 1.",
     ),
     # Q2
     Variable(
         name="top_source_zone_id",
         value=0,
-        description="Int. The Zone ID with the highest Net Outflow during morning rush.",
+        description="Int. Store the Zone ID with the highest Net Outflow during morning rush of question 2.",
     ),
     # Q3
     Variable(
         name="surcharge_burden_by_distance",
         value=pd.Series(dtype=float),
-        description="Series. The Surcharge Burden for Short (<2mi) and Long (>10mi) trips indexed by ['Short Trips', 'Long Trips'].",
+        description="Series. Store the Surcharge Burden for Short (<2mi) and Long (>10mi) trips indexed by ['Short Trips', 'Long Trips'] of question 3.",
     ),
     # Q4
     Variable(
         name="top_entropy_zone_id",
         value=0,
-        description="Int. The PULocationID with the highest Shannon Entropy of its destination distribution.",
+        description="Int. Store the PULocationID with the highest Shannon Entropy of its destination distribution of question 4.",
     ),
     Variable(
         name="top_entropy_value",
         value=0.0,
-        description="Float. The calculated Shannon Entropy value for the top zone.",
+        description="Float. Store the calculated Shannon Entropy value for the top zone of question 4.",
     ),
     # Q5
     Variable(
         name="top_sink_zone_id",
         value=0,
-        description="Int. The Zone ID with the highest Imbalance Ratio ((DO-PU)/(DO+PU)).",
+        description="Int. Store the Zone ID with the highest Imbalance Ratio ((DO-PU)/(DO+PU)) of question 5.",
     ),
     Variable(
         name="sink_imbalance_ratio",
         value=0.0,
-        description="Float. The imbalance ratio for the top sink zone.",
+        description="Float. Store the imbalance ratio for the top sink zone of question 5.",
     ),
 ]
 

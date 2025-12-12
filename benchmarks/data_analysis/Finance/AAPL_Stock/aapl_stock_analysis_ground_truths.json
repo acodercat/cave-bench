@@ -1,119 +1,119 @@
 [
-    {
-      "scenario": "aapl_stock_analysis",
-      "module": "benchmarks.data_analysis.Finance.AAPL.aapl_stock_analysis",
-      "description": "Analyze AAPL stock data for 2024.",
-      "conversations": [
-        {
-          "id": "aapl_stock_analysis_2024",
-          "turns": [
-            {
-              "query": "Calculate the mean 'Close' price for AAPL in 2024. Store the result in 'mean_close_price'.",
-              "validator": "validate_q1",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["mean_close_price"]
-            },
-            {
-              "query": "Find the highest and lowest prices in 2024. Store the highest 'High' as 'year_high' and the lowest 'Low' as 'year_low'.",
-              "validator": "validate_q2",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["year_high", "year_low"]
-            },
-            {
-              "query": "Calculate average daily percentage returns based on the 'Close' price (in percentage). Store the result as 'average_daily_returns'.",
-              "validator": "validate_q3",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["average_daily_returns"]
-            },
-            {
-              "query": "Resample the data to find the average 'Close' price for each month. Store the resulting Series as 'average_monthly_close'.",
-              "validator": "validate_q4",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["average_monthly_close"]
-            },
-            {
-              "query": "Identify the month with the highest total trading volume. Store the month string (e.g., 'YYYY-MM') as 'highest_vol_month' and the total volume as 'highest_vol_month_volume'.",
-              "validator": "validate_q5",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["highest_vol_month", "highest_vol_month_volume"]
-            },
-            {
-              "query": "Calculate the absolute price change (Last Close - First Open) for each quarter. Store the DataFrame as 'quarterly_performance' with a 'price_change' column. The DataFrame should have DatetimeIndex with quarter end dates (e.g., 2024-03-31, 2024-06-30, 2024-09-30, 2024-12-31).",
-              "validator": "validate_q6",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["quarterly_performance"]
-            },
-            {
-              "query": "Calculate a 20-day Simple Moving Average (SMA) for the 'Close' price. Store it in a DataFrame named 'sma_20' with a column 'SMA_20'. The DataFrame should have Date as the index (not as a column).",
-              "validator": "validate_q7",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["sma_20"]
-            },
-            {
-              "query": "Calculate a 20-day Exponential Moving Average (EMA) for the 'Close' price. Store it in a DataFrame named 'ema_20' with a column 'EMA_20'. The DataFrame should have Date as the index (not as a column).",
-              "validator": "validate_q8",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["ema_20"]
-            },
-            {
-              "query": "Calculate the 20-day rolling annualized volatility (standard deviation of daily returns * sqrt(252)) for the 'Close' price. Store in a DataFrame 'rolling_volatility' with column 'Vol_20_ann'. The DataFrame should have Date as the index (not as a column).",
-              "validator": "validate_q9",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["rolling_volatility"]
-            },
-            {
-              "query": "Identify dates where the daily return (absolute value) was greater than 4% for the 'Close' price. Store the list of date strings as 'big_move_days'.",
-              "validator": "validate_q10",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["big_move_days"]
-            },
-            {
-              "query": "Calculate the correlation coefficient between Daily Volume and the absolute magnitude of Daily Returns for the 'Close' price. Store as 'vol_return_corr'.",
-              "validator": "validate_q11",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["vol_return_corr"]
-            },
-            {
-              "query": "Calculate the Maximum Drawdown (MDD) of the Close price up to 2024-11-25. Store the percentage value in 'max_drawdown'.",
-              "validator": "validate_q12",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["max_drawdown"]
-            },
-            {
-              "query": "Identify dates where the 20-day SMA crosses above (Golden Cross) or below (Death Cross) the 50-day SMA for the 'Close' price. Store dates as lists in 'golden_cross_dates' and 'death_cross_dates'.",
-              "validator": "validate_q13",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["golden_cross_dates", "death_cross_dates"]
-            },
-            {
-              "query": "Calculate the 14-day RSI (Relative Strength Index) for the 'Close' price using Wilder's Smoothing method. Store in a DataFrame 'rsi_14' with column 'RSI_14'. The DataFrame should have Date as the index (not as a column).",
-              "validator": "validate_q14",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["rsi_14"]
-            },
-            {
-              "query": "Simulate a 'Buy and Hold' strategy: Calculate the value of a $10,000 investment made on day 1 over time. Store final value in 'portfolio_value' and return percentage in 'portfolio_returns'.",
-              "validator": "validate_q15",
-              "expected_function_calls": [],
-              "expected_variable_reads": ["aapl_df"],
-              "expected_variable_writes": ["portfolio_value", "portfolio_returns"]
-            }
-          ]
-        }
-      ]
-    }
+  {
+    "scenario": "aapl_stock_analysis",
+    "module": "benchmarks.data_analysis.Finance.AAPL.aapl_stock_analysis",
+    "requirements": "You are a Senior Quantitative Analyst evaluating AAPL's 2024 performance.\n\nANALYSIS SPECIFICATIONS:\n\n1. Descriptive Statistics:\n   - Metrics: Mean Close Price, Yearly High/Low Range\n\n2. Aggregation Analysis:\n   - Monthly: Average Close Price\n   - Volume: Month with the highest total trading volume\n   - Quarterly: Price Change (Last Close - First Open)\n\n3. Trend Indicators:\n   - SMA: 20-day Simple Moving Average\n   - EMA: 20-day Exponential Moving Average\n   - Crossovers: Golden Cross (SMA-20 > SMA-50) & Death Cross (SMA-20 < SMA-50)\n\n4. Risk & Volatility:\n   - Metric: 20-day Rolling Annualized Volatility (Daily Std Dev * sqrt(252))\n   - Drawdown: Maximum Drawdown (Peak to Trough percentage)\n   - Outliers: 'Big Move' days defined as Absolute Daily Return > 4%\n   - Correlation: Pearson coefficient between Volume and Absolute Daily Returns\n\n5. Momentum:\n   - Indicator: 14-day RSI (Wilder's Smoothing)\n\n6. Strategy Backtest:\n   - Strategy: Buy and Hold\n   - Parameters: $10,000 initial investment on Day 1",
+    "conversations": [
+      {
+        "id": "aapl_stock_analysis_2024",
+        "turns": [
+          {
+            "query": "Start with a central tendency assessment. Calculate the average closing price for the entire year of 2024.",
+            "validator": "validate_q1",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Determine the trading range for the year. Identify the absolute highest and lowest price points reached during the period.",
+            "validator": "validate_q2",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Compute the daily return profile. We need the percentage change in closing price from one day to the next.",
+            "validator": "validate_q3",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Perform a temporal aggregation to smooth out noise. Resample the data to view the average closing price on a monthly basis.",
+            "validator": "validate_q4",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Identify liquidity peaks. Find the specific month that accumulated the highest total trading volume.",
+            "validator": "validate_q5",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Assess performance by fiscal periods. Calculate the absolute price change for each quarter.",
+            "validator": "validate_q6",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Establish a short-term trend baseline using a Simple Moving Average (SMA). Calculate the 20-day SMA.",
+            "validator": "validate_q7",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Calculate a more responsive trend indicator. Compute the 20-day Exponential Moving Average (EMA) to weight recent prices more heavily.",
+            "validator": "validate_q8",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Analyze the risk profile. Calculate the rolling annualized volatility over a 20-day window.",
+            "validator": "validate_q9",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Isolate extreme volatility events. Identify the specific dates where the stock experienced significant price swings exceeding the defined threshold.",
+            "validator": "validate_q10",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Test the relationship between participation and volatility. Calculate the correlation between trading volume and the magnitude of price changes.",
+            "validator": "validate_q11",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Quantify the worst-case scenario risk. Calculate the Maximum Drawdown (MDD) percentage experienced up to late November.",
+            "validator": "validate_q12",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Generate technical trade signals. Identify all dates corresponding to 'Golden Cross' and 'Death Cross' events based on the moving averages.",
+            "validator": "validate_q13",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Evaluate momentum. Calculate the Relative Strength Index (RSI) using the standard smoothing method.",
+            "validator": "validate_q14",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          },
+          {
+            "query": "Simulate a passive investment strategy. Backtest a 'Buy and Hold' approach with the specified initial capital and determine the final portfolio value and total return.",
+            "validator": "validate_q15",
+            "expected_function_calls": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": []
+          }
+        ]
+      }
+    ]
+  }
 ]

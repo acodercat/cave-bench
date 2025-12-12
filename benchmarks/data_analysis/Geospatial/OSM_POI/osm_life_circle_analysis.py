@@ -150,30 +150,35 @@ variables = [
         })
         """
     ),
+    # Q1 Variables
     Variable(
         name="worst_food_swamp",
         value=("", 0.0),
-        description="Tuple (str, float). The name of the district with the highest Food Swamp Index and the index value."
+        description="Tuple (str, float). Store the name of the district with the highest Food Swamp Index and the index value of question 1."
     ),
+    # Q2 Variables
     Variable(
         name="diversity_entropy",
         value=0.0,
-        description="Float. Shannon Entropy of category distribution in Central and Western, unit: nat."
+        description="Float. Store the Shannon Entropy of category distribution in Central and Western, unit: nat. of question 2."
     ),
+    # Q3 Variables
     Variable(
         name="avg_nn_dist",
         value=0.0,
-        description="Float. Average distance to the nearest neighbor for 'cafe' category, unit: meters."
+        description="Float. Store the Average distance to the nearest neighbor for 'cafe' category, unit: meters. of question 3."
     ),
+    # Q4 Variables
     Variable(
         name="most_competitive_id",
         value=0,
-        description="Int. The ID of the POI with the most same-category neighbors within 0.005 radius."
+        description="Int. Store the ID of the POI with the most same-category neighbors within 0.005 radius of question 4."
     ),
+    # Q5 Variables
     Variable(
         name="riskiest_school",
         value=(0, 0.0),
-        description="Tuple (int, float). The ID of the school with highest Fast Food Exposure Score and the score itself. The score is calculated as the sum of (1 / distance_in_meters) using local meter coordinates (lon_scale = cos(lat_mean) * 111320, lat_scale = 111320)."
+        description="Tuple (int, float). Store the ID of the school with highest Fast Food Exposure Score and the score itself of question 5. The score is calculated as the sum of (1 / distance_in_meters) using local meter coordinates (lon_scale = cos(lat_mean) * 111320, lat_scale = 111320)."
     )
 ]
 

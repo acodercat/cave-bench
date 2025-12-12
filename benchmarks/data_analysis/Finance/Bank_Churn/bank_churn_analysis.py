@@ -412,104 +412,104 @@ variables = [
     Variable(
         name="total_customers",
         value=0,
-        description="Int. Total number of customers in the dataset.",
+        description="Int. Store the total number of customers in the dataset of question 1.",
     ),
     # Q2
     Variable(
         name="unique_geos",
         value=0,
-        description="Int. Number of unique entries in 'Geography' column.",
+        description="Int. Store the number of unique entries in 'Geography' column of question 2.",
     ),
     Variable(
         name="unique_geo_customer_counts",
         value=pd.Series(dtype=int),
-        description="Series. Count of customers by uniqueGeography.",
+        description="Series. Store the count of customers by uniqueGeography of question 2.",
     ),
     # Q3
     Variable(
         name="avg_credit_score_female",
         value=0.0,
-        description="Float. Mean of 'CreditScore' for female customers.",
+        description="Float. Store the mean of 'CreditScore' for female customers of question 3.",
     ),
     # Q4
     Variable(
         name="churn_rate_pct",
         value=0.0,
-        description="Float. Percentage of customers where Exited=1.",
+        description="Float. Store the percentage of customers where Exited=1 of question 4.",
     ),
     # Q5
     Variable(
         name="avg_balance_exited",
         value=0.0,
-        description="Float. Mean 'Balance' of customers who Exited.",
+        description="Float. Store the mean 'Balance' of customers who Exited of question 5.",
     ),
     # Q6
     Variable(
         name="female_france_count",
         value=0,
-        description="Int. Count of customers who are Female AND in France.",
+        description="Int. Store the count of customers who are Female AND in France of question 6.",
     ),
     # Q7
     Variable(
         name="geo_churn_rates", 
         value=pd.Series(dtype=float), 
-        description="Series. Churn rate grouped by Geography."),
+        description="Series. Store the churn rate grouped by Geography of question 7."),
     # Q8
     Variable(
         name="active_inactive_salary",
         value=pd.Series(dtype=float),
-        description="Series. Mean EstimatedSalary grouped by IsActiveMember (Active or Inactive).",
+        description="Series. Store the mean EstimatedSalary grouped by IsActiveMember (Active or Inactive) of question 8.",
     ),
     # Q9
     Variable(
         name="zero_balance_pct", 
         value=0.0, 
-        description="Float. Percentage of customers with Balance == 0.",
+        description="Float. Store the percentage of customers with Balance == 0 of question 9.",
     ),
     # Q10
     Variable(
         name="top_surname", 
         value="", 
-        description="String. Most frequent Surname.",
+        description="String. Store the most frequent Surname of question 10.",
     ),
     # Q11
     Variable(
         name="multi_product_churn_rate", 
         value=0.0, 
-        description="Float. Churn rate for customers with NumOfProducts >= 3."
+        description="Float. Store the churn rate for customers with NumOfProducts >= 3 of question 11."
     ),
     # Q12
     Variable(
         name="age_credit_corr", 
         value=0.0, 
-        description="Float. Correlation between Age and CreditScore."
+        description="Float. Store the correlation between Age and CreditScore of question 12."
     ),
     # Q13
     Variable(
         name="risky_age_group", 
         value="", 
-        description="String. The age bin (e.g., '41-50') with highest churn count."
+        description="String. Store the age bin (e.g., '41-50') with highest churn count of question 13."
     ),
     Variable(
         name="risky_age_group_churn_count",
         value=0,
-        description="Int. The churn count for the age bin with highest churn count."
+        description="Int. Store the churn count for the age bin with highest churn count of question 13."
     ),
     # Q14
     Variable(
         name="geo_gender_pivot", 
         value=pd.DataFrame(), 
-        description="DataFrame. Pivot table of mean Exited (Index: Geography, Col: Gender)."),
+        description="DataFrame. Store the pivot table of mean Exited (Index: Geography, Col: Gender) of question 14."),
     # Q15
     Variable(
         name="group_with_highest_churn_rate", 
         value=(), 
-        description="Tuple. The (Geography, Credit_Segment) group with the highest churn rate."
+        description="Tuple. Store the (Geography, Credit_Segment) group with the highest churn rate of question 15."
     ),
     Variable(
         name="churn_rate_for_group",
         value=0.0,
-        description="Float. The churn rate for the (Geography, Credit_Segment) group."
+        description="Float. Store the churn rate for the (Geography, Credit_Segment) group of question 15."
     )
 ]
 
