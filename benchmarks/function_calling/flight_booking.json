@@ -1,0 +1,349 @@
+[
+  {
+    "module": "benchmarks.function_calling.flight_booking_tools",
+    "conversations": [
+      {
+        "id": "flight_search_and_booking_conversation",
+        "turns": [
+          {
+            "query": "I want to fly from Hong Kong to London on April 28th, 2023. What flights are available?",
+            "expected_function_calls": [
+              {
+                "name": "get_available_flights",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "departure_date",
+                    "value": "2023-04-28",
+                    "type": "str"
+                  },
+                  {
+                    "name": "origin_airport",
+                    "value": "HKG",
+                    "type": "str"
+                  },
+                  {
+                    "name": "destination_airport",
+                    "value": "LHR",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "query": "I'm interested in the British Airways flight. Are there any business class seats available?",
+            "expected_function_calls": [
+              {
+                "name": "check_seat_availability",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "flight_id",
+                    "value": "BA28",
+                    "type": "str"
+                  },
+                  {
+                    "name": "seat_class",
+                    "value": "business",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "query": "That's a bit expensive. How many economy seats are left?",
+            "expected_function_calls": [
+              {
+                "name": "check_seat_availability",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "flight_id",
+                    "value": "BA28",
+                    "type": "str"
+                  },
+                  {
+                    "name": "seat_class",
+                    "value": "economy",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "query": "I'd like to see the passenger information for P12345",
+            "expected_function_calls": [
+              {
+                "name": "get_passenger_information_by_id",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "passenger_id",
+                    "value": "P12345",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "query": "Please book an economy seat on that British Airways flight for passenger P12345",
+            "expected_function_calls": [
+              {
+                "name": "book_flight",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "flight_id",
+                    "value": "BA28",
+                    "type": "str"
+                  },
+                  {
+                    "name": "passenger_id",
+                    "value": "P12345",
+                    "type": "str"
+                  },
+                  {
+                    "name": "seat_class",
+                    "value": "economy",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "complex_flight_booking_conversation",
+        "turns": [
+          {
+            "query": "I need to check flights from HKG to LHR on April 28th, 2023, preferably non-stop direct flights",
+            "expected_function_calls": [
+              {
+                "name": "get_available_flights",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "departure_date",
+                    "value": "2023-04-28",
+                    "type": "str"
+                  },
+                  {
+                    "name": "origin_airport",
+                    "value": "HKG",
+                    "type": "str"
+                  },
+                  {
+                    "name": "destination_airport",
+                    "value": "LHR",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "query": "Can you tell me what's the cheapest direct flight, and if it has first class seats available?",
+            "expected_function_calls": [
+              {
+                "name": "check_seat_availability",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "flight_id",
+                    "value": "VS201",
+                    "type": "str"
+                  },
+                  {
+                    "name": "seat_class",
+                    "value": "first",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "query": "What about business class then?",
+            "expected_function_calls": [
+              {
+                "name": "check_seat_availability",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "flight_id",
+                    "value": "VS201",
+                    "type": "str"
+                  },
+                  {
+                    "name": "seat_class",
+                    "value": "business",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "query": "I'm Emma Chen, can you look up my passenger information?",
+            "expected_function_calls": [
+              {
+                "name": "get_passenger_information_by_name",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "name",
+                    "value": "Emma Chen",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "query": "Great, please book me (Emma Chen) on the VS201 flight in business class",
+            "expected_function_calls": [
+              {
+                "name": "book_flight",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "flight_id",
+                    "value": "VS201",
+                    "type": "str"
+                  },
+                  {
+                    "name": "passenger_id",
+                    "value": "P67890",
+                    "type": "str"
+                  },
+                  {
+                    "name": "seat_class",
+                    "value": "business",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "ambiguous_flight_query_conversation",
+        "turns": [
+          {
+            "query": "I'm planning to travel from Hong Kong to London on 2023-04-28. What options do I have?",
+            "expected_function_calls": [
+              {
+                "name": "get_available_flights",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "departure_date",
+                    "value": "2023-04-28",
+                    "type": "str"
+                  },
+                  {
+                    "name": "origin_airport",
+                    "value": "HKG",
+                    "type": "str"
+                  },
+                  {
+                    "name": "destination_airport",
+                    "value": "LHR",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "query": "I'm interested in LH797. Can you check what seat classes are available?",
+            "expected_function_calls": [
+              {
+                "name": "check_seat_availability",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "flight_id",
+                    "value": "LH797",
+                    "type": "str"
+                  },
+                  {
+                    "name": "seat_class",
+                    "required": false,
+                    "value": null,
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "query": "Is premium economy available as well?",
+            "expected_function_calls": [
+              {
+                "name": "check_seat_availability",
+                "required": false,
+                "arguments": [
+                  {
+                    "name": "flight_id",
+                    "value": "LH797",
+                    "type": "str"
+                  },
+                  {
+                    "name": "seat_class",
+                    "value": "premium_economy",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "query": "John Smith would like to book this flight in premium economy",
+            "expected_function_calls": [
+              {
+                "name": "get_passenger_information_by_name",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "name",
+                    "value": "John Smith",
+                    "type": "str"
+                  }
+                ]
+              },
+              {
+                "name": "book_flight",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "flight_id",
+                    "value": "LH797",
+                    "type": "str"
+                  },
+                  {
+                    "name": "passenger_id",
+                    "value": "P12345",
+                    "type": "str"
+                  },
+                  {
+                    "name": "seat_class",
+                    "value": "premium_economy",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "name": "flight_booking"
+  }
+]

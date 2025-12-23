@@ -1,4 +1,8 @@
-"""Main benchmark runner for evaluating CaveAgent."""
+"""Main benchmark runner for evaluating agents.
+
+This module provides the evaluate function which can run any agent
+implementation that conforms to the AgentFactory interface.
+"""
 
 import json
 import importlib
@@ -6,11 +10,11 @@ from pathlib import Path
 from typing import Dict, Any, List
 from core.evaluator import BenchmarkEvaluator
 from core.types import BenchmarkConversation
-from cave_agent import Model
+from core.agent import AgentFactory
 
 
 async def evaluate(
-    model: Model,
+    agent_factory: AgentFactory,
     scenarios: List[Dict[str, Any]],
     results_file: str
 ) -> None:
@@ -21,16 +25,25 @@ async def evaluate(
     that have already been evaluated and resume from where it left off.
 
     Args:
-        model: The LLM model to use for evaluation
+        agent_factory: Factory for creating agent instances
         scenarios: List of scenario definitions with expected outputs
         results_file: Path to save/load evaluation results (JSON format)
 
     Example:
         >>> from cave_agent.models import LiteLLMModel
+        >>> from adapters import CaveAgentFactory
         >>>
         >>> model = LiteLLMModel(model_id="gpt-4o", ...)
+        >>> factory = CaveAgentFactory(model)
         >>> scenarios = json.load(open("benchmarks/function_calling/benchmarks.json"))
-        >>> await evaluate(model, scenarios, "results.json")
+        >>> await evaluate(factory, scenarios, "results.json")
+
+    Example with LiteLLM (JSON function calling):
+        >>> from adapters import LitellmAgentFactory, LitellmModel
+        >>>
+        >>> model = LitellmModel(model_id="gpt-4o", api_key="...", provider="openai")
+        >>> factory = LitellmAgentFactory(model)
+        >>> await evaluate(factory, scenarios, "results.json")
     """
     # Load existing results if available
     existing_results = {}
@@ -44,8 +57,8 @@ async def evaluate(
     # Ensure results directory exists
     results_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Initialize evaluator
-    evaluator = BenchmarkEvaluator(model)
+    # Initialize evaluator with the factory
+    evaluator = BenchmarkEvaluator(agent_factory)
 
     # Print header
     total_scenarios = len(scenarios)
@@ -90,6 +103,10 @@ async def evaluate(
         print(f"  Failed Turns: {metrics.failed_turns}")
         print(f"  Total Steps: {metrics.total_steps}")
         print(f"  Avg Steps/Turn: {metrics.total_steps/metrics.total_turns:.1f}" if metrics.total_turns > 0 else "")
+        print(f"  Token Usage:")
+        print(f"    Prompt Tokens: {metrics.total_prompt_tokens:,}")
+        print(f"    Completion Tokens: {metrics.total_completion_tokens:,}")
+        print(f"    Total Tokens: {metrics.total_tokens:,}")
 
         # Save results incrementally (convert to dict for JSON serialization)
         existing_results[scenario_name] = results.to_dict()

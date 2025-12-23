@@ -1,20 +1,23 @@
+"""Benchmark evaluation engine for cave-bench.
+
+This module provides the BenchmarkEvaluator class which can evaluate
+any agent implementation that conforms to the Agent interface.
+"""
+
 import logging
 import ast
-from typing import Dict, List, Callable, Set
+import copy
+from typing import Dict, List, Callable, Set, Optional, Any
 from core.validation import validate_function_calls, ErrorType, ValidationError, ValidatorResult
 from core.types import (
     ToolCall, TurnMetrics, TurnResult,
     ConversationResult, ScenarioMetrics, ScenarioResult, VariableAccess,
     BenchmarkTurn, BenchmarkConversation, ExpectedFunctionCall, BenchmarkScenario
 )
-from core.tracker import FunctionCallTracker
-from cave_agent import CaveAgent, LogLevel, Model
-from cave_agent.python_runtime import PythonRuntime, Function, Variable, Type
-from core.prompts import DEFAULT_AGENT_IDENTITY, DEFAULT_INSTRUCTIONS
+from core.agent import Agent, AgentFactory, AgentToolCall
 
 
 logger = logging.getLogger('Agent.Evaluator')
-
 
 
 def analyze_variable_access(code: str) -> VariableAccess:
@@ -40,6 +43,7 @@ def analyze_variable_access(code: str) -> VariableAccess:
         # If AST parsing fails, return empty results
         return VariableAccess(reads=[], writes=[])
 
+
 class VariableAnalyzer(ast.NodeVisitor):
     """A simple variable access analyzer"""
 
@@ -58,15 +62,22 @@ class VariableAnalyzer(ast.NodeVisitor):
 
         self.generic_visit(node)
 
+
 class BenchmarkEvaluator:
-    def __init__(self, model: Model):
+    """Evaluator for benchmarking agent implementations.
+
+    This evaluator works with any agent that implements the Agent interface,
+    including CaveAgent (Python code execution) and LiteLLM (JSON function calling).
+    """
+
+    def __init__(self, agent_factory: AgentFactory):
         """
         Initialize the benchmark evaluator.
 
         Args:
-            model: The LLM model to use for creating agents
+            agent_factory: Factory for creating agent instances
         """
-        self.model = model
+        self.agent_factory = agent_factory
         self._reset_metrics()
 
     def _reset_metrics(self):
@@ -76,52 +87,6 @@ class BenchmarkEvaluator:
         """
         logger.debug("Resetting evaluation metrics")
         self.metrics = ScenarioMetrics()
-
-    def _create_agent(
-        self,
-        functions: List[Callable],
-        variables: List[Variable],
-        types: List[Type],
-        description: str | None = None,
-        requirements: str | None = None
-    ) -> CaveAgent:
-        """
-        Create a CaveAgent instance for benchmarking.
-
-        Args:
-            functions: List of callable functions
-            variables: List of variables
-            description: Optional scenario-specific agent identity (defaults to DEFAULT_AGENT_IDENTITY)
-            requirements: Optional scenario-specific requirements (defaults to DEFAULT_INSTRUCTIONS)
-
-        Returns:
-            Configured CaveAgent instance
-        """
-        functions = [Function(f) for f in functions]
-        runtime = PythonRuntime(
-            functions=functions,
-            variables=variables,
-            types=types
-        )
-
-        if description:
-            instructions = DEFAULT_INSTRUCTIONS + "\nTASK DESCRIPTION: \n" + description + "\n"
-        else:
-            instructions = DEFAULT_INSTRUCTIONS
-
-        if requirements:
-            instructions = instructions + "\nTASK REQUIREMENTS: \n" + requirements
-
-        return CaveAgent(
-            model=self.model,
-            runtime=runtime,
-            max_steps=100,
-            max_history=200,
-            max_execution_result_length=10000,
-            log_level=LogLevel.DEBUG,
-            agent_identity=DEFAULT_AGENT_IDENTITY,
-            instructions=instructions
-        )
 
     async def evaluate(
         self,
@@ -172,18 +137,22 @@ class BenchmarkEvaluator:
             metrics=self.metrics
         )
 
-
-    async def _evaluate_conversation(self, conversation: BenchmarkConversation,
-                               scenario: BenchmarkScenario) -> ConversationResult:
+    async def _evaluate_conversation(
+        self,
+        conversation: BenchmarkConversation,
+        scenario: BenchmarkScenario
+    ) -> ConversationResult:
         """Evaluate a single conversation within a scenario."""
         logger.debug(f"Evaluating conversation: {conversation.id}")
 
-        # Extract function names for tracking
-        function_names = [f.__name__ for f in scenario.tools]
+        # Deep copy variables to ensure fresh state for each conversation
+        # This prevents mutable values (lists, dicts) from persisting across conversations
+        fresh_variables = copy.deepcopy(scenario.variables)
 
-        agent = self._create_agent(
+        # Create agent using the factory
+        agent = self.agent_factory.create_agent(
             functions=scenario.tools,
-            variables=scenario.variables,
+            variables=fresh_variables,
             types=scenario.types,
             description=scenario.description,
             requirements=scenario.requirements
@@ -193,7 +162,7 @@ class BenchmarkEvaluator:
         turn_results = []
         for turn in conversation.turns:
             result = await self._evaluate_turn(
-                turn, agent, function_names, scenario.validators, scenario.hooks
+                turn, agent, scenario.validators, scenario.hooks
             )
             turn_results.append(result)
             self.metrics.total_steps += result.metrics.steps
@@ -203,13 +172,17 @@ class BenchmarkEvaluator:
             turns=turn_results
         )
 
-    def calculate_missing_calls_metric(self, expected_calls: List[ExpectedFunctionCall], actual_calls: List[ToolCall]) -> int:
+    def _calculate_missing_calls_metric(
+        self,
+        expected_calls: List[ExpectedFunctionCall],
+        actual_calls: List[AgentToolCall]
+    ) -> int:
         """
         Calculate the number of missing required function calls.
 
         Args:
             expected_calls: List of expected function calls from benchmarks
-            actual_calls: List of actual function calls from the tracker
+            actual_calls: List of actual function calls from the agent
 
         Returns:
             Number of missing required function calls
@@ -226,10 +199,13 @@ class BenchmarkEvaluator:
 
         return missing_required_calls
 
-    async def _evaluate_turn(self, turn: BenchmarkTurn,
-                       agent: CaveAgent, function_names: List[str],
-                       validators: Dict[str, Callable] | None = None,
-                       hooks: Dict[str, Callable] | None = None) -> TurnResult:
+    async def _evaluate_turn(
+        self,
+        turn: BenchmarkTurn,
+        agent: Agent,
+        validators: Optional[Dict[str, Callable]] = None,
+        hooks: Optional[Dict[str, Callable]] = None
+    ) -> TurnResult:
         """Evaluate a single turn within a conversation and return detailed metrics."""
         if validators is None:
             validators = {}
@@ -243,9 +219,12 @@ class BenchmarkEvaluator:
         expected_variable_writes = turn.expected_variable_writes
 
         # Call pre-turn hook if specified (injects randomness / modifies state)
+        # Note: hooks require runtime access, only available for CaveAgent
         if turn.pre_turn_hook:
             if turn.pre_turn_hook not in hooks:
                 raise KeyError(f"Hook '{turn.pre_turn_hook}' not found. Available hooks: {list(hooks.keys())}")
+            if agent.runtime is None:
+                raise ValueError(f"Hook '{turn.pre_turn_hook}' requires runtime access, but agent has no runtime")
             hook_result = hooks[turn.pre_turn_hook](agent.runtime, turn)
             # Hook can return a new query string, or None to use the original
             if hook_result is not None:
@@ -258,14 +237,21 @@ class BenchmarkEvaluator:
         self.metrics.total_expected_calls += len(expected_calls)
         self.metrics.total_turns += 1
 
-        # Create tracker with provided function names and use context manager for safe cleanup
-        with FunctionCallTracker(target_functions=function_names) as tracker:
-            # Run the agent
-            result = await agent.run(query)
+        # Run the agent
+        result = await agent.run(query)
 
-        turn_metrics.steps = result.steps_taken
+        turn_metrics.steps = result.steps
 
-        # Analyze code snippets for variable access
+        # Track token usage
+        token_usage = result.token_usage
+        turn_metrics.prompt_tokens = token_usage.prompt_tokens
+        turn_metrics.completion_tokens = token_usage.completion_tokens
+        turn_metrics.total_tokens = token_usage.total_tokens
+        self.metrics.total_prompt_tokens += token_usage.prompt_tokens
+        self.metrics.total_completion_tokens += token_usage.completion_tokens
+        self.metrics.total_tokens += token_usage.total_tokens
+
+        # Analyze code snippets for variable access (only for agents that produce code)
         code_snippets = result.code_snippets
         actual_variable_reads = []
         actual_variable_writes = []
@@ -279,22 +265,35 @@ class BenchmarkEvaluator:
                 if write in expected_variable_writes:
                     actual_variable_writes.append(write)
 
-        # Get function calls and convert to dictionaries
-        actual_calls = tracker.get_tool_calls()
-        actual_calls_dict = [{"function": call.function, "arguments": call.arguments, "call_id": call.call_id} for call in actual_calls]
+        # Get function calls from agent response
+        actual_calls = result.tool_calls
+        actual_calls_dict = [call.to_dict() for call in actual_calls]
         self.metrics.total_actual_calls += len(actual_calls)
 
+        # Convert AgentToolCall to ToolCall for validation
+        tool_calls_for_validation = [
+            ToolCall(
+                function=call.function,
+                arguments=call.arguments,
+                call_id=call.call_id
+            )
+            for call in actual_calls
+        ]
+
         # Run validator if specified (after we have actual_calls)
+        # Note: validators may require runtime access
         validator_name = turn.validator
         if validator_name:
             if validator_name not in validators:
                 raise KeyError(f"Validator '{validator_name}' not found. Available validators: {list(validators.keys())}")
-            validator_result = validators[validator_name](result.content, agent.runtime, turn, actual_calls)
+            validator_result = validators[validator_name](
+                result.content, agent.runtime, turn, tool_calls_for_validation
+            )
         else:
             validator_result = ValidatorResult(success=True, message="")
 
         # Validate function calls
-        validation_errors = validate_function_calls(actual_calls, expected_calls)
+        validation_errors = validate_function_calls(tool_calls_for_validation, expected_calls)
 
         # Check for missing variable reads/writes
         for expected_variable_read in expected_variable_reads:
@@ -316,7 +315,7 @@ class BenchmarkEvaluator:
             error_messages.append(f"Custom validator failed: {validator_result.message}")
 
         # Calculate missing calls metric
-        turn_metrics.missing_calls = self.calculate_missing_calls_metric(expected_calls, actual_calls)
+        turn_metrics.missing_calls = self._calculate_missing_calls_metric(expected_calls, actual_calls)
         self.metrics.missing_calls += turn_metrics.missing_calls
 
         # Count error types
@@ -337,8 +336,8 @@ class BenchmarkEvaluator:
                 self.metrics.missing_variable_writes += 1
                 turn_metrics.missing_variable_writes += 1
 
-        # Determine turn success
-        success = not validation_errors and validator_result.success
+        # Determine turn success (ensure native Python bool for JSON serialization)
+        success = bool(not validation_errors and validator_result.success)
         if success:
             self.metrics.successful_turns += 1
         else:
@@ -353,7 +352,7 @@ class BenchmarkEvaluator:
             validation_errors=error_messages,
             metrics=turn_metrics,
             success=success,
-            validator_result=validator_result.success,
+            validator_result=bool(validator_result.success),
             code_snippets=code_snippets,
             expected_variable_reads=expected_variable_reads,
             expected_variable_writes=expected_variable_writes,

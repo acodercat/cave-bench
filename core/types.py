@@ -179,6 +179,9 @@ class TurnMetrics:
     steps: int = 0
     missing_variable_reads: int = 0
     missing_variable_writes: int = 0
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    total_tokens: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -241,6 +244,9 @@ class ScenarioMetrics:
     success_rate: float = 0.0
     missing_variable_reads: int = 0
     missing_variable_writes: int = 0
+    total_prompt_tokens: int = 0
+    total_completion_tokens: int = 0
+    total_tokens: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

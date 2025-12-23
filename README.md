@@ -8,32 +8,34 @@ Benchmarking framework for evaluating [CaveAgent](https://github.com/acodercat/c
 uv sync
 ```
 
-## Quick Start
+## Configuration
 
-```python
-import asyncio
-from pathlib import Path
-import json
-from cave_agent.models import LiteLLMModel
-from runner import evaluate
-
-model = LiteLLMModel(
-    model_id="gpt-4o",
-    api_key="your-api-key",
-    base_url="https://api.openai.com/v1"
-)
-
-benchmarks = json.loads(Path("./benchmarks/function_calling/benchmarks.json").read_text())
-
-asyncio.run(evaluate(model, benchmarks, "./results/results.json"))
-```
-
-Or run directly:
+Copy `.env.example` to `.env` and add your API keys:
 
 ```bash
-python run_function_calling.py  # Function calling benchmarks
-python run_data_analysis.py     # Data analysis benchmarks
+cp .env.example .env
 ```
+
+```bash
+# .env
+DEEPSEEK_API_KEY=your-api-key
+DEEPSEEK_MODEL_ID=deepseek-chat
+DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
+DEEPSEEK_TEMPERATURE=0.3
+```
+
+## Quick Start
+
+Run benchmarks from the `scripts/` folder:
+
+```bash
+python scripts/function_calling.py  # Function calling benchmarks
+python scripts/stateful.py          # Stateful benchmarks
+python scripts/data_analysis.py     # Data analysis benchmarks
+python scripts/domain.py            # Smart home, robot, game, etc.
+```
+
+Edit the `BENCHMARKS` list in each script to select which benchmarks to run.
 
 ## Benchmark Structure
 
@@ -95,21 +97,28 @@ validators = {"validate_q1": validate_q1}
 - **Variables**: Missing reads/writes
 - **Steps**: Total steps taken
 
-## Configuration
+## Project Structure
 
-Model configs in `models.toml`:
-
-```toml
-[gpt-4o]
-model_id = "gpt-4o"
-api_key = "your-api-key"
-base_url = "https://api.openai.com/v1"
+```
+cave-bench/
+├── adapters/           # Agent adapters (CaveAgent, LiteLLM)
+│   └── models/         # Model implementations (Gemini, Anthropic)
+├── benchmarks/         # Benchmark definitions
+│   ├── function_calling/
+│   ├── stateful/
+│   ├── data_analysis/
+│   ├── smart_home/
+│   ├── robot/
+│   └── game/
+├── core/               # Evaluation framework
+├── scripts/            # Benchmark runners
+├── results/            # Evaluation results
+└── runner.py           # Core evaluation engine
 ```
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a PR.
-For more details, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

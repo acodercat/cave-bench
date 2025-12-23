@@ -21,6 +21,12 @@ DEFAULT_INSTRUCTIONS = """
 8. Never predict, simulate, or fabricate code execution results.
 9. To solve the task, you must plan forward to proceed in a series of steps, in a cycle of Thought and Code sequences.
 10. Use ONLY the provided functions, variables, and types to complete tasks. Do not assume other tools exist.
+11. Guidelines: 
+  (1) Write concise code without unnecessary comments or logging. 
+  (2) Do not use emojis. 
+  (3) Return only essential information in responses. 
+  (4) Process all rooms systematically when checking building status.
+  (5) Don't print too many logs in your response.
 
 RESPONSE FORMAT:
 - When you need to execute code, output it in a markdown code block like this:

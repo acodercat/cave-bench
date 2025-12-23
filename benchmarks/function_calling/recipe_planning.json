@@ -1,0 +1,136 @@
+[
+  {
+    "module": "benchmarks.function_calling.recipe_planning_tools",
+    "conversations": [
+      {
+        "id": "recipe_planning_conversation",
+        "turns": [
+          {
+            "query": "I want to cook Mexican food for 6 people with vegetarian dietary restrictions on April 15, 2024. Find suitable recipes, get ingredients for Vegetarian Quesadillas, check what I have in my pantry, and create a shopping list for Walmart.",
+            "expected_function_calls": [
+              {
+                "name": "search_recipes",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "cuisine",
+                    "value": "Mexican",
+                    "type": "str"
+                  },
+                  {
+                    "name": "dietary_restrictions",
+                    "value": [
+                      "vegetarian"
+                    ],
+                    "type": "list"
+                  }
+                ]
+              },
+              {
+                "name": "get_ingredients",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "recipe_name",
+                    "value": "Vegetarian Quesadillas",
+                    "type": "str"
+                  },
+                  {
+                    "name": "servings",
+                    "value": 6,
+                    "type": "int"
+                  }
+                ]
+              },
+              {
+                "name": "check_pantry",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "ingredients",
+                    "value": [
+                      {
+                        "name": "Flour tortillas",
+                        "amount": "12 large",
+                        "category": "Grain"
+                      },
+                      {
+                        "name": "Bell peppers",
+                        "amount": "6 medium",
+                        "category": "Vegetable"
+                      },
+                      {
+                        "name": "Onions",
+                        "amount": "3 medium",
+                        "category": "Vegetable"
+                      },
+                      {
+                        "name": "Cheese",
+                        "amount": "6 cups",
+                        "category": "Dairy"
+                      },
+                      {
+                        "name": "Black beans",
+                        "amount": "3 can",
+                        "category": "Protein"
+                      }
+                    ],
+                    "type": "list"
+                  }
+                ]
+              },
+              {
+                "name": "create_shopping_list",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "pantry_check",
+                    "value": {
+                      "have_in_pantry": [
+                        {
+                          "name": "Flour tortillas",
+                          "amount": "12 large",
+                          "category": "Grain"
+                        },
+                        {
+                          "name": "Onions",
+                          "amount": "3 medium",
+                          "category": "Vegetable"
+                        }
+                      ],
+                      "need_to_buy": [
+                        {
+                          "name": "Bell peppers",
+                          "amount": "6 medium",
+                          "category": "Vegetable"
+                        },
+                        {
+                          "name": "Cheese",
+                          "amount": "6 cups",
+                          "category": "Dairy"
+                        },
+                        {
+                          "name": "Black beans",
+                          "amount": "3 can",
+                          "category": "Protein"
+                        }
+                      ],
+                      "shopping_list_total": 11.27
+                    },
+                    "type": "dict"
+                  },
+                  {
+                    "name": "store_preference",
+                    "value": "Walmart",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "name": "recipe_planning"
+  }
+]

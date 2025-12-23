@@ -1,0 +1,158 @@
+[
+  {
+    "module": "benchmarks.function_calling.ecommerce_tools",
+    "conversations": [
+      {
+        "id": "order_processing_conversation",
+        "turns": [
+          {
+            "query": "Process an order for customer CUST123 placed on April 15, 2024: 2 iPhone 15, 1 AirPods Pro. Check inventory availability, calculate total with discounts, process payment, and create shipping label.",
+            "expected_function_calls": [
+              {
+                "name": "get_customer_info",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "customer_id",
+                    "value": "CUST123",
+                    "type": "str"
+                  }
+                ]
+              },
+              {
+                "name": "check_inventory",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "items",
+                    "value": [
+                      {
+                        "product": "iPhone 15",
+                        "quantity": 2
+                      },
+                      {
+                        "product": "AirPods Pro",
+                        "quantity": 1
+                      }
+                    ],
+                    "type": "list"
+                  }
+                ]
+              },
+              {
+                "name": "calculate_total",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "items",
+                    "value": [
+                      {
+                        "product": "iPhone 15",
+                        "quantity": 2
+                      },
+                      {
+                        "product": "AirPods Pro",
+                        "quantity": 1
+                      }
+                    ],
+                    "type": "list"
+                  },
+                  {
+                    "name": "customer_info",
+                    "value": {
+                      "customer_id": "CUST123",
+                      "name": "John Smith",
+                      "email": "john@email.com",
+                      "tier": "Gold",
+                      "address": {
+                        "street": "123 Main St",
+                        "city": "New York",
+                        "state": "NY",
+                        "zip": "10001"
+                      }
+                    },
+                    "type": "dict"
+                  }
+                ]
+              },
+              {
+                "name": "process_payment",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "customer_info",
+                    "value": {
+                      "customer_id": "CUST123",
+                      "name": "John Smith",
+                      "email": "john@email.com",
+                      "tier": "Gold",
+                      "address": {
+                        "street": "123 Main St",
+                        "city": "New York",
+                        "state": "NY",
+                        "zip": "10001"
+                      }
+                    },
+                    "type": "dict"
+                  },
+                  {
+                    "name": "total_amount",
+                    "value": 1795.28,
+                    "type": "float"
+                  }
+                ]
+              },
+              {
+                "name": "create_shipping_label",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "customer_info",
+                    "value": {
+                      "customer_id": "CUST123",
+                      "name": "John Smith",
+                      "email": "john@email.com",
+                      "tier": "Gold",
+                      "address": {
+                        "street": "123 Main St",
+                        "city": "New York",
+                        "state": "NY",
+                        "zip": "10001"
+                      }
+                    },
+                    "type": "dict"
+                  },
+                  {
+                    "name": "items",
+                    "value": [
+                      {
+                        "product": "iPhone 15",
+                        "quantity": 2
+                      },
+                      {
+                        "product": "AirPods Pro",
+                        "quantity": 1
+                      }
+                    ],
+                    "type": "list"
+                  },
+                  {
+                    "name": "payment_result",
+                    "value": {
+                      "success": true,
+                      "transaction_id": "TXN1231795",
+                      "amount": 1795.28,
+                      "payment_method": "Credit Card"
+                    },
+                    "type": "dict"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "name": "ecommerce_order_processing"
+  }
+]

@@ -21,9 +21,11 @@ class Person:
         self.city = city
 
     def introduce(self) -> str:
+        """Introduce the person."""
         return f"Hi, I'm {self.name}, {self.age} years old from {self.city}."
 
     def have_birthday(self):
+        """Increment the age of the person by 1."""
         self.age += 1
 
 
@@ -33,14 +35,17 @@ class BankAccount:
         self.transactions = []
 
     def deposit(self, amount: float):
+        """Deposit an amount into the bank account."""
         self.balance += amount
         self.transactions.append(f"+{amount}")
 
     def withdraw(self, amount: float):
+        """Withdraw an amount from the bank account."""
         self.balance -= amount
         self.transactions.append(f"-{amount}")
 
     def apply_interest(self, rate: float):
+        """Apply interest to the bank account."""
         interest = self.balance * rate
         self.balance += interest
 
@@ -50,53 +55,67 @@ class ShoppingCart:
         self.items = []
 
     def add_item(self, item: dict):
+        """Add an item to the shopping cart."""
         self.items.append(item)
 
     def remove_item(self, name: str):
+        """Remove an item from the shopping cart."""
         self.items = [i for i in self.items if i.get("name") != name]
 
     def get_total(self) -> float:
+        """Get the total price of the shopping cart."""
         return sum(item.get("price", 0) * item.get("quantity", 1) for item in self.items)
 
     def clear(self):
+        """Clear the shopping cart."""
         self.items = []
 
 
 class Counter:
     def __init__(self, value: int = 0):
+        """Initialize the counter with a value."""
         self.value = value
 
     def increment(self):
+        """Increment the value of the counter by 1."""
         self.value += 1
 
     def decrement(self):
+        """Decrement the value of the counter by 1."""
         self.value -= 1
 
     def add(self, n: int):
+        """Add a number to the value of the counter."""
         self.value += n
 
     def reset(self):
+        """Reset the value of the counter to 0."""
         self.value = 0
 
 
 class Stack:
     def __init__(self):
+        """Initialize the stack."""
         self._items = []
 
     def push(self, item):
+        """Push an item onto the stack."""
         self._items.append(item)
 
     def pop(self):
+        """Pop an item from the stack."""
         if self._items:
             return self._items.pop()
         return None
 
     def peek(self):
+        """Peek at the top item of the stack."""
         if self._items:
             return self._items[-1]
         return None
 
     def size(self) -> int:
+        """Get the size of the stack."""
         return len(self._items)
 
 
@@ -294,6 +313,54 @@ def validate_stack_size(response: str, runtime: PythonRuntime, turn: BenchmarkTu
 
 
 # ============================================================================
+# VALIDATORS - ShoppingCart Removal
+# ============================================================================
+
+def validate_cart_add_items(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
+    c = runtime.get_variable("cart")
+    # Should have Laptop and Mouse
+    names = [item.get("name") for item in c.items]
+    ok = len(c.items) == 2 and "Laptop" in names and "Mouse" in names
+    return ValidatorResult(ok, f"items = {names}")
+
+def validate_cart_remove(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
+    c = runtime.get_variable("cart")
+    # Mouse should be removed, only Laptop remains
+    names = [item.get("name") for item in c.items]
+    ok = len(c.items) == 1 and "Laptop" in names and "Mouse" not in names
+    return ValidatorResult(ok, f"items = {names}")
+
+def validate_cart_clear(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
+    c = runtime.get_variable("cart")
+    ok = len(c.items) == 0
+    return ValidatorResult(ok, f"items count = {len(c.items)}, expected 0")
+
+
+# ============================================================================
+# VALIDATORS - Stack Advanced
+# ============================================================================
+
+def validate_stack_multi_push(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
+    s = runtime.get_variable("stack")
+    ok = s.size() == 4
+    return ValidatorResult(ok, f"size = {s.size()}, expected 4")
+
+def validate_stack_pop_until(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
+    s = runtime.get_variable("stack")
+    r = runtime.get_variable("result_num")
+    # Popped 'D', 'C', 'B' (3 items), sum of their ASCII or count
+    # Stack should have 1 item left ('A')
+    ok = s.size() == 1 and r == 3
+    return ValidatorResult(ok, f"size = {s.size()}, popped count = {r}")
+
+def validate_stack_peek_after(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
+    s = runtime.get_variable("stack")
+    r = runtime.get_variable("result_str")
+    ok = s.size() == 1 and r == "A"
+    return ValidatorResult(ok, f"size = {s.size()}, top = {r}")
+
+
+# ============================================================================
 # EXPORTS
 # ============================================================================
 
@@ -302,7 +369,7 @@ tools = []
 variables = [
     Variable("person", person, "Person object. Attributes: name (str), age (int), city (str). Methods: introduce() -> str, have_birthday()."),
     Variable("account", account, "BankAccount with balance=1000.0. Methods: deposit(amount), withdraw(amount), apply_interest(rate)."),
-    Variable("cart", cart, "ShoppingCart with empty items list. Methods: add_item(dict), remove_item(name), get_total() -> float, clear()."),
+    Variable("cart", cart, "ShoppingCart with empty items list. Methods: add_item(dict with keys: name, price, quantity), remove_item(name), get_total() -> float, clear()."),
     Variable("counter", counter, "Counter with value=0. Methods: increment(), decrement(), add(n), reset()."),
     Variable("stack", stack, "Stack (LIFO). Methods: push(item), pop() -> item, peek() -> item, size() -> int."),
     Variable("result_str", result_str, "Store string results here."),
@@ -353,4 +420,12 @@ validators = {
     "validate_stack_push_nums": validate_stack_push_nums,
     "validate_stack_pop_sum": validate_stack_pop_sum,
     "validate_stack_size": validate_stack_size,
+    # ShoppingCart Removal
+    "validate_cart_add_items": validate_cart_add_items,
+    "validate_cart_remove": validate_cart_remove,
+    "validate_cart_clear": validate_cart_clear,
+    # Stack Advanced
+    "validate_stack_multi_push": validate_stack_multi_push,
+    "validate_stack_pop_until": validate_stack_pop_until,
+    "validate_stack_peek_after": validate_stack_peek_after,
 }

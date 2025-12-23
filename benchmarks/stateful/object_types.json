@@ -2,86 +2,102 @@
     {
         "name": "object_types",
         "module": "benchmarks.stateful.object_types",
-        "description": "Test stateful management of custom objects with attributes and methods.",
+        "requirements": "Manage the state of a system with custom objects. IMPORTANT: Only perform the exact operations requested. Do NOT call extra methods, do NOT set unrequested attributes, do NOT demonstrate or test functionality beyond what is asked. State persists across turns, so any extra operations will corrupt future results.",
         "conversations": [
             {
                 "id": "person_basic",
                 "turns": [
-                    {"query": "I'm setting up a new employee record. Her name is Alice and she's 25 years old. Can you update the person object with this info?", "validator": "validate_person_init"},
-                    {"query": "Alice just had a birthday and also relocated! Increment her age by 1 and change her city to Boston.", "validator": "validate_person_update"},
-                    {"query": "I need her introduction for the company newsletter. Call her introduce() method and save the result to result_str.", "validator": "validate_person_method"}
+                    {"query": "I'm setting up a new employee record in person. Her name is Alice and she's 25 years old.", "validator": "validate_person_init"},
+                    {"query": "Update person: Alice just turned 26 and moved to Boston.", "validator": "validate_person_update"},
+                    {"query": "I need Alice's introduction for the newsletter. Get it from person and store in result_str.", "validator": "validate_person_method"}
                 ]
             },
             {
                 "id": "person_birthday",
                 "turns": [
-                    {"query": "Setting up another employee profile. This is Bob, he's 30 years old. Update the person object accordingly.", "validator": "validate_person_birthday_init"},
-                    {"query": "It's Bob's birthday today! Call the have_birthday() method to celebrate.", "validator": "validate_person_birthday"},
-                    {"query": "Wait, I made an error earlier - his birthday is actually today too. Call have_birthday() one more time.", "validator": "validate_person_birthday2"}
+                    {"query": "Update person for a new employee: Bob, 30 years old.", "validator": "validate_person_birthday_init"},
+                    {"query": "It's Bob's birthday today! Use person to celebrate his birthday.", "validator": "validate_person_birthday"},
+                    {"query": "Oops, I miscounted - give person another birthday celebration.", "validator": "validate_person_birthday2"}
                 ]
             },
             {
                 "id": "account_basic",
                 "turns": [
-                    {"query": "A customer just made a deposit. Please add $500 to their account.", "validator": "validate_account_deposit"},
-                    {"query": "The same customer needs to withdraw $200 for rent. Process the withdrawal please.", "validator": "validate_account_withdraw"},
-                    {"query": "It's month-end and we're applying 10% interest to the account balance. Please update accordingly.", "validator": "validate_account_interest"}
+                    {"query": "A customer just made a $500 deposit. Add it to account.", "validator": "validate_account_deposit"},
+                    {"query": "The customer needs to withdraw $200 for rent from account.", "validator": "validate_account_withdraw"},
+                    {"query": "Month-end: apply 10% interest to account.", "validator": "validate_account_interest"}
                 ]
             },
             {
                 "id": "account_transactions",
                 "turns": [
-                    {"query": "Processing multiple deposits for a customer - they received $100 from a refund, then $200 from a paycheck. Add both to the account.", "validator": "validate_account_multi_deposit"},
-                    {"query": "The customer is paying some bills - withdraw $150 for utilities, then $100 for subscriptions.", "validator": "validate_account_multi_withdraw"},
-                    {"query": "I need to record the current balance for the monthly statement. Store it in result_num please.", "validator": "validate_account_balance"}
+                    {"query": "Processing deposits to account: $100 refund, then $200 paycheck.", "validator": "validate_account_multi_deposit"},
+                    {"query": "Customer paying bills from account: $150 for utilities, then $100 for subscriptions.", "validator": "validate_account_multi_withdraw"},
+                    {"query": "Record account's current balance in result_num.", "validator": "validate_account_balance"}
                 ]
             },
             {
                 "id": "cart_basic",
                 "turns": [
-                    {"query": "A customer is shopping online. They want to add a Book priced at $15.99 to their cart.", "validator": "validate_cart_add"},
-                    {"query": "They found something else! Add a Pen for $2.50 to the cart as well.", "validator": "validate_cart_add2"},
-                    {"query": "They're ready to checkout. Calculate the total using get_total() and save it to result_num.", "validator": "validate_cart_total"}
+                    {"query": "Customer wants to add a Book priced at $15.99 to cart.", "validator": "validate_cart_add"},
+                    {"query": "Add a Pen for $2.50 to cart as well.", "validator": "validate_cart_add2"},
+                    {"query": "Checkout time. Get cart's total and store in result_num.", "validator": "validate_cart_total"}
                 ]
             },
             {
                 "id": "cart_quantity",
                 "turns": [
-                    {"query": "Customer is buying fruit. Add 3 Apples at $10.00 each to the cart. Make sure to track the quantity.", "validator": "validate_cart_qty_add"},
-                    {"query": "They also want 2 Oranges at $5.00 each. Add those with quantity to the cart.", "validator": "validate_cart_qty_add2"},
-                    {"query": "Time to calculate the bill. Use get_total() to compute price times quantity for each item and store in result_num.", "validator": "validate_cart_qty_total"}
+                    {"query": "Customer buying 3 Apples at $10.00 each. Add to cart with quantity.", "validator": "validate_cart_qty_add"},
+                    {"query": "Also add 2 Oranges at $5.00 each to cart with quantity.", "validator": "validate_cart_qty_add2"},
+                    {"query": "Calculate cart's total (price * quantity for each item) and store in result_num.", "validator": "validate_cart_qty_total"}
                 ]
             },
             {
                 "id": "counter_basic",
                 "turns": [
-                    {"query": "I'm tracking visitor counts. Three people just walked in - call increment() three times on the counter.", "validator": "validate_counter_inc"},
-                    {"query": "Oops, one person left but two more arrived. Call decrement() once and increment() twice.", "validator": "validate_counter_mixed"},
-                    {"query": "End of day, we need to reset for tomorrow. Call reset() to zero out the counter.", "validator": "validate_counter_reset"}
+                    {"query": "Three visitors arrived. Increment counter three times.", "validator": "validate_counter_inc"},
+                    {"query": "One visitor left, two more arrived. Update counter accordingly.", "validator": "validate_counter_mixed"},
+                    {"query": "End of day. Reset counter to zero.", "validator": "validate_counter_reset"}
                 ]
             },
             {
                 "id": "counter_add",
                 "turns": [
-                    {"query": "A tour group of 10 just arrived. Use add(10) to register them all at once.", "validator": "validate_counter_add10"},
-                    {"query": "Another small group of 5 came in. Add them using add(5).", "validator": "validate_counter_add5"},
-                    {"query": "I need the current count for my report. Save the counter's value to result_num.", "validator": "validate_counter_store"}
+                    {"query": "A tour group of 10 arrived. Add 10 to counter.", "validator": "validate_counter_add10"},
+                    {"query": "Another group of 5 came in. Add 5 to counter.", "validator": "validate_counter_add5"},
+                    {"query": "Get counter's current value and store in result_num.", "validator": "validate_counter_store"}
                 ]
             },
             {
                 "id": "stack_ops",
                 "turns": [
-                    {"query": "I'm managing an undo history. Push the actions 'A', 'B', and 'C' onto the stack in that order.", "validator": "validate_stack_push"},
-                    {"query": "User hit undo! Pop the last action from the stack and save it to result_str.", "validator": "validate_stack_pop"},
-                    {"query": "User wants to preview what would be undone next. Peek at the top of the stack and store in result_str.", "validator": "validate_stack_peek"}
+                    {"query": "Managing undo history with stack. Push 'A', 'B', 'C' in that order.", "validator": "validate_stack_push"},
+                    {"query": "User hit undo. Pop from stack and store the popped value in result_str.", "validator": "validate_stack_pop"},
+                    {"query": "Preview what would be undone next. Peek at stack's top and store in result_str.", "validator": "validate_stack_peek"}
                 ]
             },
             {
                 "id": "stack_numeric",
                 "turns": [
-                    {"query": "I'm building a calculation stack. Push the numbers 1, 2, 3, 4, 5 onto the stack.", "validator": "validate_stack_push_nums"},
-                    {"query": "For a sum operation, pop two values and store their sum in result_num.", "validator": "validate_stack_pop_sum"},
-                    {"query": "I need to know how many items remain. Store the stack's size in result_num.", "validator": "validate_stack_size"}
+                    {"query": "Building a calculation with stack. Push numbers 1, 2, 3, 4, 5.", "validator": "validate_stack_push_nums"},
+                    {"query": "Pop two values from stack and store their sum in result_num.", "validator": "validate_stack_pop_sum"},
+                    {"query": "How many items remain in stack? Store the count in result_num.", "validator": "validate_stack_size"}
+                ]
+            },
+            {
+                "id": "cart_removal",
+                "turns": [
+                    {"query": "New shopping session. Add a Laptop ($999.99) and a Mouse ($29.99) to cart.", "validator": "validate_cart_add_items"},
+                    {"query": "Customer changed their mind about the Mouse. Remove it from cart.", "validator": "validate_cart_remove"},
+                    {"query": "Customer wants to start over. Clear the entire cart.", "validator": "validate_cart_clear"}
+                ]
+            },
+            {
+                "id": "stack_advanced",
+                "turns": [
+                    {"query": "Building navigation history with stack. Push 'A', 'B', 'C', 'D' in order.", "validator": "validate_stack_multi_push"},
+                    {"query": "User wants to go back to first page. Pop from stack until only 1 item remains, store count of popped items in result_num.", "validator": "validate_stack_pop_until"},
+                    {"query": "Verify we're at the right page. Peek at stack's top and store in result_str.", "validator": "validate_stack_peek_after"}
                 ]
             }
         ]
