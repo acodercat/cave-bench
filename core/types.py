@@ -2,8 +2,8 @@
 
 from dataclasses import dataclass, field, asdict
 from typing import Dict, Any, List, Optional, Callable
-from cave_agent.python_runtime import Variable
-from cave_agent.python_runtime import Type
+from cave_agent.runtime import Variable
+from cave_agent.runtime import Type
 
 @dataclass
 class ToolCall:

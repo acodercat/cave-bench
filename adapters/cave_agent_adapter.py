@@ -9,7 +9,7 @@ from core.agent import Agent, AgentFactory, AgentResponse, AgentToolCall, TokenU
 from core.tracker import FunctionCallTracker
 from core.prompts import DEFAULT_AGENT_IDENTITY, DEFAULT_INSTRUCTIONS
 from cave_agent import CaveAgent, LogLevel, Model
-from cave_agent.python_runtime import PythonRuntime, Function, Variable, Type
+from cave_agent.runtime import PythonRuntime, Function, Variable, Type
 
 
 class CaveAgentWrapper(Agent):
