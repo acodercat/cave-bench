@@ -61,9 +61,9 @@ def validate_arrival_check(
     only that it performed the security actions correctly.
     """
     try:
-        front_lock = runtime.get_variable("front_door_lock")
-        back_lock = runtime.get_variable("back_door_lock")
-        camera = runtime.get_variable("security_camera")
+        front_lock = runtime.retrieve("front_door_lock")
+        back_lock = runtime.retrieve("back_door_lock")
+        camera = runtime.retrieve("security_camera")
         
         errors = []
         
@@ -101,9 +101,9 @@ def validate_evening_setup(
     - Living room speaker should be PLAYING at 40% volume
     """
     try:
-        thermostat = runtime.get_variable("thermostat")
-        lr_light = runtime.get_variable("living_room_light")
-        lr_speaker = runtime.get_variable("living_room_speaker")
+        thermostat = runtime.retrieve("thermostat")
+        lr_light = runtime.retrieve("living_room_light")
+        lr_speaker = runtime.retrieve("living_room_speaker")
         
         errors = []
         
@@ -158,13 +158,13 @@ def validate_bedtime_routine(
     This validates cross-turn state persistence.
     """
     try:
-        lr_light = runtime.get_variable("living_room_light")
-        lr_speaker = runtime.get_variable("living_room_speaker")
-        bedroom_light = runtime.get_variable("bedroom_light")
-        thermostat = runtime.get_variable("thermostat")
-        front_lock = runtime.get_variable("front_door_lock")
-        back_lock = runtime.get_variable("back_door_lock")
-        camera = runtime.get_variable("security_camera")
+        lr_light = runtime.retrieve("living_room_light")
+        lr_speaker = runtime.retrieve("living_room_speaker")
+        bedroom_light = runtime.retrieve("bedroom_light")
+        thermostat = runtime.retrieve("thermostat")
+        front_lock = runtime.retrieve("front_door_lock")
+        back_lock = runtime.retrieve("back_door_lock")
+        camera = runtime.retrieve("security_camera")
         
         errors = []
         

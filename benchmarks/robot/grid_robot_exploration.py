@@ -849,11 +849,11 @@ def validate_initial_exploration(
     - exploration_path tracks movement
     """
     try:
-        robot = runtime.get_variable("robot")
-        explored_map = runtime.get_variable("explored_map")
-        visited_cells = runtime.get_variable("visited_cells")
-        discovered_items = runtime.get_variable("discovered_items")
-        exploration_path = runtime.get_variable("exploration_path")
+        robot = runtime.retrieve("robot")
+        explored_map = runtime.retrieve("explored_map")
+        visited_cells = runtime.retrieve("visited_cells")
+        discovered_items = runtime.retrieve("discovered_items")
+        exploration_path = runtime.retrieve("exploration_path")
         
         errors = []
         
@@ -919,11 +919,11 @@ def validate_continued_exploration(
     - discovered_obstacles list updated if obstacles found
     """
     try:
-        robot = runtime.get_variable("robot")
-        explored_map = runtime.get_variable("explored_map")
-        visited_cells = runtime.get_variable("visited_cells")
-        discovered_items = runtime.get_variable("discovered_items")
-        discovered_obstacles = runtime.get_variable("discovered_obstacles")
+        robot = runtime.retrieve("robot")
+        explored_map = runtime.retrieve("explored_map")
+        visited_cells = runtime.retrieve("visited_cells")
+        discovered_items = runtime.retrieve("discovered_items")
+        discovered_obstacles = runtime.retrieve("discovered_obstacles")
         
         errors = []
         
@@ -986,10 +986,10 @@ def validate_return_to_base(
     - Robot used explored_map to navigate (avoided obstacles)
     """
     try:
-        robot = runtime.get_variable("robot")
-        explored_map = runtime.get_variable("explored_map")
-        total_value = runtime.get_variable("total_collected_value")
-        mission_done = runtime.get_variable("mission_complete")
+        robot = runtime.retrieve("robot")
+        explored_map = runtime.retrieve("explored_map")
+        total_value = runtime.retrieve("total_collected_value")
+        mission_done = runtime.retrieve("mission_complete")
         
         errors = []
         
@@ -1051,11 +1051,11 @@ def validate_explore_and_return(
     - mission_complete = True
     """
     try:
-        robot = runtime.get_variable("robot")
-        explored_map = runtime.get_variable("explored_map")
-        exploration_path = runtime.get_variable("exploration_path")
-        total_value = runtime.get_variable("total_collected_value")
-        mission_done = runtime.get_variable("mission_complete")
+        robot = runtime.retrieve("robot")
+        explored_map = runtime.retrieve("explored_map")
+        exploration_path = runtime.retrieve("exploration_path")
+        total_value = runtime.retrieve("total_collected_value")
+        mission_done = runtime.retrieve("mission_complete")
         
         errors = []
         
@@ -1136,10 +1136,10 @@ def hook_exploration_turn(runtime: PythonRuntime, turn: BenchmarkTurn) -> str:
     global _turn_number
     _turn_number += 1
 
-    robot = runtime.get_variable("robot")
-    explored_map = runtime.get_variable("explored_map")
-    visited_cells = runtime.get_variable("visited_cells")
-    discovered_items = runtime.get_variable("discovered_items")
+    robot = runtime.retrieve("robot")
+    explored_map = runtime.retrieve("explored_map")
+    visited_cells = runtime.retrieve("visited_cells")
+    discovered_items = runtime.retrieve("discovered_items")
 
     # Reset move counter for new turn
     robot.moves_this_turn = 0
@@ -1215,7 +1215,7 @@ def hook_initial_turn(runtime: PythonRuntime, turn: BenchmarkTurn) -> str:
     global _turn_number
     _turn_number = 1
 
-    robot = runtime.get_variable("robot")
+    robot = runtime.retrieve("robot")
 
     # Reset move counter
     robot.moves_this_turn = 0
@@ -1253,10 +1253,10 @@ def hook_final_turn(runtime: PythonRuntime, turn: BenchmarkTurn) -> str:
     global _turn_number
     _turn_number += 1
 
-    robot = runtime.get_variable("robot")
-    explored_map = runtime.get_variable("explored_map")
-    total_collected_value = runtime.get_variable("total_collected_value")
-    mission_complete = runtime.get_variable("mission_complete")
+    robot = runtime.retrieve("robot")
+    explored_map = runtime.retrieve("explored_map")
+    total_collected_value = runtime.retrieve("total_collected_value")
+    mission_complete = runtime.retrieve("mission_complete")
 
     # Reset move counter
     robot.moves_this_turn = 0

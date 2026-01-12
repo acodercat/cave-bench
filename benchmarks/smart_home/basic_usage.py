@@ -80,7 +80,7 @@ def validate_movie_mode(
 ) -> ValidatorResult:
     """Validate movie mode - living room light should be dimmed to 20%."""
     try:
-        lr_light = runtime.get_variable("living_room_light")
+        lr_light = runtime.retrieve("living_room_light")
 
         # Check brightness is 20%
         if lr_light.brightness == 20:
@@ -100,10 +100,10 @@ def validate_leaving_home(
 ) -> ValidatorResult:
     """Validate leaving home automation - doors locked, lights off, camera recording."""
     try:
-        front_lock = runtime.get_variable("front_door_lock")
-        back_lock = runtime.get_variable("back_door_lock")
-        all_devices = runtime.get_variable("all_devices")
-        security_camera = runtime.get_variable("security_camera")
+        front_lock = runtime.retrieve("front_door_lock")
+        back_lock = runtime.retrieve("back_door_lock")
+        all_devices = runtime.retrieve("all_devices")
+        security_camera = runtime.retrieve("security_camera")
 
         errors = []
 
@@ -144,13 +144,13 @@ def validate_goodnight_routine(
 ) -> ValidatorResult:
     """Validate goodnight routine - temperature calculation, selective lighting, and security."""
     try:
-        thermostat = runtime.get_variable("thermostat")
-        bedroom_light = runtime.get_variable("bedroom_light")
-        all_devices = runtime.get_variable("all_devices")
-        front_lock = runtime.get_variable("front_door_lock")
-        back_lock = runtime.get_variable("back_door_lock")
-        security_camera = runtime.get_variable("security_camera")
-        warmup_time = runtime.get_variable("warmup_time_minutes")
+        thermostat = runtime.retrieve("thermostat")
+        bedroom_light = runtime.retrieve("bedroom_light")
+        all_devices = runtime.retrieve("all_devices")
+        front_lock = runtime.retrieve("front_door_lock")
+        back_lock = runtime.retrieve("back_door_lock")
+        security_camera = runtime.retrieve("security_camera")
+        warmup_time = runtime.retrieve("warmup_time_minutes")
 
         errors = []
 

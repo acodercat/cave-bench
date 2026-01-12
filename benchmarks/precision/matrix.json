@@ -1,0 +1,64 @@
+[
+  {
+    "name": "matrix_precision",
+    "module": "benchmarks.precision.matrix",
+    "requirements": "You are a mathematical assistant. Use the provided matrix functions to perform calculations. Store results in the specified variables.",
+    "conversations": [
+      {
+        "id": "matrix_operations",
+        "turns": [
+          {
+            "query": "Multiply matrix_A_5x5 and matrix_B_5x5 using the matrix_multiply function. Store the result in variable `result_5x5`.",
+            "validator": "validate_matrix_5x5",
+            "expected_function_calls": [{"name": "matrix_multiply", "arguments": []}]
+          },
+          {
+            "query": "Multiply matrix_A_10x10 and matrix_B_10x10 using the matrix_multiply function. Store the result in variable `result_10x10`.",
+            "validator": "validate_matrix_10x10",
+            "expected_function_calls": [{"name": "matrix_multiply", "arguments": []}]
+          },
+          {
+            "query": "Multiply matrix_A_15x15 and matrix_B_15x15 using the matrix_multiply function. Store the result in variable `result_15x15`.",
+            "validator": "validate_matrix_15x15",
+            "expected_function_calls": [{"name": "matrix_multiply", "arguments": []}]
+          },
+          {
+            "query": "Multiply matrix_A_20x20 and matrix_B_20x20 using the matrix_multiply function. Store the result in variable `result_20x20`.",
+            "validator": "validate_matrix_20x20",
+            "expected_function_calls": [{"name": "matrix_multiply", "arguments": []}]
+          },
+          {
+            "query": "Multiply matrix_A_25x25 and matrix_B_25x25 using the matrix_multiply function. Store the result in variable `result_25x25`.",
+            "validator": "validate_matrix_25x25",
+            "expected_function_calls": [{"name": "matrix_multiply", "arguments": []}]
+          },
+          {
+            "query": "Multiply matrix_A_30x30 and matrix_B_30x30 using the matrix_multiply function. Store the result in variable `result_30x30`.",
+            "validator": "validate_matrix_30x30",
+            "expected_function_calls": [{"name": "matrix_multiply", "arguments": []}]
+          },
+          {
+            "query": "Multiply matrix_A_35x35 and matrix_B_35x35 using the matrix_multiply function. Store the result in variable `result_35x35`.",
+            "validator": "validate_matrix_35x35",
+            "expected_function_calls": [{"name": "matrix_multiply", "arguments": []}]
+          },
+          {
+            "query": "Multiply matrix_A_40x40 and matrix_B_40x40 using the matrix_multiply function. Store the result in variable `result_40x40`.",
+            "validator": "validate_matrix_40x40",
+            "expected_function_calls": [{"name": "matrix_multiply", "arguments": []}]
+          },
+          {
+            "query": "Multiply matrix_A_45x45 and matrix_B_45x45 using the matrix_multiply function. Store the result in variable `result_45x45`.",
+            "validator": "validate_matrix_45x45",
+            "expected_function_calls": [{"name": "matrix_multiply", "arguments": []}]
+          },
+          {
+            "query": "Multiply matrix_A_50x50 and matrix_B_50x50 using the matrix_multiply function. Store the result in variable `result_50x50`.",
+            "validator": "validate_matrix_50x50",
+            "expected_function_calls": [{"name": "matrix_multiply", "arguments": []}]
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -85,7 +85,7 @@ correct_answers = {
 # --- Validators ---
 
 def validate_q1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    mean_close = runtime.get_variable("mean_close_price")
+    mean_close = runtime.retrieve("mean_close_price")
     
     # Check type
     if not isinstance(mean_close, float):
@@ -98,8 +98,8 @@ def validate_q1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     return ValidatorResult(success=False, message=f"Q1: Incorrect. Expected {correct_answers['q1']}, but got {round(mean_close, 2)}.")
 
 def validate_q2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    year_high = runtime.get_variable("year_high")
-    year_low = runtime.get_variable("year_low")
+    year_high = runtime.retrieve("year_high")
+    year_low = runtime.retrieve("year_low")
     
     # Check types
     if not isinstance(year_high, float):
@@ -123,7 +123,7 @@ def validate_q2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
         return ValidatorResult(success=False, message=f"Q2: Both values incorrect. Expected high={correct_answers['q2_high']}, low={correct_answers['q2_low']}, but got high={high_value}, low={low_value}.")
 
 def validate_q3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    average_daily_returns = runtime.get_variable("average_daily_returns")
+    average_daily_returns = runtime.retrieve("average_daily_returns")
     
     # Check type
     if not isinstance(average_daily_returns, float):
@@ -136,7 +136,7 @@ def validate_q3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     return ValidatorResult(success=False, message=f"Q3: Incorrect. Expected {correct_answers['q3']}, but got {round(average_daily_returns, 4)}.")
 
 def validate_q4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    average_monthly_close = runtime.get_variable("average_monthly_close")
+    average_monthly_close = runtime.retrieve("average_monthly_close")
     
     # Check type
     if not isinstance(average_monthly_close, pd.Series):
@@ -162,8 +162,8 @@ def validate_q4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
         return ValidatorResult(success=False, message=f"Q4: Both values incorrect. Expected Jan={correct_answers['q4_jan']}, Dec={correct_answers['q4_dec']}, but got Jan={jan_value}, Dec={dec_value}.")
 
 def validate_q5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    highest_vol_month = runtime.get_variable("highest_vol_month")
-    highest_vol_month_volume = runtime.get_variable("highest_vol_month_volume")
+    highest_vol_month = runtime.retrieve("highest_vol_month")
+    highest_vol_month_volume = runtime.retrieve("highest_vol_month_volume")
     
     # Check volume type
     # if not isinstance(highest_vol_month_volume, int):
@@ -194,7 +194,7 @@ def validate_q5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
         return ValidatorResult(success=False, message=f"Q5: Both values incorrect. Expected month=one of {accepted_formats}, volume={correct_answers['q5_volume']}, but got month='{highest_vol_month}', volume={highest_vol_month_volume}.")
 
 def validate_q6(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    quarterly_perf = runtime.get_variable("quarterly_performance")
+    quarterly_perf = runtime.retrieve("quarterly_performance")
 
     # Check type
     if not isinstance(quarterly_perf, pd.DataFrame):
@@ -228,7 +228,7 @@ def validate_q6(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     else:
         return ValidatorResult(success=False, message=f"Q6: Both values incorrect. Expected Q1={correct_answers['q6_q1']}, Q4={correct_answers['q6_q4']}, but got Q1={q1_value}, Q4={q4_value}.")
 def validate_q7(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    sma_20 = runtime.get_variable("sma_20")
+    sma_20 = runtime.retrieve("sma_20")
 
     # Check type
     if not isinstance(sma_20, pd.DataFrame):
@@ -247,7 +247,7 @@ def validate_q7(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
         return ValidatorResult(success=False, message=f"Q7: Incorrect. Expected {correct_answers['q7_20241231']}, but got {sma_value}.")
 
 def validate_q8(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    ema_20 = runtime.get_variable("ema_20")
+    ema_20 = runtime.retrieve("ema_20")
 
     # Check type
     if not isinstance(ema_20, pd.DataFrame):
@@ -266,7 +266,7 @@ def validate_q8(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
         return ValidatorResult(success=False, message=f"Q8: Incorrect. Expected {correct_answers['q8_20241231']}, but got {ema_value}.")
 
 def validate_q9(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    rolling_vol = runtime.get_variable("rolling_volatility")
+    rolling_vol = runtime.retrieve("rolling_volatility")
 
     # Check type
     if not isinstance(rolling_vol, pd.DataFrame):
@@ -285,7 +285,7 @@ def validate_q9(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
         return ValidatorResult(success=False, message=f"Q9: Incorrect. Expected {correct_answers['q9_20241231']}, but got {rolling_vol_value}.")
 
 def validate_q10(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    big_move_days = runtime.get_variable("big_move_days")
+    big_move_days = runtime.retrieve("big_move_days")
 
     # Check type
     if not isinstance(big_move_days, list):
@@ -299,7 +299,7 @@ def validate_q10(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, act
         return ValidatorResult(success=False, message=f"Q10: Incorrect. Expected {correct_answers['q10']}, but got {big_move_days}.")
 
 def validate_q11(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    corr = runtime.get_variable("vol_return_corr")
+    corr = runtime.retrieve("vol_return_corr")
 
     # Check type
     if not isinstance(corr, float):
@@ -314,7 +314,7 @@ def validate_q11(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, act
         return ValidatorResult(success=False, message=f"Q11: Incorrect. Expected {correct_answers['q11']}, but got {corr_value}.")
 
 def validate_q12(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    max_dd = runtime.get_variable("max_drawdown")
+    max_dd = runtime.retrieve("max_drawdown")
 
     # Check type
     if not isinstance(max_dd, float):
@@ -329,8 +329,8 @@ def validate_q12(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, act
         return ValidatorResult(success=False, message=f"Q12: Incorrect. Expected {correct_answers['q12']}, but got {max_dd_value}.")
 
 def validate_q13(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    golden_cross_dates = runtime.get_variable("golden_cross_dates")
-    death_cross_dates = runtime.get_variable("death_cross_dates")
+    golden_cross_dates = runtime.retrieve("golden_cross_dates")
+    death_cross_dates = runtime.retrieve("death_cross_dates")
 
     # Check type
     if not isinstance(golden_cross_dates, list):
@@ -351,7 +351,7 @@ def validate_q13(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, act
         return ValidatorResult(success=False, message=f"Q13: Both values incorrect. Expected golden_cross={correct_answers['q13_golden_cross']}, death_cross={correct_answers['q13_death_cross']}, but got golden_cross={golden_cross_dates}, death_cross={death_cross_dates}.")
 
 def validate_q14(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    rsi = runtime.get_variable("rsi_14")
+    rsi = runtime.retrieve("rsi_14")
 
     # Check type
     if not isinstance(rsi, pd.DataFrame):
@@ -369,8 +369,8 @@ def validate_q14(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, act
     else:
         return ValidatorResult(success=False, message=f"Q14: Incorrect. Expected {correct_answers['q14_1230']}, but got {rsi_1230_value}.")
 def validate_q15(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    portfolio_value = runtime.get_variable("portfolio_value")
-    portfolio_returns = runtime.get_variable("portfolio_returns")
+    portfolio_value = runtime.retrieve("portfolio_value")
+    portfolio_returns = runtime.retrieve("portfolio_returns")
 
     # Check type
     if not isinstance(portfolio_value, float):

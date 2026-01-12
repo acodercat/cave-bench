@@ -74,7 +74,7 @@ def _validate_state(runtime: PythonRuntime, expected: dict) -> list:
     """Helper to validate runtime state against expected values."""
     errors = []
     for key, exp_val in expected.items():
-        val = runtime.get_variable(key)
+        val = runtime.retrieve(key)
         if not _compare_values(val, exp_val):
             errors.append(f"{key}={val} (expected {exp_val})")
     return errors

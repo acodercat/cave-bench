@@ -76,7 +76,7 @@ def validate_q1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the overall placement rate calculation.
     """
-    overall_placement_rate = runtime.get_variable("overall_placement_rate")
+    overall_placement_rate = runtime.retrieve("overall_placement_rate")
     
     if overall_placement_rate is None:
         return ValidatorResult(
@@ -111,7 +111,7 @@ def validate_q2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     values = {}
     
     for var in variables:
-        values[var] = runtime.get_variable(var)
+        values[var] = runtime.retrieve(var)
         if values[var] is None:
             return ValidatorResult(
                 success=False,
@@ -151,8 +151,8 @@ def validate_q3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the placement analysis by internship experience and academic performance.
     """
-    placement_crosstab = runtime.get_variable("placement_crosstab")
-    placement_rates_by_internship_performance = runtime.get_variable("placement_rates_by_internship_performance")
+    placement_crosstab = runtime.retrieve("placement_crosstab")
+    placement_rates_by_internship_performance = runtime.retrieve("placement_rates_by_internship_performance")
     
     if placement_crosstab is None or placement_rates_by_internship_performance is None:
         return ValidatorResult(
@@ -203,7 +203,7 @@ def validate_q4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the skills distribution analysis for placed students.
     """
-    skills_stats_placed = runtime.get_variable("skills_stats_placed")
+    skills_stats_placed = runtime.retrieve("skills_stats_placed")
     
     if skills_stats_placed is None:
         return ValidatorResult(
@@ -248,10 +248,10 @@ def validate_q5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the comprehensive competency analysis.
     """
-    competency_placement_rates = runtime.get_variable("competency_placement_rates")
-    competency_internship_placement_rates = runtime.get_variable("competency_internship_placement_rates")
-    best_combination = runtime.get_variable("best_combination")
-    best_placement_rate = runtime.get_variable("best_placement_rate")
+    competency_placement_rates = runtime.retrieve("competency_placement_rates")
+    competency_internship_placement_rates = runtime.retrieve("competency_internship_placement_rates")
+    best_combination = runtime.retrieve("best_combination")
+    best_placement_rate = runtime.retrieve("best_placement_rate")
     
     if any(var is None for var in [competency_placement_rates, competency_internship_placement_rates, 
                                    best_combination, best_placement_rate]):

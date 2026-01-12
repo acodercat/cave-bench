@@ -15,4 +15,5 @@ dependencies = [
     "anthropic>=0.75.0",
     "python-dotenv>=1.2.1",
     "openai-agents>=0.6.4",
+    "json-repair>=0.55.0",
 ]

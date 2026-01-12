@@ -63,7 +63,7 @@ def validate_morning_climate_check(
     - thermostat.target_temp = 23 (cold morning)
     """
     try:
-        thermostat = runtime.get_variable("thermostat")
+        thermostat = runtime.retrieve("thermostat")
         
         errors = []
         
@@ -105,9 +105,9 @@ def validate_morning_prep(
     - kitchen_light: on at 60%
     """
     try:
-        blinds = runtime.get_variable("bedroom_blinds")
-        coffee = runtime.get_variable("coffee_maker")
-        kitchen = runtime.get_variable("kitchen_light")
+        blinds = runtime.retrieve("bedroom_blinds")
+        coffee = runtime.retrieve("coffee_maker")
+        kitchen = runtime.retrieve("kitchen_light")
         
         errors = []
         
@@ -160,15 +160,15 @@ def validate_leaving_for_work(
     - garage_door closed
     """
     try:
-        bedroom_blinds = runtime.get_variable("bedroom_blinds")
-        living_room_blinds = runtime.get_variable("living_room_blinds")
-        kitchen_blinds = runtime.get_variable("kitchen_blinds")
-        vacuum = runtime.get_variable("robot_vacuum")
-        coffee = runtime.get_variable("coffee_maker")
-        kitchen_light = runtime.get_variable("kitchen_light")
-        thermostat = runtime.get_variable("thermostat")
-        front_lock = runtime.get_variable("front_door_lock")
-        garage = runtime.get_variable("garage_door")
+        bedroom_blinds = runtime.retrieve("bedroom_blinds")
+        living_room_blinds = runtime.retrieve("living_room_blinds")
+        kitchen_blinds = runtime.retrieve("kitchen_blinds")
+        vacuum = runtime.retrieve("robot_vacuum")
+        coffee = runtime.retrieve("coffee_maker")
+        kitchen_light = runtime.retrieve("kitchen_light")
+        thermostat = runtime.retrieve("thermostat")
+        front_lock = runtime.retrieve("front_door_lock")
+        garage = runtime.retrieve("garage_door")
         
         errors = []
         

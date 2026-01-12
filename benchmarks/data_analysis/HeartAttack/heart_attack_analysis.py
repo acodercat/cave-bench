@@ -96,7 +96,7 @@ def validate_q1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the heart attack risk rate by age groups.
     """
-    risk_by_age_group = runtime.get_variable("risk_by_age_group")
+    risk_by_age_group = runtime.retrieve("risk_by_age_group")
     
     if risk_by_age_group is None:
         return ValidatorResult(
@@ -146,10 +146,10 @@ def validate_q2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates average cholesterol and BMI for high-risk vs low-risk patients.
     """
-    avg_cholesterol_high_risk = runtime.get_variable("avg_cholesterol_high_risk")
-    avg_cholesterol_low_risk = runtime.get_variable("avg_cholesterol_low_risk")
-    avg_bmi_high_risk = runtime.get_variable("avg_bmi_high_risk")
-    avg_bmi_low_risk = runtime.get_variable("avg_bmi_low_risk")
+    avg_cholesterol_high_risk = runtime.retrieve("avg_cholesterol_high_risk")
+    avg_cholesterol_low_risk = runtime.retrieve("avg_cholesterol_low_risk")
+    avg_bmi_high_risk = runtime.retrieve("avg_bmi_high_risk")
+    avg_bmi_low_risk = runtime.retrieve("avg_bmi_low_risk")
     
     if any(var is None for var in [avg_cholesterol_high_risk, avg_cholesterol_low_risk, 
                                     avg_bmi_high_risk, avg_bmi_low_risk]):
@@ -180,9 +180,9 @@ def validate_q3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates lifestyle factors risk analysis.
     """
-    lifestyle_risk_rates = runtime.get_variable("lifestyle_risk_rates")
-    most_dangerous_pattern = runtime.get_variable("most_dangerous_pattern")
-    safest_pattern = runtime.get_variable("safest_pattern")
+    lifestyle_risk_rates = runtime.retrieve("lifestyle_risk_rates")
+    most_dangerous_pattern = runtime.retrieve("most_dangerous_pattern")
+    safest_pattern = runtime.retrieve("safest_pattern")
     
     if lifestyle_risk_rates is None:
         return ValidatorResult(
@@ -240,9 +240,9 @@ def validate_q4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates blood pressure and stress correlation analysis.
     """
-    avg_systolic_diabetes = runtime.get_variable("avg_systolic_diabetes")
-    avg_systolic_no_diabetes = runtime.get_variable("avg_systolic_no_diabetes")
-    stress_bp_correlation = runtime.get_variable("stress_bp_correlation")
+    avg_systolic_diabetes = runtime.retrieve("avg_systolic_diabetes")
+    avg_systolic_no_diabetes = runtime.retrieve("avg_systolic_no_diabetes")
+    stress_bp_correlation = runtime.retrieve("stress_bp_correlation")
     
     if any(var is None for var in [avg_systolic_diabetes, avg_systolic_no_diabetes, stress_bp_correlation]):
         return ValidatorResult(
@@ -272,11 +272,11 @@ def validate_q5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates complex multi-factor risk analysis.
     """
-    risk_score_rates = runtime.get_variable("risk_score_rates")
-    best_exercise_diet_combo = runtime.get_variable("best_exercise_diet_combo")
+    risk_score_rates = runtime.retrieve("risk_score_rates")
+    best_exercise_diet_combo = runtime.retrieve("best_exercise_diet_combo")
     print(type(best_exercise_diet_combo))
-    cholesterol_threshold = runtime.get_variable("cholesterol_threshold")
-    triglycerides_threshold = runtime.get_variable("triglycerides_threshold")
+    cholesterol_threshold = runtime.retrieve("cholesterol_threshold")
+    triglycerides_threshold = runtime.retrieve("triglycerides_threshold")
     
     if any(var is None for var in [risk_score_rates, best_exercise_diet_combo, 
                                    cholesterol_threshold, triglycerides_threshold]):

@@ -1,0 +1,24 @@
+[
+  {
+    "name": "stock_benchmark_fc_analysis",
+    "module": "benchmarks.stock_analysis.stock_benchmark_fc",
+    "requirements": "You are a financial data analyst. Don't generate Python code. You do it by your own. Perform data analysis tasks.\n\nYou can use query tools to retrieve data, then compute statistics and return the results.\n\nOutput Format: Return statistics as JSON object:\n{{\"statistics\": {{...}}, \"insight\": \"...\"}}\n\nExample:\n{{\"statistics\": {{\"correlation\": 0.85, \"sharpe_ratio\": 1.2}}, \"insight\": \"Strong positive correlation observed.\"}}. Do not return any other text or comments.",
+    "conversations": [
+      {
+        "id": "data_analysis",
+        "turns": [
+          {"query": "Calculate annualized 30-day rolling volatility for AAPL in 2023 (2023-01-01 to 2023-12-31). Return as JSON: {\"statistics\": {\"avg_volatility\": value}, \"insight\": \"...\"}. Do not return any other text or comments.", "validator": "validate_q11"},
+          {"query": "Count how many days GOOGL volume exceeded 100 million. Use query_by_volume_threshold and count the results. Return as JSON: {\"statistics\": {\"count\": value}, \"insight\": \"...\"}. Do not return any other text or comments.", "validator": "validate_q12"},
+          {"query": "Calculate Sharpe ratio for GOOGL in 2023 (assume risk-free rate = 0). Return as JSON: {\"statistics\": {\"sharpe_ratio\": value}, \"insight\": \"...\"}. Do not return any other text or comments.", "validator": "validate_q13"},
+          {"query": "Find maximum drawdown for AAPL from 2020 to 2023 (return as percentage, e.g., -31.5 for -31.5%). Return as JSON: {\"statistics\": {\"max_drawdown\": value}, \"insight\": \"...\"}. Do not return any other text or comments.", "validator": "validate_q14"},
+          {"query": "Compute month-over-month return statistics for AAPL in 2023 (use month-end close prices, calculate pct_change between months, return as decimal not percentage). Return as JSON: {\"statistics\": {\"mean\": value, \"std\": value, \"min\": value, \"max\": value}, \"insight\": \"...\"}. Do not return any other text or comments.", "validator": "validate_q15"},
+          {"query": "Calculate beta of AAPL relative to GOOGL for 2023. Return as JSON: {\"statistics\": {\"beta\": value}, \"insight\": \"...\"}. Do not return any other text or comments.", "validator": "validate_q16"},
+          {"query": "Get the top 5 highest volume days for AAPL using query_top_volume_days, then calculate the average closing price. Return as JSON: {\"statistics\": {\"avg_close\": value}, \"insight\": \"...\"}. Do not return any other text or comments.", "validator": "validate_q17"},
+          {"query": "Get AAPL weekly OHLC for Q4 2023 (2023-10-01 to 2023-12-31), then find the maximum weekly closing price. Return as JSON: {\"statistics\": {\"max_close\": value}, \"insight\": \"...\"}. Do not return any other text or comments.", "validator": "validate_q18"},
+          {"query": "Calculate average daily trading range (high-low) by month for AAPL in 2023. Return as JSON: {\"statistics\": {\"2023-01\": value, \"2023-02\": value, ...}, \"insight\": \"...\"} with one entry per month. Do not return any other text or comments.", "validator": "validate_q19"},
+          {"query": "Perform SMA crossover analysis (SMA20 vs SMA50) for AAPL in 2023. Return as JSON: {\"statistics\": {\"crossover_count\": value}, \"insight\": \"...\"}. Do not return any other text or comments.", "validator": "validate_q20"}
+        ]
+      }
+    ]
+  }
+]

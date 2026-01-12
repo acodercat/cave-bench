@@ -139,32 +139,32 @@ result_num = 0.0
 # ============================================================================
 
 def validate_person_init(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    p = runtime.get_variable("person")
+    p = runtime.retrieve("person")
     ok = p.name == "Alice" and p.age == 25
     return ValidatorResult(ok, f"name='{p.name}', age={p.age}")
 
 def validate_person_update(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    p = runtime.get_variable("person")
+    p = runtime.retrieve("person")
     ok = p.age == 26 and p.city == "Boston"
     return ValidatorResult(ok, f"age={p.age}, city='{p.city}'")
 
 def validate_person_method(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_str")
+    r = runtime.retrieve("result_str")
     expected = "Hi, I'm Alice, 26 years old from Boston."
     return ValidatorResult(r == expected, f"result_str = '{r}'")
 
 
 def validate_person_birthday_init(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    p = runtime.get_variable("person")
+    p = runtime.retrieve("person")
     ok = p.name == "Bob" and p.age == 30
     return ValidatorResult(ok, f"name='{p.name}', age={p.age}")
 
 def validate_person_birthday(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    p = runtime.get_variable("person")
+    p = runtime.retrieve("person")
     return ValidatorResult(p.age == 31, f"age = {p.age}, expected 31")
 
 def validate_person_birthday2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    p = runtime.get_variable("person")
+    p = runtime.retrieve("person")
     return ValidatorResult(p.age == 32, f"age = {p.age}, expected 32")
 
 
@@ -173,34 +173,34 @@ def validate_person_birthday2(response: str, runtime: PythonRuntime, turn: Bench
 # ============================================================================
 
 def validate_account_deposit(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    a = runtime.get_variable("account")
+    a = runtime.retrieve("account")
     ok = abs(a.balance - 1500.0) < 0.01
     return ValidatorResult(ok, f"balance = {a.balance}")
 
 def validate_account_withdraw(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    a = runtime.get_variable("account")
+    a = runtime.retrieve("account")
     ok = abs(a.balance - 1300.0) < 0.01
     return ValidatorResult(ok, f"balance = {a.balance}")
 
 def validate_account_interest(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    a = runtime.get_variable("account")
+    a = runtime.retrieve("account")
     expected = 1300.0 * 1.10
     ok = abs(a.balance - expected) < 0.01
     return ValidatorResult(ok, f"balance = {a.balance}")
 
 
 def validate_account_multi_deposit(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    a = runtime.get_variable("account")
+    a = runtime.retrieve("account")
     ok = abs(a.balance - 1300.0) < 0.01
     return ValidatorResult(ok, f"balance = {a.balance}")
 
 def validate_account_multi_withdraw(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    a = runtime.get_variable("account")
+    a = runtime.retrieve("account")
     ok = abs(a.balance - 1050.0) < 0.01
     return ValidatorResult(ok, f"balance = {a.balance}")
 
 def validate_account_balance(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_num")
+    r = runtime.retrieve("result_num")
     ok = abs(r - 1050.0) < 0.01
     return ValidatorResult(ok, f"result_num = {r}")
 
@@ -210,34 +210,34 @@ def validate_account_balance(response: str, runtime: PythonRuntime, turn: Benchm
 # ============================================================================
 
 def validate_cart_add(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    c = runtime.get_variable("cart")
+    c = runtime.retrieve("cart")
     ok = len(c.items) == 1 and c.items[0].get("name") == "Book"
     return ValidatorResult(ok, f"items = {c.items}")
 
 def validate_cart_add2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    c = runtime.get_variable("cart")
+    c = runtime.retrieve("cart")
     ok = len(c.items) == 2
     return ValidatorResult(ok, f"items count = {len(c.items)}")
 
 def validate_cart_total(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_num")
+    r = runtime.retrieve("result_num")
     expected = 15.99 + 2.50
     ok = abs(r - expected) < 0.01
     return ValidatorResult(ok, f"result_num = {r}")
 
 
 def validate_cart_qty_add(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    c = runtime.get_variable("cart")
+    c = runtime.retrieve("cart")
     ok = len(c.items) == 1 and c.items[0].get("quantity") == 3
     return ValidatorResult(ok, f"items = {c.items}")
 
 def validate_cart_qty_add2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    c = runtime.get_variable("cart")
+    c = runtime.retrieve("cart")
     ok = len(c.items) == 2
     return ValidatorResult(ok, f"items count = {len(c.items)}")
 
 def validate_cart_qty_total(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_num")
+    r = runtime.retrieve("result_num")
     expected = 10.0 * 3 + 5.0 * 2
     ok = abs(r - expected) < 0.01
     return ValidatorResult(ok, f"result_num = {r}")
@@ -248,28 +248,28 @@ def validate_cart_qty_total(response: str, runtime: PythonRuntime, turn: Benchma
 # ============================================================================
 
 def validate_counter_inc(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    c = runtime.get_variable("counter")
+    c = runtime.retrieve("counter")
     return ValidatorResult(c.value == 3, f"value = {c.value}")
 
 def validate_counter_mixed(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    c = runtime.get_variable("counter")
+    c = runtime.retrieve("counter")
     return ValidatorResult(c.value == 4, f"value = {c.value}")
 
 def validate_counter_reset(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    c = runtime.get_variable("counter")
+    c = runtime.retrieve("counter")
     return ValidatorResult(c.value == 0, f"value = {c.value}")
 
 
 def validate_counter_add10(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    c = runtime.get_variable("counter")
+    c = runtime.retrieve("counter")
     return ValidatorResult(c.value == 10, f"value = {c.value}")
 
 def validate_counter_add5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    c = runtime.get_variable("counter")
+    c = runtime.retrieve("counter")
     return ValidatorResult(c.value == 15, f"value = {c.value}")
 
 def validate_counter_store(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_num")
+    r = runtime.retrieve("result_num")
     return ValidatorResult(r == 15, f"result_num = {r}")
 
 
@@ -278,37 +278,37 @@ def validate_counter_store(response: str, runtime: PythonRuntime, turn: Benchmar
 # ============================================================================
 
 def validate_stack_push(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    s = runtime.get_variable("stack")
+    s = runtime.retrieve("stack")
     ok = s.size() == 3
     return ValidatorResult(ok, f"size = {s.size()}")
 
 def validate_stack_pop(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    s = runtime.get_variable("stack")
-    r = runtime.get_variable("result_str")
+    s = runtime.retrieve("stack")
+    r = runtime.retrieve("result_str")
     ok = s.size() == 2 and r == "C"
     return ValidatorResult(ok, f"size = {s.size()}, popped = {r}")
 
 def validate_stack_peek(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    s = runtime.get_variable("stack")
-    r = runtime.get_variable("result_str")
+    s = runtime.retrieve("stack")
+    r = runtime.retrieve("result_str")
     ok = s.size() == 2 and r == "B"
     return ValidatorResult(ok, f"size = {s.size()}, top = {r}")
 
 
 def validate_stack_push_nums(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    s = runtime.get_variable("stack")
+    s = runtime.retrieve("stack")
     ok = s.size() == 5
     return ValidatorResult(ok, f"size = {s.size()}")
 
 def validate_stack_pop_sum(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    s = runtime.get_variable("stack")
-    r = runtime.get_variable("result_num")
+    s = runtime.retrieve("stack")
+    r = runtime.retrieve("result_num")
     # Popped 5 + 4 = 9
     ok = s.size() == 3 and r == 9
     return ValidatorResult(ok, f"size = {s.size()}, sum = {r}")
 
 def validate_stack_size(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_num")
+    r = runtime.retrieve("result_num")
     return ValidatorResult(r == 3, f"result_num = {r}")
 
 
@@ -317,21 +317,21 @@ def validate_stack_size(response: str, runtime: PythonRuntime, turn: BenchmarkTu
 # ============================================================================
 
 def validate_cart_add_items(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    c = runtime.get_variable("cart")
+    c = runtime.retrieve("cart")
     # Should have Laptop and Mouse
     names = [item.get("name") for item in c.items]
     ok = len(c.items) == 2 and "Laptop" in names and "Mouse" in names
     return ValidatorResult(ok, f"items = {names}")
 
 def validate_cart_remove(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    c = runtime.get_variable("cart")
+    c = runtime.retrieve("cart")
     # Mouse should be removed, only Laptop remains
     names = [item.get("name") for item in c.items]
     ok = len(c.items) == 1 and "Laptop" in names and "Mouse" not in names
     return ValidatorResult(ok, f"items = {names}")
 
 def validate_cart_clear(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    c = runtime.get_variable("cart")
+    c = runtime.retrieve("cart")
     ok = len(c.items) == 0
     return ValidatorResult(ok, f"items count = {len(c.items)}, expected 0")
 
@@ -341,21 +341,21 @@ def validate_cart_clear(response: str, runtime: PythonRuntime, turn: BenchmarkTu
 # ============================================================================
 
 def validate_stack_multi_push(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    s = runtime.get_variable("stack")
+    s = runtime.retrieve("stack")
     ok = s.size() == 4
     return ValidatorResult(ok, f"size = {s.size()}, expected 4")
 
 def validate_stack_pop_until(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    s = runtime.get_variable("stack")
-    r = runtime.get_variable("result_num")
+    s = runtime.retrieve("stack")
+    r = runtime.retrieve("result_num")
     # Popped 'D', 'C', 'B' (3 items), sum of their ASCII or count
     # Stack should have 1 item left ('A')
     ok = s.size() == 1 and r == 3
     return ValidatorResult(ok, f"size = {s.size()}, popped count = {r}")
 
 def validate_stack_peek_after(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    s = runtime.get_variable("stack")
-    r = runtime.get_variable("result_str")
+    s = runtime.retrieve("stack")
+    r = runtime.retrieve("result_str")
     ok = s.size() == 1 and r == "A"
     return ValidatorResult(ok, f"size = {s.size()}, top = {r}")
 

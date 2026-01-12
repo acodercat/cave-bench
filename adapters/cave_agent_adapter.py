@@ -65,8 +65,8 @@ class CaveAgentWrapper(Agent):
             runtime=runtime,
             max_steps=100,
             max_history=200,
-            max_execution_result_length=10000,
-            log_level=LogLevel.INFO,
+            max_execution_result_length=80000,
+            log_level=LogLevel.DEBUG,
             agent_identity=DEFAULT_AGENT_IDENTITY,
             instructions=instructions
         )

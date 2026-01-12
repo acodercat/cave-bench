@@ -78,7 +78,7 @@ result_value = 0.0
 # ============================================================================
 
 def validate_df_add_column(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    d = runtime.get_variable("df")
+    d = runtime.retrieve("df")
     if "total" not in d.columns:
         return ValidatorResult(False, "Column 'total' not found")
     expected = [5000.0, 6000.0, 1000.0, 1200.0, 1000.0]
@@ -87,12 +87,12 @@ def validate_df_add_column(response: str, runtime: PythonRuntime, turn: Benchmar
     return ValidatorResult(ok, f"total = {actual}")
 
 def validate_df_filter(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    d = runtime.get_variable("df")
+    d = runtime.retrieve("df")
     ok = len(d) == 3 and all(t > 1000 for t in d["total"].tolist())
     return ValidatorResult(ok, f"df has {len(d)} rows with total > 1000")
 
 def validate_df_sort(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    d = runtime.get_variable("df")
+    d = runtime.retrieve("df")
     totals = d["total"].tolist()
     ok = totals == sorted(totals, reverse=True)
     return ValidatorResult(ok, f"totals = {totals}")
@@ -103,7 +103,7 @@ def validate_df_sort(response: str, runtime: PythonRuntime, turn: BenchmarkTurn,
 # ============================================================================
 
 def validate_df_groupby(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_df")
+    r = runtime.retrieve("result_df")
     if r is None:
         return ValidatorResult(False, "result_df is None")
     # Electronics: 1700, Clothing: 130, Food: 10
@@ -116,13 +116,13 @@ def validate_df_groupby(response: str, runtime: PythonRuntime, turn: BenchmarkTu
     return ValidatorResult(ok, f"grouped = {r}")
 
 def validate_df_groupby_count(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_value")
+    r = runtime.retrieve("result_value")
     # Number of categories: 3
     ok = r == 3
     return ValidatorResult(ok, f"category count = {r}, expected 3")
 
 def validate_df_groupby_max(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_value")
+    r = runtime.retrieve("result_value")
     # Max total price: Electronics = 1700
     ok = abs(r - 1700.0) < 0.01
     return ValidatorResult(ok, f"max = {r}, expected 1700.0")
@@ -133,14 +133,14 @@ def validate_df_groupby_max(response: str, runtime: PythonRuntime, turn: Benchma
 # ============================================================================
 
 def validate_df_merge(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_df")
+    r = runtime.retrieve("result_df")
     if r is None:
         return ValidatorResult(False, "result_df is None")
     ok = len(r) == 3 and "supplier" in r.columns
     return ValidatorResult(ok, f"merged has {len(r)} rows, columns: {r.columns.tolist()}")
 
 def validate_df_merge_filter(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_df")
+    r = runtime.retrieve("result_df")
     if r is None:
         return ValidatorResult(False, "result_df is None")
     # Filter supplier == 'SupA': Phone, Shirt
@@ -148,7 +148,7 @@ def validate_df_merge_filter(response: str, runtime: PythonRuntime, turn: Benchm
     return ValidatorResult(ok, f"filtered to {r['product'].tolist()}")
 
 def validate_df_merge_sum(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_value")
+    r = runtime.retrieve("result_value")
     # Sum of prices for SupA: 500 + 50 = 550
     ok = abs(r - 550.0) < 0.01
     return ValidatorResult(ok, f"sum = {r}, expected 550.0")
@@ -159,19 +159,19 @@ def validate_df_merge_sum(response: str, runtime: PythonRuntime, turn: Benchmark
 # ============================================================================
 
 def validate_array_multiply(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    m = runtime.get_variable("matrix")
+    m = runtime.retrieve("matrix")
     expected = np.array([[2, 4, 6], [8, 10, 12], [14, 16, 18]])
     ok = bool(np.array_equal(m, expected))
     return ValidatorResult(ok, f"matrix[0] = {m[0].tolist()}")
 
 def validate_array_add(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    m = runtime.get_variable("matrix")
+    m = runtime.retrieve("matrix")
     expected = np.array([[12, 14, 16], [18, 20, 22], [24, 26, 28]])
     ok = bool(np.array_equal(m, expected))
     return ValidatorResult(ok, f"matrix[0] = {m[0].tolist()}")
 
 def validate_array_transpose(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    m = runtime.get_variable("matrix")
+    m = runtime.retrieve("matrix")
     expected = np.array([[12, 18, 24], [14, 20, 26], [16, 22, 28]])
     ok = bool(np.array_equal(m, expected))
     return ValidatorResult(ok, f"matrix shape = {m.shape}")
@@ -182,14 +182,14 @@ def validate_array_transpose(response: str, runtime: PythonRuntime, turn: Benchm
 # ============================================================================
 
 def validate_array_reshape(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_array")
+    r = runtime.retrieve("result_array")
     if r is None:
         return ValidatorResult(False, "result_array is None")
     ok = r.shape == (2, 4)
     return ValidatorResult(ok, f"shape = {r.shape}, expected (2, 4)")
 
 def validate_array_sum_axis(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_array")
+    r = runtime.retrieve("result_array")
     if r is None:
         return ValidatorResult(False, "result_array is None")
     # Sum along axis 1: [10+25+5+30, 15+8+22+3] = [70, 48]
@@ -198,7 +198,7 @@ def validate_array_sum_axis(response: str, runtime: PythonRuntime, turn: Benchma
     return ValidatorResult(ok, f"row sums = {r.tolist()}")
 
 def validate_array_total(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_value")
+    r = runtime.retrieve("result_value")
     # Total: 70 + 48 = 118
     ok = r == 118
     return ValidatorResult(ok, f"total = {r}, expected 118")
@@ -209,7 +209,7 @@ def validate_array_total(response: str, runtime: PythonRuntime, turn: BenchmarkT
 # ============================================================================
 
 def validate_array_bool_filter(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_array")
+    r = runtime.retrieve("result_array")
     if r is None:
         return ValidatorResult(False, "result_array is None")
     expected = np.array([25, 30, 15, 22])
@@ -217,14 +217,14 @@ def validate_array_bool_filter(response: str, runtime: PythonRuntime, turn: Benc
     return ValidatorResult(ok, f"filtered = {r.tolist()}")
 
 def validate_array_bool_replace(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    a = runtime.get_variable("array")
+    a = runtime.retrieve("array")
     # 10 < 10 is False, so 10 stays. Values < 10 are 5, 8, 3 which become 0
     expected = np.array([10, 25, 0, 30, 15, 0, 22, 0])
     ok = bool(np.array_equal(a, expected))
     return ValidatorResult(ok, f"array = {a.tolist()}")
 
 def validate_array_bool_mean(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_value")
+    r = runtime.retrieve("result_value")
     # Mean of non-zero: (10+25+30+15+22)/5 = 20.4
     ok = abs(r - 20.4) < 0.01
     return ValidatorResult(ok, f"mean = {r}, expected 20.4")
@@ -235,19 +235,19 @@ def validate_array_bool_mean(response: str, runtime: PythonRuntime, turn: Benchm
 # ============================================================================
 
 def validate_series_add(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    s = runtime.get_variable("series")
+    s = runtime.retrieve("series")
     expected = [90, 97, 83, 100, 93]
     ok = s.tolist() == expected
     return ValidatorResult(ok, f"series = {s.tolist()}")
 
 def validate_series_clip(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    s = runtime.get_variable("series")
+    s = runtime.retrieve("series")
     ok = bool(s.max() <= 100 and s.min() >= 80)
     return ValidatorResult(ok, f"min={s.min()}, max={s.max()}")
 
 def validate_series_mean(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_value")
-    s = runtime.get_variable("series")
+    r = runtime.retrieve("result_value")
+    s = runtime.retrieve("series")
     expected = s.mean()
     ok = abs(r - expected) < 0.01
     return ValidatorResult(ok, f"mean = {r}")
@@ -258,7 +258,7 @@ def validate_series_mean(response: str, runtime: PythonRuntime, turn: BenchmarkT
 # ============================================================================
 
 def validate_series_select(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_array")
+    r = runtime.retrieve("result_array")
     if r is None:
         return ValidatorResult(False, "result_array is None")
     # Select b, c, d from original: 92, 78, 95
@@ -268,14 +268,14 @@ def validate_series_select(response: str, runtime: PythonRuntime, turn: Benchmar
     return ValidatorResult(ok, f"selected = {list(r)}")
 
 def validate_series_multiply(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    s = runtime.get_variable("series")
+    s = runtime.retrieve("series")
     # b, c, d doubled: a=85, b=184, c=156, d=190, e=88
     expected = {"a": 85, "b": 184, "c": 156, "d": 190, "e": 88}
     ok = s.to_dict() == expected
     return ValidatorResult(ok, f"series = {s.to_dict()}")
 
 def validate_series_sum(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_value")
+    r = runtime.retrieve("result_value")
     # Sum: 85 + 184 + 156 + 190 + 88 = 703
     ok = r == 703
     return ValidatorResult(ok, f"sum = {r}, expected 703")
@@ -286,7 +286,7 @@ def validate_series_sum(response: str, runtime: PythonRuntime, turn: BenchmarkTu
 # ============================================================================
 
 def validate_series_bool_filter(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_array")
+    r = runtime.retrieve("result_array")
     if r is None:
         return ValidatorResult(False, "result_array is None")
     # Values > 90 from original: 92, 95
@@ -296,13 +296,13 @@ def validate_series_bool_filter(response: str, runtime: PythonRuntime, turn: Ben
     return ValidatorResult(ok, f"filtered = {list(r)}")
 
 def validate_series_bool_count(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_value")
+    r = runtime.retrieve("result_value")
     # Count > 90: 2
     ok = r == 2
     return ValidatorResult(ok, f"count = {r}, expected 2")
 
 def validate_series_max(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_value")
+    r = runtime.retrieve("result_value")
     ok = r == 95
     return ValidatorResult(ok, f"max = {r}, expected 95")
 
@@ -312,13 +312,13 @@ def validate_series_max(response: str, runtime: PythonRuntime, turn: BenchmarkTu
 # ============================================================================
 
 def validate_df_fillna(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    d = runtime.get_variable("df_missing")
+    d = runtime.retrieve("df_missing")
     # Check no NaN in age column after filling with 30
     ok = bool(not d["age"].isna().any() and d["age"].tolist() == [25.0, 30.0, 35.0, 30.0, 28.0])
     return ValidatorResult(ok, f"age = {d['age'].tolist()}")
 
 def validate_df_dropna(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_df")
+    r = runtime.retrieve("result_df")
     if r is None:
         return ValidatorResult(False, "result_df is None")
     # After fillna on age: Alice, Bob, Diana have complete data (Charlie, Eve have NaN score)
@@ -326,7 +326,7 @@ def validate_df_dropna(response: str, runtime: PythonRuntime, turn: BenchmarkTur
     return ValidatorResult(ok, f"rows without NaN = {len(r)}")
 
 def validate_df_apply(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    d = runtime.get_variable("df_missing")
+    d = runtime.retrieve("df_missing")
     # score doubled where not NaN
     ok = bool(d.loc[0, "score"] == 170.0 and d.loc[1, "score"] == 180.0)
     return ValidatorResult(ok, f"scores = {d['score'].tolist()}")
@@ -337,7 +337,7 @@ def validate_df_apply(response: str, runtime: PythonRuntime, turn: BenchmarkTurn
 # ============================================================================
 
 def validate_df_pivot(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_df")
+    r = runtime.retrieve("result_df")
     if r is None:
         return ValidatorResult(False, "result_df is None")
     # Pivot: rows=region, columns=quarter, values=sales
@@ -345,13 +345,13 @@ def validate_df_pivot(response: str, runtime: PythonRuntime, turn: BenchmarkTurn
     return ValidatorResult(ok, f"pivot shape = {r.shape}")
 
 def validate_df_pivot_sum(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_value")
+    r = runtime.retrieve("result_value")
     # Sum all sales: 100+150+200+180+120+140 = 890
     ok = r == 890
     return ValidatorResult(ok, f"total sales = {r}, expected 890")
 
 def validate_df_pivot_max_region(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_value")
+    r = runtime.retrieve("result_value")
     # Max region total: South = 200+180 = 380
     ok = r == 380
     return ValidatorResult(ok, f"max region = {r}, expected 380")
@@ -362,7 +362,7 @@ def validate_df_pivot_max_region(response: str, runtime: PythonRuntime, turn: Be
 # ============================================================================
 
 def validate_array_concat(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_array")
+    r = runtime.retrieve("result_array")
     if r is None:
         return ValidatorResult(False, "result_array is None")
     # Concatenate array and array2
@@ -371,7 +371,7 @@ def validate_array_concat(response: str, runtime: PythonRuntime, turn: Benchmark
     return ValidatorResult(ok, f"length = {len(r)}, expected 16")
 
 def validate_array_slice(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_array")
+    r = runtime.retrieve("result_array")
     if r is None:
         return ValidatorResult(False, "result_array is None")
     # Slice first 4 elements from result_array
@@ -380,7 +380,7 @@ def validate_array_slice(response: str, runtime: PythonRuntime, turn: BenchmarkT
     return ValidatorResult(ok, f"sliced = {r.tolist()}")
 
 def validate_array_reverse(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_array")
+    r = runtime.retrieve("result_array")
     if r is None:
         return ValidatorResult(False, "result_array is None")
     # Reverse the sliced array
@@ -390,7 +390,7 @@ def validate_array_reverse(response: str, runtime: PythonRuntime, turn: Benchmar
 
 
 def validate_array_dot(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_array")
+    r = runtime.retrieve("result_array")
     if r is None:
         return ValidatorResult(False, "result_array is None")
     # matrix (3x3) @ matrix2 (3x2) = (3x2)
@@ -401,7 +401,7 @@ def validate_array_dot(response: str, runtime: PythonRuntime, turn: BenchmarkTur
     return ValidatorResult(ok, f"shape = {r.shape}, expected (3, 2)")
 
 def validate_array_dot_sum(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_value")
+    r = runtime.retrieve("result_value")
     # Sum of dot product result
     m = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
     m2 = np.array([[1, 0], [0, 1], [1, 1]])
@@ -410,7 +410,7 @@ def validate_array_dot_sum(response: str, runtime: PythonRuntime, turn: Benchmar
     return ValidatorResult(ok, f"sum = {r}, expected {expected}")
 
 def validate_array_dot_max(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_value")
+    r = runtime.retrieve("result_value")
     # Max of dot product result
     m = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
     m2 = np.array([[1, 0], [0, 1], [1, 1]])
@@ -424,7 +424,7 @@ def validate_array_dot_max(response: str, runtime: PythonRuntime, turn: Benchmar
 # ============================================================================
 
 def validate_series_cumsum(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_array")
+    r = runtime.retrieve("result_array")
     if r is None:
         return ValidatorResult(False, "result_array is None")
     # Cumsum of original series [85, 92, 78, 95, 88]
@@ -435,7 +435,7 @@ def validate_series_cumsum(response: str, runtime: PythonRuntime, turn: Benchmar
     return ValidatorResult(ok, f"cumsum = {list(r)}")
 
 def validate_series_diff(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_array")
+    r = runtime.retrieve("result_array")
     if r is None:
         return ValidatorResult(False, "result_array is None")
     # Diff of original series (excluding first NaN)
@@ -448,7 +448,7 @@ def validate_series_diff(response: str, runtime: PythonRuntime, turn: BenchmarkT
     return ValidatorResult(ok, f"diff = {actual}")
 
 def validate_series_rank(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
-    r = runtime.get_variable("result_array")
+    r = runtime.retrieve("result_array")
     if r is None:
         return ValidatorResult(False, "result_array is None")
     # Rank of original series [85, 92, 78, 95, 88]: [2, 4, 1, 5, 3]

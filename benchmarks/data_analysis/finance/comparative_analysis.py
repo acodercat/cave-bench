@@ -37,9 +37,9 @@ def validate_total_returns(
 ) -> ValidatorResult:
     """Turn 1: Calculate total returns (floats) and better performer (string)."""
     try:
-        aapl_return = runtime.get_variable("aapl_total_return")
-        googl_return = runtime.get_variable("googl_total_return")
-        better = runtime.get_variable("better_performer")
+        aapl_return = runtime.retrieve("aapl_total_return")
+        googl_return = runtime.retrieve("googl_total_return")
+        better = runtime.retrieve("better_performer")
 
         errors = []
 
@@ -80,7 +80,7 @@ def validate_merged_data(
 ) -> ValidatorResult:
     """Turn 2: Merge DataFrames on overlapping dates."""
     try:
-        merged = runtime.get_variable("merged_df")
+        merged = runtime.retrieve("merged_df")
 
         if merged is None:
             return ValidatorResult(False, "merged_df not created")
@@ -118,8 +118,8 @@ def validate_daily_returns(
 ) -> ValidatorResult:
     """Turn 3: Add daily returns and compute correlation."""
     try:
-        merged = runtime.get_variable("merged_df")
-        corr = runtime.get_variable("correlation")
+        merged = runtime.retrieve("merged_df")
+        corr = runtime.retrieve("correlation")
 
         errors = []
 

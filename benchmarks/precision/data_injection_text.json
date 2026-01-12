@@ -1,0 +1,54 @@
+[
+  {
+    "name": "data_injection_text",
+    "module": "benchmarks.precision.data_injection_text",
+    "requirements": "You are a data analyst. Stock data will be provided as CSV text in each query. Parse the data and perform calculations. Store results in the specified variables. Also output as JSON: {{\"result\": <value>}}",
+    "conversations": [
+      {
+        "id": "text_based_analysis",
+        "turns": [
+          {
+            "pre_turn_hook": "hook_avg_daily_range",
+            "validator": "validate_avg_daily_range"
+          },
+          {
+            "pre_turn_hook": "hook_up_day_volume",
+            "validator": "validate_up_day_volume"
+          },
+          {
+            "pre_turn_hook": "hook_range_volume_corr",
+            "validator": "validate_range_volume_corr"
+          },
+          {
+            "pre_turn_hook": "hook_avg_intraday_return",
+            "validator": "validate_avg_intraday_return"
+          },
+          {
+            "pre_turn_hook": "hook_volatility",
+            "validator": "validate_volatility"
+          },
+          {
+            "pre_turn_hook": "hook_max_single_day_gain",
+            "validator": "validate_max_single_day_gain"
+          },
+          {
+            "pre_turn_hook": "hook_vwap",
+            "validator": "validate_vwap"
+          },
+          {
+            "pre_turn_hook": "hook_down_day_avg_range",
+            "validator": "validate_down_day_avg_range"
+          },
+          {
+            "pre_turn_hook": "hook_aapl_googl_corr",
+            "validator": "validate_aapl_googl_corr"
+          },
+          {
+            "pre_turn_hook": "hook_volume_ratio",
+            "validator": "validate_volume_ratio"
+          }
+        ]
+      }
+    ]
+  }
+]

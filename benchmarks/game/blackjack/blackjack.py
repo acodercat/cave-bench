@@ -551,7 +551,7 @@ def validate_initial_decision(
     """
     Validate Turn 1: Player made a decision (hit or stand).
     """
-    game = runtime.get_variable("game")
+    game = runtime.retrieve("game")
 
     # Check that player took an action
     if game.player_action is None:
@@ -577,7 +577,7 @@ def validate_continued_play(
     """
     Validate Turn 2: Player responded appropriately to new card.
     """
-    game = runtime.get_variable("game")
+    game = runtime.retrieve("game")
 
     # If game ended (bust), check that player acknowledged
     if game.phase == GamePhase.FINISHED and game.result == "lose":
@@ -612,7 +612,7 @@ def validate_game_complete(
     """
     Validate final turn: Game completed and result acknowledged.
     """
-    game = runtime.get_variable("game")
+    game = runtime.retrieve("game")
 
     # Game should be finished
     if game.phase != GamePhase.FINISHED:

@@ -58,7 +58,7 @@ CORRECT_ANSWERS = {
 
 def validate_q1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Validates the depreciation calculation."""
-    value = runtime.get_variable("q1_depreciation_answer")
+    value = runtime.retrieve("q1_depreciation_answer")
     expected = CORRECT_ANSWERS["q1"]
     if isinstance(value, (int, float)) and math.isclose(value, expected, rel_tol=TOLERANCE):
         return ValidatorResult(success=True, message="Q1: Depreciation calculation is correct.")
@@ -66,7 +66,7 @@ def validate_q1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
 
 def validate_q3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Validates the interest compounding calculation."""
-    value = runtime.get_variable("q3_compounding_answer")
+    value = runtime.retrieve("q3_compounding_answer")
     expected = CORRECT_ANSWERS["q3"]
     if isinstance(value, (int, float)) and math.isclose(value, expected, rel_tol=TOLERANCE):
         return ValidatorResult(success=True, message="Q3: Interest compounding calculation is correct.")
@@ -74,7 +74,7 @@ def validate_q3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
 
 def validate_q7(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Validates the commitment fee calculation."""
-    value = runtime.get_variable("q7_fee_answer")
+    value = runtime.retrieve("q7_fee_answer")
     expected = CORRECT_ANSWERS["q7"]
     if isinstance(value, (int, float)) and math.isclose(value, expected, rel_tol=TOLERANCE):
         return ValidatorResult(success=True, message="Q7: Commitment fee calculation is correct.")

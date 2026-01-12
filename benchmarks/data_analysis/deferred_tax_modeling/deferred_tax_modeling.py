@@ -62,7 +62,7 @@ CORRECT_ANSWERS = {
 
 def validate_q1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Validator for total nominal capex 2012-2021."""
-    value = runtime.get_variable("q1_total_nominal_capex")
+    value = runtime.retrieve("q1_total_nominal_capex")
     expected = CORRECT_ANSWERS["q1"]
     if value == expected:
         return ValidatorResult(success=True, message="Calculation for total nominal capex is correct.")
@@ -71,7 +71,7 @@ def validate_q1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
 
 def validate_q2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Validator for accounting closing balance in 2017."""
-    value = runtime.get_variable("q2_accounting_closing_balance_2017")
+    value = runtime.retrieve("q2_accounting_closing_balance_2017")
     expected = CORRECT_ANSWERS["q2"]
     if value == expected:
         return ValidatorResult(success=True, message="Calculation for accounting closing balance is correct.")
@@ -80,7 +80,7 @@ def validate_q2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
 
 def validate_q3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Validator for taxation closing balance in 2019."""
-    value = runtime.get_variable("q3_tax_closing_balance_2019")
+    value = runtime.retrieve("q3_tax_closing_balance_2019")
     expected = CORRECT_ANSWERS["q3"]
     if value == expected:
         return ValidatorResult(success=True, message="Calculation for tax closing balance is correct.")
@@ -89,7 +89,7 @@ def validate_q3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
 
 def validate_q4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Validator for the impact of the tax rate change."""
-    value = runtime.get_variable("q4_tax_rate_change_impact")
+    value = runtime.retrieve("q4_tax_rate_change_impact")
     expected = CORRECT_ANSWERS["q4"]
     if abs(value) == expected:
         return ValidatorResult(success=True, message="Calculation for tax rate change impact is correct.")
@@ -98,8 +98,8 @@ def validate_q4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
 
 def validate_q5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Validator for the deferred tax balance in 2028."""
-    value = runtime.get_variable("q5_deferred_tax_balance_2028_value")
-    type = runtime.get_variable("q5_deferred_tax_balance_2028_type")
+    value = runtime.retrieve("q5_deferred_tax_balance_2028_value")
+    type = runtime.retrieve("q5_deferred_tax_balance_2028_type")
     expected_value = CORRECT_ANSWERS["q5"]
     expected_type = CORRECT_ANSWERS["q5_type"]
     type_ok = isinstance(type, str) and type.lower() == expected_type.lower()

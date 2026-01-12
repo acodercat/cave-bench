@@ -1,6 +1,6 @@
 # cave-bench
 
-Benchmarking framework for evaluating [CaveAgent](https://github.com/acodercat/cave-agent)'s tool-calling and code-generation capabilities.
+Benchmarking framework for evaluating [CaveAgent](https://github.com/acodercat/cave-agent) tool calling, stateful management, and JSON-based tool calling.
 
 ## Installation
 
@@ -80,7 +80,7 @@ def validate_q1(
     turn: BenchmarkTurn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:
-    result = runtime.get_variable("result")
+    result = runtime.retrieve("result")
     if result == expected_value:
         return ValidatorResult(True, "Correct!")
     return ValidatorResult(False, f"Expected {expected_value}, got {result}")

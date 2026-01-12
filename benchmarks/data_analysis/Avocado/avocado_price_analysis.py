@@ -92,7 +92,7 @@ def validate_q1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates average prices by type and year analysis.
     """
-    price_by_type_year = runtime.get_variable("price_by_type_year")
+    price_by_type_year = runtime.retrieve("price_by_type_year")
     
     if price_by_type_year is None:
         return ValidatorResult(
@@ -144,8 +144,8 @@ def validate_q2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates top regions by price analysis.
     """
-    top_5_expensive_regions = runtime.get_variable("top_5_expensive_regions")
-    top_5_cheap_regions = runtime.get_variable("top_5_cheap_regions")
+    top_5_expensive_regions = runtime.retrieve("top_5_expensive_regions")
+    top_5_cheap_regions = runtime.retrieve("top_5_cheap_regions")
     
     if top_5_expensive_regions is None or top_5_cheap_regions is None:
         return ValidatorResult(
@@ -184,8 +184,8 @@ def validate_q3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates seasonal price patterns analysis.
     """
-    seasonal_prices = runtime.get_variable("seasonal_prices")
-    max_price_diff_month = runtime.get_variable("max_price_diff_month")
+    seasonal_prices = runtime.retrieve("seasonal_prices")
+    max_price_diff_month = runtime.retrieve("max_price_diff_month")
     
     if seasonal_prices is None or max_price_diff_month is None:
         return ValidatorResult(
@@ -234,9 +234,9 @@ def validate_q4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates volume-price correlation analysis.
     """
-    conventional_volume_price_corr = runtime.get_variable("conventional_volume_price_corr")
-    organic_volume_price_corr = runtime.get_variable("organic_volume_price_corr")
-    highest_volume_region = runtime.get_variable("highest_volume_region")
+    conventional_volume_price_corr = runtime.retrieve("conventional_volume_price_corr")
+    organic_volume_price_corr = runtime.retrieve("organic_volume_price_corr")
+    highest_volume_region = runtime.retrieve("highest_volume_region")
     
     if any(var is None for var in [conventional_volume_price_corr, organic_volume_price_corr, highest_volume_region]):
         return ValidatorResult(
@@ -279,10 +279,10 @@ def validate_q5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates comprehensive market analysis.
     """
-    price_volatility = runtime.get_variable("price_volatility")
-    yoy_growth_rates = runtime.get_variable("yoy_growth_rates")
-    most_stable_market = runtime.get_variable("most_stable_market")
-    bag_size_distribution = runtime.get_variable("bag_size_distribution")
+    price_volatility = runtime.retrieve("price_volatility")
+    yoy_growth_rates = runtime.retrieve("yoy_growth_rates")
+    most_stable_market = runtime.retrieve("most_stable_market")
+    bag_size_distribution = runtime.retrieve("bag_size_distribution")
     
     if any(var is None for var in [price_volatility, yoy_growth_rates, most_stable_market, bag_size_distribution]):
         return ValidatorResult(

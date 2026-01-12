@@ -1,0 +1,24 @@
+[
+  {
+    "name": "stock_benchmark_query",
+    "module": "benchmarks.stock_analysis.stock_benchmark",
+    "requirements": "You are a financial data analyst. Use the provided query tools to retrieve stock data.\n\nStore query results in variable: queried_data\n\nCRITICAL: Store the raw query result directly - do NOT modify, transform, or add columns after assignment.",
+    "conversations": [
+      {
+        "id": "data_query",
+        "turns": [
+          {"query": "Get AAPL data for January 2023 (2023-01-01 to 2023-01-31). Store in `queried_data`.", "validator": "validate_q1", "expected_function_calls": [{"name": "query_by_date_range", "arguments": []}]},
+          {"query": "Find all days where GOOGL volume exceeded 100 million. Store in `queried_data`.", "validator": "validate_q2", "expected_function_calls": [{"name": "query_by_volume_threshold", "arguments": []}]},
+          {"query": "Retrieve days where both AAPL and GOOGL dropped more than 3%. Use condition 'both_down_3pct'. Store in `queried_data`.", "validator": "validate_q3", "expected_function_calls": [{"name": "query_cross_stock_condition", "arguments": []}]},
+          {"query": "Get the top 5 highest trading volume days for AAPL. Store in `queried_data`.", "validator": "validate_q4", "expected_function_calls": [{"name": "query_top_volume_days", "arguments": []}]},
+          {"query": "Extract weekly OHLC data for GOOGL for Q4 2023 (2023-10-01 to 2023-12-31). Store in `queried_data`.", "validator": "validate_q5", "expected_function_calls": [{"name": "query_weekly_ohlc", "arguments": []}]},
+          {"query": "Find AAPL records where close > open by more than 5%. Store in `queried_data`.", "validator": "validate_q6", "expected_function_calls": [{"name": "query_price_change_days", "arguments": []}]},
+          {"query": "Get the last 10 trading days for AAPL. Store in `queried_data`.", "validator": "validate_q7", "expected_function_calls": [{"name": "query_last_n_days", "arguments": []}]},
+          {"query": "Get monthly first and last trading day prices for AAPL in 2023. Store in `queried_data`.", "validator": "validate_q8", "expected_function_calls": [{"name": "query_monthly_first_last", "arguments": []}]},
+          {"query": "Cross-reference: find all days where AAPL was up but GOOGL was down. Use condition 'aapl_up_googl_down'. Store in `queried_data`.", "validator": "validate_q9", "expected_function_calls": [{"name": "query_cross_stock_condition", "arguments": []}]},
+          {"query": "Get all AAPL trading data for full year 2023 (2023-01-01 to 2023-12-31). Store in `queried_data`.", "validator": "validate_q10", "expected_function_calls": [{"name": "query_by_date_range", "arguments": []}]}
+        ]
+      }
+    ]
+  }
+]

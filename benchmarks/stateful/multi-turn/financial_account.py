@@ -64,7 +64,7 @@ def _check(runtime: PythonRuntime, expected: dict) -> list:
     """Validate runtime state against expected values."""
     errors = []
     for key, exp_val in expected.items():
-        actual = runtime.get_variable(key)
+        actual = runtime.retrieve(key)
         if isinstance(exp_val, float):
             if not isinstance(actual, (int, float)) or abs(actual - exp_val) > 0.01:
                 errors.append(f"{key}={actual} (expected {exp_val})")

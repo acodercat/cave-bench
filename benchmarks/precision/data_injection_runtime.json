@@ -1,0 +1,54 @@
+[
+  {
+    "name": "data_injection_runtime",
+    "module": "benchmarks.precision.data_injection_runtime",
+    "requirements": "You are a data analyst. AAPL and GOOGL stock data are available as pandas DataFrames 'aapl_df' and 'googl_df' with columns: Date, Open, High, Low, Close, Volume (50 rows each). Access them directly. Store results in the specified variables.",
+    "conversations": [
+      {
+        "id": "runtime_injection_analysis",
+        "turns": [
+          {
+            "query": "Calculate the average daily trading range for AAPL. Daily range = High - Low for each day. Store the mean in 'avg_daily_range'.",
+            "validator": "validate_avg_daily_range"
+          },
+          {
+            "query": "Calculate the total AAPL trading volume on 'up days' (days where Close > Open). Store in 'up_day_volume'.",
+            "validator": "validate_up_day_volume"
+          },
+          {
+            "query": "Calculate the Pearson correlation between AAPL daily range (High - Low) and Volume. Store in 'range_volume_corr'.",
+            "validator": "validate_range_volume_corr"
+          },
+          {
+            "query": "Calculate the average AAPL intraday return percentage. Formula: (Close - Open) / Open * 100 for each day. Store the mean in 'avg_intraday_return'.",
+            "validator": "validate_avg_intraday_return"
+          },
+          {
+            "query": "Calculate AAPL annualized volatility. Formula: std(daily_returns) * sqrt(252) * 100, where daily_returns[i] = (Close[i] - Close[i-1]) / Close[i-1]. Store in 'volatility'.",
+            "validator": "validate_volatility"
+          },
+          {
+            "query": "Find the maximum single-day percentage gain for AAPL. Formula: (Close - Open) / Open * 100 for each day, return the max. Store in 'max_single_day_gain'.",
+            "validator": "validate_max_single_day_gain"
+          },
+          {
+            "query": "Calculate the AAPL volume-weighted average price (VWAP). Formula: sum(Close * Volume) / sum(Volume). Store in 'vwap'.",
+            "validator": "validate_vwap"
+          },
+          {
+            "query": "Calculate the average AAPL daily range (High - Low) on 'down days' (days where Close < Open). Store in 'down_day_avg_range'.",
+            "validator": "validate_down_day_avg_range"
+          },
+          {
+            "query": "Calculate the Pearson correlation between AAPL and GOOGL daily returns. Daily return = (Close[i] - Close[i-1]) / Close[i-1]. Store in 'aapl_googl_corr'.",
+            "validator": "validate_aapl_googl_corr"
+          },
+          {
+            "query": "Calculate the ratio of total AAPL volume to total GOOGL volume. Formula: sum(AAPL Volume) / sum(GOOGL Volume). Store in 'volume_ratio'.",
+            "validator": "validate_volume_ratio"
+          }
+        ]
+      }
+    ]
+  }
+]

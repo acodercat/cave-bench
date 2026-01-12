@@ -64,9 +64,9 @@ def validate_baby_safety_setup(
     - doorbell.do_not_disturb = True
     """
     try:
-        thermostat = runtime.get_variable("thermostat")
-        camera = runtime.get_variable("nursery_camera")
-        doorbell = runtime.get_variable("doorbell")
+        thermostat = runtime.retrieve("thermostat")
+        camera = runtime.retrieve("nursery_camera")
+        doorbell = runtime.retrieve("doorbell")
         
         errors = []
         
@@ -109,10 +109,10 @@ def validate_movie_setup(
     - speaker: volume = 35%, playing
     """
     try:
-        tv = runtime.get_variable("living_room_tv")
-        light = runtime.get_variable("living_room_light")
-        blinds = runtime.get_variable("living_room_blinds")
-        speaker = runtime.get_variable("living_room_speaker")
+        tv = runtime.retrieve("living_room_tv")
+        light = runtime.retrieve("living_room_light")
+        blinds = runtime.retrieve("living_room_blinds")
+        speaker = runtime.retrieve("living_room_speaker")
         
         errors = []
         
@@ -164,15 +164,15 @@ def validate_movie_night_end(
     - All doors locked
     """
     try:
-        tv = runtime.get_variable("living_room_tv")
-        speaker = runtime.get_variable("living_room_speaker")
-        lr_light = runtime.get_variable("living_room_light")
-        kitchen_light = runtime.get_variable("kitchen_light")
-        hallway_light = runtime.get_variable("hallway_light")
-        nursery_camera = runtime.get_variable("nursery_camera")
-        doorbell = runtime.get_variable("doorbell")
-        front_lock = runtime.get_variable("front_door_lock")
-        back_lock = runtime.get_variable("back_door_lock")
+        tv = runtime.retrieve("living_room_tv")
+        speaker = runtime.retrieve("living_room_speaker")
+        lr_light = runtime.retrieve("living_room_light")
+        kitchen_light = runtime.retrieve("kitchen_light")
+        hallway_light = runtime.retrieve("hallway_light")
+        nursery_camera = runtime.retrieve("nursery_camera")
+        doorbell = runtime.retrieve("doorbell")
+        front_lock = runtime.retrieve("front_door_lock")
+        back_lock = runtime.retrieve("back_door_lock")
         
         errors = []
         

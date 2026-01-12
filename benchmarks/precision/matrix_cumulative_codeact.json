@@ -1,0 +1,64 @@
+[
+  {
+    "name": "matrix_cumulative_codeact",
+    "module": "benchmarks.precision.matrix_cumulative_codeact",
+    "requirements": "You are a mathematical assistant. Use matrix_add to add matrices and matrix_pad to resize matrices. Each turn builds on the previous result with growing matrix sizes. Output the result as JSON: {{\"result\": [[...], ...]}}.",
+    "conversations": [
+      {
+        "id": "cumulative_operations_json",
+        "turns": [
+          {
+            "query": "Add matrix_5x5_1 and matrix_5x5_2 using matrix_add. Respond with ONLY the complete result as JSON: {{\"result\": [[...], ...]}}",
+            "validator": "validate_turn_1_codeact",
+            "expected_function_calls": [{"name": "matrix_add", "arguments": []}]
+          },
+          {
+            "query": "Pad the previous result to 10x10 using matrix_pad, then add matrix_10x10 using matrix_add. Respond with ONLY the complete result as JSON: {{\"result\": [[...], ...]}}",
+            "validator": "validate_turn_2_codeact",
+            "expected_function_calls": [{"name": "matrix_pad", "arguments": []}, {"name": "matrix_add", "arguments": []}]
+          },
+          {
+            "query": "Pad the previous result to 15x15 using matrix_pad, then add matrix_15x15 using matrix_add. Respond with ONLY the complete result as JSON: {{\"result\": [[...], ...]}}",
+            "validator": "validate_turn_3_codeact",
+            "expected_function_calls": [{"name": "matrix_pad", "arguments": []}, {"name": "matrix_add", "arguments": []}]
+          },
+          {
+            "query": "Pad the previous result to 20x20 using matrix_pad, then add matrix_20x20 using matrix_add. Respond with ONLY the complete result as JSON: {{\"result\": [[...], ...]}}",
+            "validator": "validate_turn_4_codeact",
+            "expected_function_calls": [{"name": "matrix_pad", "arguments": []}, {"name": "matrix_add", "arguments": []}]
+          },
+          {
+            "query": "Pad the previous result to 25x25 using matrix_pad, then add matrix_25x25 using matrix_add. Respond with ONLY the complete result as JSON: {{\"result\": [[...], ...]}}",
+            "validator": "validate_turn_5_codeact",
+            "expected_function_calls": [{"name": "matrix_pad", "arguments": []}, {"name": "matrix_add", "arguments": []}]
+          },
+          {
+            "query": "Pad the previous result to 30x30 using matrix_pad, then add matrix_30x30 using matrix_add. Respond with ONLY the complete result as JSON: {{\"result\": [[...], ...]}}",
+            "validator": "validate_turn_6_codeact",
+            "expected_function_calls": [{"name": "matrix_pad", "arguments": []}, {"name": "matrix_add", "arguments": []}]
+          },
+          {
+            "query": "Pad the previous result to 35x35 using matrix_pad, then add matrix_35x35 using matrix_add. Respond with ONLY the complete result as JSON: {{\"result\": [[...], ...]}}",
+            "validator": "validate_turn_7_codeact",
+            "expected_function_calls": [{"name": "matrix_pad", "arguments": []}, {"name": "matrix_add", "arguments": []}]
+          },
+          {
+            "query": "Pad the previous result to 40x40 using matrix_pad, then add matrix_40x40 using matrix_add. Respond with ONLY the complete result as JSON: {{\"result\": [[...], ...]}}",
+            "validator": "validate_turn_8_codeact",
+            "expected_function_calls": [{"name": "matrix_pad", "arguments": []}, {"name": "matrix_add", "arguments": []}]
+          },
+          {
+            "query": "Pad the previous result to 45x45 using matrix_pad, then add matrix_45x45 using matrix_add. Respond with ONLY the complete result as JSON: {{\"result\": [[...], ...]}}",
+            "validator": "validate_turn_9_codeact",
+            "expected_function_calls": [{"name": "matrix_pad", "arguments": []}, {"name": "matrix_add", "arguments": []}]
+          },
+          {
+            "query": "Pad the previous result to 50x50 using matrix_pad, then add matrix_50x50 using matrix_add. Respond with ONLY the complete result as JSON: {{\"result\": [[...], ...]}}",
+            "validator": "validate_turn_10_codeact",
+            "expected_function_calls": [{"name": "matrix_pad", "arguments": []}, {"name": "matrix_add", "arguments": []}]
+          }
+        ]
+      }
+    ]
+  }
+]

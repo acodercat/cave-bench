@@ -55,7 +55,7 @@ def _check(runtime: PythonRuntime, expected: dict) -> list:
     """Validate runtime state against expected values."""
     errors = []
     for key, exp_val in expected.items():
-        actual = runtime.get_variable(key)
+        actual = runtime.retrieve(key)
         if isinstance(exp_val, float):
             if not isinstance(actual, (int, float)) or abs(actual - exp_val) > 0.5:
                 errors.append(f"{key}={actual} (expected {exp_val})")
@@ -78,8 +78,8 @@ def validate_turn_1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, 
     Check outdoor temp: if < 10°C set thermostat to 22°C, else 20°C.
     Turn on bedroom light gently (30%).
     """
-    thermo = runtime.get_variable("thermostat")
-    bedroom = runtime.get_variable("bedroom_light")
+    thermo = runtime.retrieve("thermostat")
+    bedroom = runtime.retrieve("bedroom_light")
 
     errors = []
     if thermo.target_temp != 22:
@@ -94,8 +94,8 @@ def validate_turn_1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, 
 
 def validate_turn_2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 2: Open Blinds (6:30 AM) - blinds fully open, living room light medium."""
-    blinds = runtime.get_variable("living_room_blinds")
-    lr_light = runtime.get_variable("living_room_light")
+    blinds = runtime.retrieve("living_room_blinds")
+    lr_light = runtime.retrieve("living_room_light")
 
     errors = []
     if blinds.position != 100:
@@ -110,8 +110,8 @@ def validate_turn_2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, 
 
 def validate_turn_3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 3: Breakfast - bedroom off, living room bright."""
-    bedroom = runtime.get_variable("bedroom_light")
-    lr_light = runtime.get_variable("living_room_light")
+    bedroom = runtime.retrieve("bedroom_light")
+    lr_light = runtime.retrieve("living_room_light")
     errors = []
     if bedroom.is_on:
         errors.append("bedroom_light should be off")
@@ -124,10 +124,10 @@ def validate_turn_3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, 
 
 def validate_turn_4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 4: Leaving Home - lights off, blinds privacy, door locked, thermostat eco."""
-    lr_light = runtime.get_variable("living_room_light")
-    blinds = runtime.get_variable("living_room_blinds")
-    door = runtime.get_variable("front_door")
-    thermo = runtime.get_variable("thermostat")
+    lr_light = runtime.retrieve("living_room_light")
+    blinds = runtime.retrieve("living_room_blinds")
+    door = runtime.retrieve("front_door")
+    thermo = runtime.retrieve("thermostat")
     errors = []
     if lr_light.is_on:
         errors.append("living_room_light should be off")
@@ -144,7 +144,7 @@ def validate_turn_4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, 
 
 def validate_turn_5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """CHECKPOINT 1 - Turn 5: Midday Check - camera recording."""
-    camera = runtime.get_variable("camera")
+    camera = runtime.retrieve("camera")
     errors = []
     if not camera.is_recording:
         errors.append("camera should be recording")
@@ -155,10 +155,10 @@ def validate_turn_5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, 
 
 def validate_turn_6(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 6: Return Home - door unlocked, light on, blinds partial, thermostat auto."""
-    door = runtime.get_variable("front_door")
-    lr_light = runtime.get_variable("living_room_light")
-    blinds = runtime.get_variable("living_room_blinds")
-    thermo = runtime.get_variable("thermostat")
+    door = runtime.retrieve("front_door")
+    lr_light = runtime.retrieve("living_room_light")
+    blinds = runtime.retrieve("living_room_blinds")
+    thermo = runtime.retrieve("thermostat")
     errors = []
     if door.is_locked:
         errors.append("front_door should be unlocked")
@@ -175,9 +175,9 @@ def validate_turn_6(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, 
 
 def validate_turn_7(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 7: Evening Relaxation - speaker on, light dimmed, blinds more closed."""
-    speaker = runtime.get_variable("speaker")
-    lr_light = runtime.get_variable("living_room_light")
-    blinds = runtime.get_variable("living_room_blinds")
+    speaker = runtime.retrieve("speaker")
+    lr_light = runtime.retrieve("living_room_light")
+    blinds = runtime.retrieve("living_room_blinds")
     errors = []
     # "medium volume" = medium=40 (explicit term)
     if not speaker.is_playing or speaker.volume != 40:
@@ -195,9 +195,9 @@ def validate_turn_7(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, 
 
 def validate_turn_8(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 8: Dinner Time - light bright, speaker stopped, blinds closed."""
-    lr_light = runtime.get_variable("living_room_light")
-    speaker = runtime.get_variable("speaker")
-    blinds = runtime.get_variable("living_room_blinds")
+    lr_light = runtime.retrieve("living_room_light")
+    speaker = runtime.retrieve("speaker")
+    blinds = runtime.retrieve("living_room_blinds")
     errors = []
     if lr_light.brightness != 80:
         errors.append(f"living_room_light should be 80%, got {lr_light.brightness}%")
@@ -212,8 +212,8 @@ def validate_turn_8(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, 
 
 def validate_turn_9(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 9: After Dinner - light dimmed, speaker quiet."""
-    lr_light = runtime.get_variable("living_room_light")
-    speaker = runtime.get_variable("speaker")
+    lr_light = runtime.retrieve("living_room_light")
+    speaker = runtime.retrieve("speaker")
     errors = []
     # "Dim the lights" - check it decreased from Turn 8's bright (80)
     if lr_light.brightness >= 80:
@@ -228,8 +228,8 @@ def validate_turn_9(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, 
 
 def validate_turn_10(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """CHECKPOINT 2 - Turn 10: Security Check - door locked, camera recording."""
-    door = runtime.get_variable("front_door")
-    camera = runtime.get_variable("camera")
+    door = runtime.retrieve("front_door")
+    camera = runtime.retrieve("camera")
     errors = []
     if not door.is_locked:
         errors.append("front_door should be locked")
@@ -242,9 +242,9 @@ def validate_turn_10(response: str, runtime: PythonRuntime, turn: BenchmarkTurn,
 
 def validate_turn_11(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 11: Pre-Bedtime - speaker stopped, living room way down, bedroom on."""
-    speaker = runtime.get_variable("speaker")
-    lr_light = runtime.get_variable("living_room_light")
-    bedroom = runtime.get_variable("bedroom_light")
+    speaker = runtime.retrieve("speaker")
+    lr_light = runtime.retrieve("living_room_light")
+    bedroom = runtime.retrieve("bedroom_light")
     errors = []
     if speaker.is_playing:
         errors.append("speaker should be stopped")
@@ -259,9 +259,9 @@ def validate_turn_11(response: str, runtime: PythonRuntime, turn: BenchmarkTurn,
 
 def validate_turn_12(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 12: Bedtime Prep - living room off, bedroom dim for reading, thermostat sleep."""
-    lr_light = runtime.get_variable("living_room_light")
-    bedroom = runtime.get_variable("bedroom_light")
-    thermo = runtime.get_variable("thermostat")
+    lr_light = runtime.retrieve("living_room_light")
+    bedroom = runtime.retrieve("bedroom_light")
+    thermo = runtime.retrieve("thermostat")
     errors = []
     if lr_light.is_on:
         errors.append("living_room_light should be off")
@@ -276,7 +276,7 @@ def validate_turn_12(response: str, runtime: PythonRuntime, turn: BenchmarkTurn,
 
 def validate_turn_13(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 13: Sleep Mode - bedroom off."""
-    bedroom = runtime.get_variable("bedroom_light")
+    bedroom = runtime.retrieve("bedroom_light")
     errors = []
     if bedroom.is_on:
         errors.append("bedroom_light should be off")
@@ -287,8 +287,8 @@ def validate_turn_13(response: str, runtime: PythonRuntime, turn: BenchmarkTurn,
 
 def validate_turn_14(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 14: Night Motion - camera recording, thermostat unchanged (outdoor >= 5°C)."""
-    camera = runtime.get_variable("camera")
-    thermo = runtime.get_variable("thermostat")
+    camera = runtime.retrieve("camera")
+    thermo = runtime.retrieve("thermostat")
     errors = []
     if not camera.is_recording:
         errors.append("camera should be recording")
@@ -301,10 +301,10 @@ def validate_turn_14(response: str, runtime: PythonRuntime, turn: BenchmarkTurn,
 
 def validate_turn_15(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """CHECKPOINT 3 - Turn 15: Pre-warm - thermostat 21, lights off, door locked."""
-    thermo = runtime.get_variable("thermostat")
-    lr_light = runtime.get_variable("living_room_light")
-    bedroom = runtime.get_variable("bedroom_light")
-    door = runtime.get_variable("front_door")
+    thermo = runtime.retrieve("thermostat")
+    lr_light = runtime.retrieve("living_room_light")
+    bedroom = runtime.retrieve("bedroom_light")
+    door = runtime.retrieve("front_door")
     errors = []
     if thermo.target_temp != 21:
         errors.append(f"thermostat should be 21, got {thermo.target_temp}")
@@ -321,8 +321,8 @@ def validate_turn_15(response: str, runtime: PythonRuntime, turn: BenchmarkTurn,
 
 def validate_turn_16(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 16: Day 2 Wake Up - bedroom gentle, blinds partial."""
-    bedroom = runtime.get_variable("bedroom_light")
-    blinds = runtime.get_variable("living_room_blinds")
+    bedroom = runtime.retrieve("bedroom_light")
+    blinds = runtime.retrieve("living_room_blinds")
     errors = []
     if not bedroom.is_on or bedroom.brightness != 30:
         errors.append(f"bedroom_light should be 30%, got {bedroom.brightness}%")
@@ -335,9 +335,9 @@ def validate_turn_16(response: str, runtime: PythonRuntime, turn: BenchmarkTurn,
 
 def validate_turn_17(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 17: Day 2 Morning - living room on, blinds full, bedroom off."""
-    lr_light = runtime.get_variable("living_room_light")
-    blinds = runtime.get_variable("living_room_blinds")
-    bedroom = runtime.get_variable("bedroom_light")
+    lr_light = runtime.retrieve("living_room_light")
+    blinds = runtime.retrieve("living_room_blinds")
+    bedroom = runtime.retrieve("bedroom_light")
     errors = []
     if not lr_light.is_on or lr_light.brightness != 60:
         errors.append(f"living_room_light should be 60%, got {lr_light.brightness}%")
@@ -352,8 +352,8 @@ def validate_turn_17(response: str, runtime: PythonRuntime, turn: BenchmarkTurn,
 
 def validate_turn_18(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 18: Day 2 Breakfast - bright light, morning music."""
-    lr_light = runtime.get_variable("living_room_light")
-    speaker = runtime.get_variable("speaker")
+    lr_light = runtime.retrieve("living_room_light")
+    speaker = runtime.retrieve("speaker")
     errors = []
     if lr_light.brightness != 80:
         errors.append(f"living_room_light should be 80%, got {lr_light.brightness}%")
@@ -366,11 +366,11 @@ def validate_turn_18(response: str, runtime: PythonRuntime, turn: BenchmarkTurn,
 
 def validate_turn_19(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Turn 19: Day 2 Leaving - lights off, speaker off, blinds privacy, door locked, eco mode."""
-    lr_light = runtime.get_variable("living_room_light")
-    speaker = runtime.get_variable("speaker")
-    blinds = runtime.get_variable("living_room_blinds")
-    door = runtime.get_variable("front_door")
-    thermo = runtime.get_variable("thermostat")
+    lr_light = runtime.retrieve("living_room_light")
+    speaker = runtime.retrieve("speaker")
+    blinds = runtime.retrieve("living_room_blinds")
+    door = runtime.retrieve("front_door")
+    thermo = runtime.retrieve("thermostat")
     errors = []
     if lr_light.is_on:
         errors.append("living_room_light should be off")
@@ -389,13 +389,13 @@ def validate_turn_19(response: str, runtime: PythonRuntime, turn: BenchmarkTurn,
 
 def validate_turn_20(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """CHECKPOINT 4 - Turn 20: Final - all off, secure, eco mode."""
-    lr_light = runtime.get_variable("living_room_light")
-    bedroom = runtime.get_variable("bedroom_light")
-    speaker = runtime.get_variable("speaker")
-    door = runtime.get_variable("front_door")
-    camera = runtime.get_variable("camera")
-    blinds = runtime.get_variable("living_room_blinds")
-    thermo = runtime.get_variable("thermostat")
+    lr_light = runtime.retrieve("living_room_light")
+    bedroom = runtime.retrieve("bedroom_light")
+    speaker = runtime.retrieve("speaker")
+    door = runtime.retrieve("front_door")
+    camera = runtime.retrieve("camera")
+    blinds = runtime.retrieve("living_room_blinds")
+    thermo = runtime.retrieve("thermostat")
     errors = []
     if lr_light.is_on:
         errors.append("living_room_light should be off")
@@ -422,9 +422,9 @@ def validate_turn_20(response: str, runtime: PythonRuntime, turn: BenchmarkTurn,
 
 def validate_party_turn_1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 1: Weekend Morning - thermostat 22 (cold outside), blinds let in light, light low."""
-    thermo = runtime.get_variable("thermostat")
-    blinds = runtime.get_variable("living_room_blinds")
-    lr_light = runtime.get_variable("living_room_light")
+    thermo = runtime.retrieve("thermostat")
+    blinds = runtime.retrieve("living_room_blinds")
+    lr_light = runtime.retrieve("living_room_light")
     errors = []
     if thermo.target_temp != 22:
         errors.append(f"thermostat should be 22 (outdoor 8<15), got {thermo.target_temp}")
@@ -439,8 +439,8 @@ def validate_party_turn_1(response: str, runtime: PythonRuntime, turn: Benchmark
 
 def validate_party_turn_2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 2: Brunch - light brighten, background music."""
-    lr_light = runtime.get_variable("living_room_light")
-    speaker = runtime.get_variable("speaker")
+    lr_light = runtime.retrieve("living_room_light")
+    speaker = runtime.retrieve("speaker")
     errors = []
     if lr_light.brightness != 70:
         errors.append(f"living_room_light should be 70%, got {lr_light.brightness}%")
@@ -453,10 +453,10 @@ def validate_party_turn_2(response: str, runtime: PythonRuntime, turn: Benchmark
 
 def validate_party_turn_3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 3: Party Prep - guest comfort temp, medium music, full blinds, bright lights."""
-    thermo = runtime.get_variable("thermostat")
-    speaker = runtime.get_variable("speaker")
-    blinds = runtime.get_variable("living_room_blinds")
-    lr_light = runtime.get_variable("living_room_light")
+    thermo = runtime.retrieve("thermostat")
+    speaker = runtime.retrieve("speaker")
+    blinds = runtime.retrieve("living_room_blinds")
+    lr_light = runtime.retrieve("living_room_light")
     errors = []
     if thermo.target_temp != 21:
         errors.append(f"thermostat should be 21, got {thermo.target_temp}")
@@ -473,8 +473,8 @@ def validate_party_turn_3(response: str, runtime: PythonRuntime, turn: Benchmark
 
 def validate_party_turn_4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 4: Guests Arriving - door unlocked, music up."""
-    door = runtime.get_variable("front_door")
-    speaker = runtime.get_variable("speaker")
+    door = runtime.retrieve("front_door")
+    speaker = runtime.retrieve("speaker")
     errors = []
     if door.is_locked:
         errors.append("front_door should be unlocked")
@@ -487,9 +487,9 @@ def validate_party_turn_4(response: str, runtime: PythonRuntime, turn: Benchmark
 
 def validate_party_turn_5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """CHECKPOINT 1 - Party Turn 5: Party Mode - speaker 60%, light very bright, camera recording."""
-    speaker = runtime.get_variable("speaker")
-    lr_light = runtime.get_variable("living_room_light")
-    camera = runtime.get_variable("camera")
+    speaker = runtime.retrieve("speaker")
+    lr_light = runtime.retrieve("living_room_light")
+    camera = runtime.retrieve("camera")
     errors = []
     if speaker.volume != 60:
         errors.append(f"speaker should be 60%, got {speaker.volume}%")
@@ -504,8 +504,8 @@ def validate_party_turn_5(response: str, runtime: PythonRuntime, turn: Benchmark
 
 def validate_party_turn_6(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 6: Sunset - blinds partial, bedroom gentle for guests."""
-    blinds = runtime.get_variable("living_room_blinds")
-    bedroom = runtime.get_variable("bedroom_light")
+    blinds = runtime.retrieve("living_room_blinds")
+    bedroom = runtime.retrieve("bedroom_light")
     errors = []
     if blinds.position != 50:
         errors.append(f"blinds should be 50%, got {blinds.position}")
@@ -518,9 +518,9 @@ def validate_party_turn_6(response: str, runtime: PythonRuntime, turn: Benchmark
 
 def validate_party_turn_7(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 7: Evening Party - blinds closed, mood lighting, speaker 70%."""
-    blinds = runtime.get_variable("living_room_blinds")
-    lr_light = runtime.get_variable("living_room_light")
-    speaker = runtime.get_variable("speaker")
+    blinds = runtime.retrieve("living_room_blinds")
+    lr_light = runtime.retrieve("living_room_light")
+    speaker = runtime.retrieve("speaker")
     errors = []
     if blinds.position != 0:
         errors.append(f"blinds should be 0%, got {blinds.position}")
@@ -535,8 +535,8 @@ def validate_party_turn_7(response: str, runtime: PythonRuntime, turn: Benchmark
 
 def validate_party_turn_8(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 8: Party Peak - speaker max, dance floor mood (dim)."""
-    speaker = runtime.get_variable("speaker")
-    lr_light = runtime.get_variable("living_room_light")
+    speaker = runtime.retrieve("speaker")
+    lr_light = runtime.retrieve("living_room_light")
     errors = []
     if speaker.volume != 80:
         errors.append(f"speaker should be 80%, got {speaker.volume}%")
@@ -549,8 +549,8 @@ def validate_party_turn_8(response: str, runtime: PythonRuntime, turn: Benchmark
 
 def validate_party_turn_9(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 9: Winding Down - lower music, brighten lights a bit."""
-    speaker = runtime.get_variable("speaker")
-    lr_light = runtime.get_variable("living_room_light")
+    speaker = runtime.retrieve("speaker")
+    lr_light = runtime.retrieve("living_room_light")
     errors = []
     # "Lower the music" is vague - just check it decreased from Turn 8's max (80)
     if speaker.volume >= 80:
@@ -565,9 +565,9 @@ def validate_party_turn_9(response: str, runtime: PythonRuntime, turn: Benchmark
 
 def validate_party_turn_10(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """CHECKPOINT 2 - Party Turn 10: Guests Leaving - speaker lowered more, door locked, bedroom off."""
-    speaker = runtime.get_variable("speaker")
-    door = runtime.get_variable("front_door")
-    bedroom = runtime.get_variable("bedroom_light")
+    speaker = runtime.retrieve("speaker")
+    door = runtime.retrieve("front_door")
+    bedroom = runtime.retrieve("bedroom_light")
     errors = []
     # "Lower music more" is vague - check it's reasonably low after being lowered twice (< 60)
     if speaker.volume >= 60:
@@ -583,8 +583,8 @@ def validate_party_turn_10(response: str, runtime: PythonRuntime, turn: Benchmar
 
 def validate_party_turn_11(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 11: Cleanup Start - full brightness, speaker stopped."""
-    lr_light = runtime.get_variable("living_room_light")
-    speaker = runtime.get_variable("speaker")
+    lr_light = runtime.retrieve("living_room_light")
+    speaker = runtime.retrieve("speaker")
     errors = []
     if lr_light.brightness != 100:
         errors.append(f"living_room_light should be 100%, got {lr_light.brightness}%")
@@ -597,8 +597,8 @@ def validate_party_turn_11(response: str, runtime: PythonRuntime, turn: Benchmar
 
 def validate_party_turn_12(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 12: Cleanup Done - dim light, thermostat sleep."""
-    lr_light = runtime.get_variable("living_room_light")
-    thermo = runtime.get_variable("thermostat")
+    lr_light = runtime.retrieve("living_room_light")
+    thermo = runtime.retrieve("thermostat")
     errors = []
     # "Dim the lights" - check it decreased from Turn 11's full (100)
     if lr_light.brightness >= 100:
@@ -613,8 +613,8 @@ def validate_party_turn_12(response: str, runtime: PythonRuntime, turn: Benchmar
 
 def validate_party_turn_13(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 13: Relax - dim more, soft music."""
-    lr_light = runtime.get_variable("living_room_light")
-    speaker = runtime.get_variable("speaker")
+    lr_light = runtime.retrieve("living_room_light")
+    speaker = runtime.retrieve("speaker")
     errors = []
     # "Dim lights more" - check it decreased from Turn 12's dim (40)
     if lr_light.brightness >= 40:
@@ -629,9 +629,9 @@ def validate_party_turn_13(response: str, runtime: PythonRuntime, turn: Benchmar
 
 def validate_party_turn_14(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 14: Bedtime - living room off, speaker stopped, bedroom gentle."""
-    lr_light = runtime.get_variable("living_room_light")
-    speaker = runtime.get_variable("speaker")
-    bedroom = runtime.get_variable("bedroom_light")
+    lr_light = runtime.retrieve("living_room_light")
+    speaker = runtime.retrieve("speaker")
+    bedroom = runtime.retrieve("bedroom_light")
     errors = []
     if lr_light.is_on:
         errors.append("living_room_light should be off")
@@ -646,9 +646,9 @@ def validate_party_turn_14(response: str, runtime: PythonRuntime, turn: Benchmar
 
 def validate_party_turn_15(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """CHECKPOINT 3 - Party Turn 15: Sleep - bedroom off, door locked, camera recording."""
-    bedroom = runtime.get_variable("bedroom_light")
-    door = runtime.get_variable("front_door")
-    camera = runtime.get_variable("camera")
+    bedroom = runtime.retrieve("bedroom_light")
+    door = runtime.retrieve("front_door")
+    camera = runtime.retrieve("camera")
     errors = []
     if bedroom.is_on:
         errors.append("bedroom_light should be off")
@@ -663,8 +663,8 @@ def validate_party_turn_15(response: str, runtime: PythonRuntime, turn: Benchmar
 
 def validate_party_turn_16(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 16: Late Sleep - all lights remain off."""
-    bedroom = runtime.get_variable("bedroom_light")
-    lr_light = runtime.get_variable("living_room_light")
+    bedroom = runtime.retrieve("bedroom_light")
+    lr_light = runtime.retrieve("living_room_light")
     errors = []
     if bedroom.is_on:
         errors.append("bedroom_light should be off")
@@ -677,9 +677,9 @@ def validate_party_turn_16(response: str, runtime: PythonRuntime, turn: Benchmar
 
 def validate_party_turn_17(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 17: Lazy Morning - bedroom on, blinds open, thermostat comfort."""
-    bedroom = runtime.get_variable("bedroom_light")
-    blinds = runtime.get_variable("living_room_blinds")
-    thermo = runtime.get_variable("thermostat")
+    bedroom = runtime.retrieve("bedroom_light")
+    blinds = runtime.retrieve("living_room_blinds")
+    thermo = runtime.retrieve("thermostat")
     errors = []
     if not bedroom.is_on or bedroom.brightness != 40:
         errors.append(f"bedroom_light should be 40%, got {bedroom.brightness}%")
@@ -694,10 +694,10 @@ def validate_party_turn_17(response: str, runtime: PythonRuntime, turn: Benchmar
 
 def validate_party_turn_18(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 18: Recovery Brunch - living room on, bedroom off, blinds full, gentle music."""
-    lr_light = runtime.get_variable("living_room_light")
-    bedroom = runtime.get_variable("bedroom_light")
-    blinds = runtime.get_variable("living_room_blinds")
-    speaker = runtime.get_variable("speaker")
+    lr_light = runtime.retrieve("living_room_light")
+    bedroom = runtime.retrieve("bedroom_light")
+    blinds = runtime.retrieve("living_room_blinds")
+    speaker = runtime.retrieve("speaker")
     errors = []
     if not lr_light.is_on or lr_light.brightness != 60:
         errors.append(f"living_room_light should be 60%, got {lr_light.brightness}%")
@@ -714,9 +714,9 @@ def validate_party_turn_18(response: str, runtime: PythonRuntime, turn: Benchmar
 
 def validate_party_turn_19(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """Party Turn 19: Afternoon Rest - dim light, speaker stopped, blinds partial."""
-    lr_light = runtime.get_variable("living_room_light")
-    speaker = runtime.get_variable("speaker")
-    blinds = runtime.get_variable("living_room_blinds")
+    lr_light = runtime.retrieve("living_room_light")
+    speaker = runtime.retrieve("speaker")
+    blinds = runtime.retrieve("living_room_blinds")
     errors = []
     # "Dim lights" - check it decreased from Turn 18's default_on (60)
     if lr_light.brightness >= 60:
@@ -733,13 +733,13 @@ def validate_party_turn_19(response: str, runtime: PythonRuntime, turn: Benchmar
 
 def validate_party_turn_20(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actual_calls: List[ToolCall]) -> ValidatorResult:
     """CHECKPOINT 4 - Party Turn 20: Weekend Complete - eco mode, all off, secure."""
-    thermo = runtime.get_variable("thermostat")
-    lr_light = runtime.get_variable("living_room_light")
-    bedroom = runtime.get_variable("bedroom_light")
-    blinds = runtime.get_variable("living_room_blinds")
-    speaker = runtime.get_variable("speaker")
-    door = runtime.get_variable("front_door")
-    camera = runtime.get_variable("camera")
+    thermo = runtime.retrieve("thermostat")
+    lr_light = runtime.retrieve("living_room_light")
+    bedroom = runtime.retrieve("bedroom_light")
+    blinds = runtime.retrieve("living_room_blinds")
+    speaker = runtime.retrieve("speaker")
+    door = runtime.retrieve("front_door")
+    camera = runtime.retrieve("camera")
     errors = []
     if thermo.mode != "eco":
         errors.append(f"thermostat should be eco mode, got {thermo.mode}")

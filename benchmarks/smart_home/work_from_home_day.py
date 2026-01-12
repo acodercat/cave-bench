@@ -84,12 +84,12 @@ def validate_work_start(
     - robot_vacuum: docked and NOT cleaning
     """
     try:
-        thermostat = runtime.get_variable("thermostat")
-        office_light = runtime.get_variable("office_light")
-        office_blinds = runtime.get_variable("office_blinds")
-        office_plug = runtime.get_variable("office_plug")
-        doorbell = runtime.get_variable("doorbell")
-        vacuum = runtime.get_variable("robot_vacuum")
+        thermostat = runtime.retrieve("thermostat")
+        office_light = runtime.retrieve("office_light")
+        office_blinds = runtime.retrieve("office_blinds")
+        office_plug = runtime.retrieve("office_plug")
+        doorbell = runtime.retrieve("doorbell")
+        vacuum = runtime.retrieve("robot_vacuum")
         
         errors = []
         
@@ -153,11 +153,11 @@ def validate_video_call_setup(
     - doorbell: still in DND
     """
     try:
-        office_light = runtime.get_variable("office_light")
-        office_blinds = runtime.get_variable("office_blinds")
-        vacuum = runtime.get_variable("robot_vacuum")
-        speaker = runtime.get_variable("living_room_speaker")
-        doorbell = runtime.get_variable("doorbell")
+        office_light = runtime.retrieve("office_light")
+        office_blinds = runtime.retrieve("office_blinds")
+        vacuum = runtime.retrieve("robot_vacuum")
+        speaker = runtime.retrieve("living_room_speaker")
+        doorbell = runtime.retrieve("doorbell")
         
         errors = []
         
@@ -211,13 +211,13 @@ def validate_work_end(
     - robot_vacuum: cleaning living room in auto mode
     """
     try:
-        office_plug = runtime.get_variable("office_plug")
-        office_light = runtime.get_variable("office_light")
-        office_blinds = runtime.get_variable("office_blinds")
-        living_room_blinds = runtime.get_variable("living_room_blinds")
-        bedroom_blinds = runtime.get_variable("bedroom_blinds")
-        doorbell = runtime.get_variable("doorbell")
-        vacuum = runtime.get_variable("robot_vacuum")
+        office_plug = runtime.retrieve("office_plug")
+        office_light = runtime.retrieve("office_light")
+        office_blinds = runtime.retrieve("office_blinds")
+        living_room_blinds = runtime.retrieve("living_room_blinds")
+        bedroom_blinds = runtime.retrieve("bedroom_blinds")
+        doorbell = runtime.retrieve("doorbell")
+        vacuum = runtime.retrieve("robot_vacuum")
         
         errors = []
         

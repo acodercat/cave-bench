@@ -729,8 +729,8 @@ def validate_first_collection(
     - battery decreased (used ~5 for movement)
     """
     try:
-        robot = runtime.get_variable("robot")
-        world = runtime.get_variable("world")
+        robot = runtime.retrieve("robot")
+        world = runtime.retrieve("world")
         
         errors = []
         
@@ -802,8 +802,8 @@ def validate_second_collection(
     - robot.items_collected = 2
     """
     try:
-        robot = runtime.get_variable("robot")
-        world = runtime.get_variable("world")
+        robot = runtime.retrieve("robot")
+        world = runtime.retrieve("world")
         
         errors = []
         
@@ -886,9 +886,9 @@ def validate_mission_complete(
     - mission_complete = True
     """
     try:
-        robot = runtime.get_variable("robot")
-        mission_value = runtime.get_variable("mission_total_value")
-        mission_done = runtime.get_variable("mission_complete")
+        robot = runtime.retrieve("robot")
+        mission_value = runtime.retrieve("mission_total_value")
+        mission_done = runtime.retrieve("mission_complete")
         
         errors = []
         

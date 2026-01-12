@@ -78,8 +78,8 @@ def validate_q1(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the quality distribution analysis.
     """
-    quality_distribution = runtime.get_variable("quality_distribution")
-    most_common_quality = runtime.get_variable("most_common_quality")
+    quality_distribution = runtime.retrieve("quality_distribution")
+    most_common_quality = runtime.retrieve("most_common_quality")
     
     if quality_distribution is None or most_common_quality is None:
         return ValidatorResult(
@@ -115,9 +115,9 @@ def validate_q2(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the chemical composition analysis by quality categories.
     """
-    avg_alcohol_high = runtime.get_variable("avg_alcohol_high")
-    avg_alcohol_medium = runtime.get_variable("avg_alcohol_medium")
-    avg_alcohol_low = runtime.get_variable("avg_alcohol_low")
+    avg_alcohol_high = runtime.retrieve("avg_alcohol_high")
+    avg_alcohol_medium = runtime.retrieve("avg_alcohol_medium")
+    avg_alcohol_low = runtime.retrieve("avg_alcohol_low")
     
     if any(var is None for var in [avg_alcohol_high, avg_alcohol_medium, avg_alcohol_low]):
         return ValidatorResult(
@@ -146,9 +146,9 @@ def validate_q3(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the correlation analysis for key factors.
     """
-    alcohol_correlation = runtime.get_variable("alcohol_correlation")
-    volatile_acidity_correlation = runtime.get_variable("volatile_acidity_correlation")
-    strongest_correlation_factor = runtime.get_variable("strongest_correlation_factor")
+    alcohol_correlation = runtime.retrieve("alcohol_correlation")
+    volatile_acidity_correlation = runtime.retrieve("volatile_acidity_correlation")
+    strongest_correlation_factor = runtime.retrieve("strongest_correlation_factor")
     
     if any(var is None for var in [alcohol_correlation, volatile_acidity_correlation, strongest_correlation_factor]):
         return ValidatorResult(
@@ -177,9 +177,9 @@ def validate_q4(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the quality prediction model accuracy.
     """
-    mean_alcohol_good = runtime.get_variable("mean_alcohol_good")
-    mean_volatile_acidity_good = runtime.get_variable("mean_volatile_acidity_good")
-    prediction_accuracy = runtime.get_variable("prediction_accuracy")
+    mean_alcohol_good = runtime.retrieve("mean_alcohol_good")
+    mean_volatile_acidity_good = runtime.retrieve("mean_volatile_acidity_good")
+    prediction_accuracy = runtime.retrieve("prediction_accuracy")
     
     if any(var is None for var in [mean_alcohol_good, mean_volatile_acidity_good, prediction_accuracy]):
         return ValidatorResult(
@@ -207,9 +207,9 @@ def validate_q5(response: str, runtime: PythonRuntime, turn: BenchmarkTurn, actu
     """
     Validates the advanced multi-factor analysis.
     """
-    tier_alcohol_averages = runtime.get_variable("tier_alcohol_averages")
-    highest_alcohol_tier = runtime.get_variable("highest_alcohol_tier")
-    high_tier_criteria_percentage = runtime.get_variable("high_tier_criteria_percentage")
+    tier_alcohol_averages = runtime.retrieve("tier_alcohol_averages")
+    highest_alcohol_tier = runtime.retrieve("highest_alcohol_tier")
+    high_tier_criteria_percentage = runtime.retrieve("high_tier_criteria_percentage")
     
     if any(var is None for var in [tier_alcohol_averages, highest_alcohol_tier, high_tier_criteria_percentage]):
         return ValidatorResult(
