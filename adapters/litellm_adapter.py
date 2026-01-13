@@ -14,7 +14,6 @@ import json
 import logging
 from core.agent import Agent, AgentFactory, AgentResponse, AgentToolCall, TokenUsage
 from litellm import acompletion
-from utils import function_to_schema
 
 logger = logging.getLogger('Agent.LitellmAdapter')
 
@@ -24,6 +23,35 @@ When the user asks you to perform a task, analyze what tools you need and call t
 Always use the tools when they can help accomplish the user's request.
 After getting tool results, provide a helpful response to the user."""
 
+
+def function_to_schema(func: Callable) -> Dict[str, Any]:
+    """
+    Convert a Python function to an OpenAI-compatible tool schema.
+
+    Args:
+        func: Python function with type hints and docstring
+
+    Returns:
+        Dictionary with name, description, and parameters schema
+
+    Note:
+        This requires the 'agents' package. Used for compatibility
+        with non-CaveAgent frameworks.
+    """
+    try:
+        from agents import function_tool
+    except ImportError:
+        raise ImportError(
+            "The 'agents' package is required for function_to_schema. "
+            "Install it with: pip install openai-agents"
+        )
+
+    tool = function_tool(func, strict_mode=False)
+    return {
+        "name": func.__name__,
+        "description": func.__doc__ or tool.description,
+        "parameters": tool.params_json_schema
+    }
 
 class LitellmModel:
     """Model configuration for LiteLLM.

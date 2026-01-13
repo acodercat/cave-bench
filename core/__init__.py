@@ -5,8 +5,8 @@ from core.types import (
     VariableAccess,
     ExpectedArgument,
     ExpectedFunctionCall,
-    BenchmarkTurn,
-    BenchmarkConversation,
+    Turn,
+    Conversation,
     BenchmarkScenario,
     TurnMetrics,
     TurnResult,
@@ -15,7 +15,7 @@ from core.types import (
     ScenarioResult,
 )
 from core.tracker import FunctionCallTracker
-from core.evaluator import BenchmarkEvaluator, analyze_variable_access
+from core.evaluator import Evaluator, analyze_variable_access
 from core.validation import (
     ErrorType,
     ValidationError,
@@ -33,8 +33,8 @@ __all__ = [
     "VariableAccess",
     "ExpectedArgument",
     "ExpectedFunctionCall",
-    "BenchmarkTurn",
-    "BenchmarkConversation",
+    "Turn",
+    "Conversation",
     "BenchmarkScenario",
     "TurnMetrics",
     "TurnResult",
@@ -44,7 +44,7 @@ __all__ = [
     # Tracker
     "FunctionCallTracker",
     # Evaluator
-    "BenchmarkEvaluator",
+    "Evaluator",
     "analyze_variable_access",
     # Validation
     "ErrorType",

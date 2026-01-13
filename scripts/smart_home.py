@@ -1,4 +1,4 @@
-"""Function Calling Benchmark Runner"""
+"""Domain-Specific Benchmark Runner (smart_home, robot, game, etc.)"""
 
 import asyncio
 import json
@@ -22,8 +22,8 @@ BASE_URL = os.getenv("DEEPSEEK_BASE_URL")
 TEMPERATURE = float(os.getenv("DEEPSEEK_TEMPERATURE", "0.3"))
 
 BENCHMARKS = [
-    "weather_query",
-    "flight_booking",
+    "evening_home_routine",
+    "work_from_home_day",
 ]
 
 
@@ -40,9 +40,9 @@ async def run_evaluation():
     for name in BENCHMARKS:
         print(f"\n{'='*60}\nBenchmark: {name}\n{'='*60}")
 
-        scenarios = json.loads(Path(f"./evals/function_calling/{name}.json").read_text())
+        scenarios = json.loads(Path(f"./evals/smart_home/{name}.json").read_text())
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        output = f"./runs/function_calling/{name}/{MODEL_ID}_{timestamp}.json"
+        output = f"./runs/smart_home/{name}/{MODEL_ID}_{timestamp}.json"
 
         await evaluate(factory, scenarios, output)
 

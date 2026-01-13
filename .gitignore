@@ -14,8 +14,7 @@ ENV/
 # Configuration files with secrets
 .env
 
-# Results and logs
-results/
+# logs
 *.log
 
 # OS generated files
@@ -55,5 +54,3 @@ dmypy.json
 
 # Claude code
 .claude/
-
-./results/

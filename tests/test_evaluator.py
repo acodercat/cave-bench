@@ -1,7 +1,7 @@
 """Tests for benchmark evaluation engine."""
 
 import pytest
-from core.evaluator import analyze_variable_access, VariableAnalyzer, BenchmarkEvaluator
+from core.evaluator import analyze_variable_access, VariableAnalyzer, Evaluator
 from core.types import VariableAccess, ExpectedFunctionCall
 from core.agent import AgentToolCall
 
@@ -129,7 +129,7 @@ class TestVariableAnalyzer:
 
 
 class TestCalculateMissingCallsMetric:
-    """Tests for BenchmarkEvaluator._calculate_missing_calls_metric method."""
+    """Tests for Evaluator._calculate_missing_calls_metric method."""
 
     def test_no_missing_calls(self):
         # Create a mock evaluator to test the method
@@ -137,7 +137,7 @@ class TestCalculateMissingCallsMetric:
             def create_agent(self, **kwargs):
                 pass
 
-        evaluator = BenchmarkEvaluator(MockFactory())
+        evaluator = Evaluator(MockFactory())
 
         expected = [
             ExpectedFunctionCall(name="func1", required=True),
@@ -156,7 +156,7 @@ class TestCalculateMissingCallsMetric:
             def create_agent(self, **kwargs):
                 pass
 
-        evaluator = BenchmarkEvaluator(MockFactory())
+        evaluator = Evaluator(MockFactory())
 
         expected = [
             ExpectedFunctionCall(name="func1", required=True),
@@ -174,7 +174,7 @@ class TestCalculateMissingCallsMetric:
             def create_agent(self, **kwargs):
                 pass
 
-        evaluator = BenchmarkEvaluator(MockFactory())
+        evaluator = Evaluator(MockFactory())
 
         expected = [
             ExpectedFunctionCall(name="func1", required=True),
@@ -190,7 +190,7 @@ class TestCalculateMissingCallsMetric:
             def create_agent(self, **kwargs):
                 pass
 
-        evaluator = BenchmarkEvaluator(MockFactory())
+        evaluator = Evaluator(MockFactory())
 
         expected = [
             ExpectedFunctionCall(name="func1", required=True),
@@ -208,7 +208,7 @@ class TestCalculateMissingCallsMetric:
             def create_agent(self, **kwargs):
                 pass
 
-        evaluator = BenchmarkEvaluator(MockFactory())
+        evaluator = Evaluator(MockFactory())
 
         expected = [
             ExpectedFunctionCall(name="func1", required=True),
@@ -227,7 +227,7 @@ class TestCalculateMissingCallsMetric:
             def create_agent(self, **kwargs):
                 pass
 
-        evaluator = BenchmarkEvaluator(MockFactory())
+        evaluator = Evaluator(MockFactory())
 
         expected = []
         actual = [
@@ -238,15 +238,15 @@ class TestCalculateMissingCallsMetric:
         assert missing == 0
 
 
-class TestBenchmarkEvaluatorInit:
-    """Tests for BenchmarkEvaluator initialization."""
+class TestEvaluatorInit:
+    """Tests for Evaluator initialization."""
 
     def test_initialization(self):
         class MockFactory:
             def create_agent(self, **kwargs):
                 pass
 
-        evaluator = BenchmarkEvaluator(MockFactory())
+        evaluator = Evaluator(MockFactory())
         assert evaluator.agent_factory is not None
         assert evaluator.metrics is not None
 
@@ -255,7 +255,7 @@ class TestBenchmarkEvaluatorInit:
             def create_agent(self, **kwargs):
                 pass
 
-        evaluator = BenchmarkEvaluator(MockFactory())
+        evaluator = Evaluator(MockFactory())
 
         # Modify metrics
         evaluator.metrics.total_turns = 10

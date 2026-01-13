@@ -1,0 +1,154 @@
+{
+  "aapl_googl_comparative_analysis": {
+    "scenario": "aapl_googl_comparative_analysis",
+    "conversations": [
+      {
+        "id": "comparative_stock_analysis",
+        "turns": [
+          {
+            "query": "What is the total return percentage for AAPL and GOOGL over their entire history? Which stock performed better?",
+            "reference_response": "",
+            "actual_response": "Based on the execution results:\n\n- AAPL total return: 279,856.67%\n- GOOGL total return: 12,710.07%\n- Better performer: AAPL\n\nThe total return percentage for AAPL over its entire history is 279,856.67%, while GOOGL has a total return of 12,710.07%. AAPL performed significantly better, with a return over 22 times higher than GOOGL's return over their respective historical periods.",
+            "expected_calls": [],
+            "actual_calls": [],
+            "validation_errors": [],
+            "metrics": {
+              "missing_calls": 0,
+              "wrong_argument_types": 0,
+              "wrong_argument_values": 0,
+              "missing_arguments": 0,
+              "steps": 2,
+              "missing_variable_reads": 0,
+              "missing_variable_writes": 0,
+              "prompt_tokens": 2328,
+              "completion_tokens": 495,
+              "total_tokens": 2823
+            },
+            "success": true,
+            "validator_result": true,
+            "code_snippets": [
+              "# Calculate total return percentage for AAPL\n# Total return = (Ending price - Starting price) / Starting price * 100%\naapl_start_price = aapl_df['Close'].iloc[0]\naapl_end_price = aapl_df['Close'].iloc[-1]\naapl_total_return = ((aapl_end_price - aapl_start_price) / aapl_start_price) * 100\nprint(f\"AAPL total return: {aapl_total_return:.2f}%\")\n\n# Calculate total return percentage for GOOGL\ngoogl_start_price = googl_df['Close'].iloc[0]\ngoogl_end_price = googl_df['Close'].iloc[-1]\ngoogl_total_return = ((googl_end_price - googl_start_price) / googl_start_price) * 100\nprint(f\"GOOGL total return: {googl_total_return:.2f}%\")\n\n# Determine which stock performed better\nif aapl_total_return > googl_total_return:\n    better_performer = 'AAPL'\n    print(f\"Better performer: {better_performer}\")\nelif googl_total_return > aapl_total_return:\n    better_performer = 'GOOGL'\n    print(f\"Better performer: {better_performer}\")\nelse:\n    better_performer = 'TIE'\n    print(\"Both stocks performed equally\")"
+            ],
+            "expected_variable_reads": [
+              "aapl_df",
+              "googl_df"
+            ],
+            "expected_variable_writes": [
+              "aapl_total_return",
+              "googl_total_return",
+              "better_performer"
+            ],
+            "actual_variable_reads": [
+              "aapl_df",
+              "googl_df"
+            ],
+            "actual_variable_writes": [
+              "aapl_total_return",
+              "googl_total_return",
+              "better_performer"
+            ]
+          },
+          {
+            "query": "Merge both stock DataFrames on their overlapping dates. Keep only Date and Close price for each stock (rename to aapl_close and googl_close).",
+            "reference_response": "",
+            "actual_response": "I have successfully merged both stock DataFrames on their overlapping dates. The merged DataFrame contains 5,355 rows covering the period from August 19, 2004 to November 28, 2025. It includes three columns: Date, aapl_close (AAPL closing price), and googl_close (GOOGL closing price). The merge was performed as an inner join, so it only includes dates where both stocks have data available.",
+            "expected_calls": [],
+            "actual_calls": [],
+            "validation_errors": [],
+            "metrics": {
+              "missing_calls": 0,
+              "wrong_argument_types": 0,
+              "wrong_argument_values": 0,
+              "missing_arguments": 0,
+              "steps": 3,
+              "missing_variable_reads": 0,
+              "missing_variable_writes": 0,
+              "prompt_tokens": 6112,
+              "completion_tokens": 626,
+              "total_tokens": 6738
+            },
+            "success": true,
+            "validator_result": true,
+            "code_snippets": [
+              "# First, let's check the date ranges of both datasets\nprint(\"AAPL date range:\", aapl_df['Date'].min(), \"to\", aapl_df['Date'].max())\nprint(\"GOOGL date range:\", googl_df['Date'].min(), \"to\", googl_df['Date'].max())\n\n# Create DataFrames with just Date and Close columns\naapl_close_df = aapl_df[['Date', 'Close']].copy()\ngoogl_close_df = googl_df[['Date', 'Close']].copy()\n\n# Rename columns\naapl_close_df = aapl_close_df.rename(columns={'Close': 'aapl_close'})\ngoogl_close_df = googl_close_df.rename(columns={'Close': 'googl_close'})\n\n# Merge on Date (inner join to get only overlapping dates)\nmerged_df = pd.merge(aapl_close_df, googl_close_df, on='Date', how='inner')\n\n# Sort by date\nmerged_df = merged_df.sort_values('Date')\n\nprint(f\"Merged DataFrame shape: {merged_df.shape}\")\nprint(f\"First few rows:\\n{merged_df.head()}\")\nprint(f\"Last few rows:\\n{merged_df.tail()}\")",
+              "import pandas as pd\n\n# Now merge both DataFrames on their overlapping dates\n# Create DataFrames with just Date and Close columns\naapl_close_df = aapl_df[['Date', 'Close']].copy()\ngoogl_close_df = googl_df[['Date', 'Close']].copy()\n\n# Rename columns\naapl_close_df = aapl_close_df.rename(columns={'Close': 'aapl_close'})\ngoogl_close_df = googl_close_df.rename(columns={'Close': 'googl_close'})\n\n# Merge on Date (inner join to get only overlapping dates)\nmerged_df = pd.merge(aapl_close_df, googl_close_df, on='Date', how='inner')\n\n# Sort by date\nmerged_df = merged_df.sort_values('Date')\n\nprint(f\"Merged DataFrame shape: {merged_df.shape}\")\nprint(f\"Date range in merged data: {merged_df['Date'].min()} to {merged_df['Date'].max()}\")\nprint(f\"First few rows:\\n{merged_df.head()}\")\nprint(f\"Last few rows:\\n{merged_df.tail()}\")"
+            ],
+            "expected_variable_reads": [
+              "aapl_df",
+              "googl_df"
+            ],
+            "expected_variable_writes": [
+              "merged_df"
+            ],
+            "actual_variable_reads": [
+              "aapl_df",
+              "googl_df",
+              "aapl_df",
+              "googl_df"
+            ],
+            "actual_variable_writes": [
+              "merged_df",
+              "merged_df"
+            ]
+          },
+          {
+            "query": "Using the merged data, calculate the daily return percentage for each stock and add them as new columns (aapl_return, googl_return). Also compute the correlation between these daily returns.",
+            "reference_response": "",
+            "actual_response": "I have successfully calculated the daily return percentages for both stocks and computed their correlation. The daily returns have been added as new columns `aapl_return` and `googl_return` to the merged DataFrame. After removing the first row with NaN values, we have 5,354 days of overlapping return data.\n\nThe correlation between AAPL and GOOGL daily returns is 0.5128, which indicates a moderately strong positive relationship. When AAPL's daily returns increase, GOOGL's daily returns tend to increase as well, and vice versa.\n\nSummary statistics show:\n- AAPL daily returns: mean = 0.1405%, standard deviation = 2.0424%\n- GOOGL daily returns: mean = 0.1093%, standard deviation = 1.9342%\n\nBoth stocks show similar volatility patterns, with AAPL having slightly higher average daily returns and slightly more volatility than GOOGL over the overlapping period from August 2004 to November 2025.",
+            "expected_calls": [],
+            "actual_calls": [],
+            "validation_errors": [],
+            "metrics": {
+              "missing_calls": 0,
+              "wrong_argument_types": 0,
+              "wrong_argument_values": 0,
+              "missing_arguments": 0,
+              "steps": 2,
+              "missing_variable_reads": 0,
+              "missing_variable_writes": 0,
+              "prompt_tokens": 6099,
+              "completion_tokens": 480,
+              "total_tokens": 6579
+            },
+            "success": true,
+            "validator_result": true,
+            "code_snippets": [
+              "# Calculate daily return percentage for AAPL\n# Daily return = (Today's price - Yesterday's price) / Yesterday's price * 100%\nmerged_df['aapl_return'] = merged_df['aapl_close'].pct_change() * 100\n\n# Calculate daily return percentage for GOOGL\nmerged_df['googl_return'] = merged_df['googl_close'].pct_change() * 100\n\n# Drop the first row which will have NaN values due to pct_change\nmerged_df_with_returns = merged_df.dropna()\n\nprint(f\"DataFrame shape after removing NaN: {merged_df_with_returns.shape}\")\nprint(f\"First few rows with returns:\\n{merged_df_with_returns.head()}\")\nprint(f\"\\nSummary statistics for AAPL returns:\")\nprint(merged_df_with_returns['aapl_return'].describe())\nprint(f\"\\nSummary statistics for GOOGL returns:\")\nprint(merged_df_with_returns['googl_return'].describe())\n\n# Calculate correlation between daily returns\ncorrelation = merged_df_with_returns['aapl_return'].corr(merged_df_with_returns['googl_return'])\nprint(f\"\\nCorrelation between AAPL and GOOGL daily returns: {correlation:.4f}\")"
+            ],
+            "expected_variable_reads": [
+              "merged_df"
+            ],
+            "expected_variable_writes": [
+              "correlation"
+            ],
+            "actual_variable_reads": [
+              "merged_df"
+            ],
+            "actual_variable_writes": [
+              "correlation"
+            ]
+          }
+        ]
+      }
+    ],
+    "metrics": {
+      "total_turns": 3,
+      "successful_turns": 3,
+      "failed_turns": 0,
+      "total_expected_calls": 0,
+      "total_actual_calls": 0,
+      "missing_calls": 0,
+      "wrong_argument_values": 0,
+      "wrong_argument_types": 0,
+      "missing_arguments": 0,
+      "wrong_argument_names": 0,
+      "total_steps": 7,
+      "success_rate": 1.0,
+      "missing_variable_reads": 0,
+      "missing_variable_writes": 0,
+      "total_prompt_tokens": 14539,
+      "total_completion_tokens": 1601,
+      "total_tokens": 16140
+    }
+  }
+}

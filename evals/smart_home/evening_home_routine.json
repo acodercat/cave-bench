@@ -1,0 +1,29 @@
+[
+  {
+    "name": "evening_home_routine",
+    "module": "evals.smart_home.evening_home_routine",
+    "description": "Control smart home devices (lights, thermostat, locks, camera, speakers) by manipulating objects and calling their methods to automate home scenes.",
+    "conversations": [
+      {
+        "id": "evening_home_routine",
+        "turns": [
+          {
+            "query": "I just got home from work. Check all the doors - if any are unlocked, lock them immediately for security. Also check which lights were left on while I was away. Then make sure the security camera starts recording since I'm home now.",
+            "validator": "validate_arrival_check",
+            "expected_function_calls": []
+          },
+          {
+            "query": "The house feels cold. Check the thermostat - if the current temperature is below 21°C, set it to 22°C to warm up. Also, I want to relax in the living room, so turn on the living room light to 70% brightness and start the living room speaker playing music at 40% volume.",
+            "validator": "validate_evening_setup",
+            "expected_function_calls": []
+          },
+          {
+            "query": "I'm heading to bed now. Turn off everything in the living room - both the light and speaker. Turn on the bedroom light but dim it to 15% for winding down. For energy saving overnight, check the thermostat - if the target temperature is above 20°C, lower it to 19°C. Do a final security check: make sure all doors are locked and the camera is still recording.",
+            "validator": "validate_bedtime_routine",
+            "expected_function_calls": []
+          }
+        ]
+      }
+    ]
+  }
+]

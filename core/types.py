@@ -80,7 +80,7 @@ class ExpectedFunctionCall:
 
 
 @dataclass
-class BenchmarkTurn:
+class Turn:
     """A single turn in a benchmark conversation."""
 
     query: str = ""  # Optional if pre_turn_hook provides the query
@@ -92,7 +92,7 @@ class BenchmarkTurn:
     pre_turn_hook: Optional[str] = None  # Hook to call before turn (modifies state, returns query)
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'BenchmarkTurn':
+    def from_dict(cls, data: Dict[str, Any]) -> 'Turn':
         """Create from dictionary loaded from JSON."""
         expected_calls = [
             ExpectedFunctionCall.from_dict(call)
@@ -110,16 +110,16 @@ class BenchmarkTurn:
 
 
 @dataclass
-class BenchmarkConversation:
+class Conversation:
     """A conversation in a benchmark scenario."""
 
     id: str
-    turns: List[BenchmarkTurn]
+    turns: List[Turn]
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'BenchmarkConversation':
+    def from_dict(cls, data: Dict[str, Any]) -> 'Conversation':
         """Create from dictionary loaded from JSON."""
-        turns = [BenchmarkTurn.from_dict(turn) for turn in data.get('turns', [])]
+        turns = [Turn.from_dict(turn) for turn in data.get('turns', [])]
         return cls(
             id=data.get('id', 'unnamed_conversation'),
             turns=turns

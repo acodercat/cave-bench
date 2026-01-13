@@ -6,8 +6,8 @@ from core.types import (
     VariableAccess,
     ExpectedArgument,
     ExpectedFunctionCall,
-    BenchmarkTurn,
-    BenchmarkConversation,
+    Turn,
+    Conversation,
     TurnMetrics,
     TurnResult,
     ConversationResult,
@@ -139,11 +139,11 @@ class TestExpectedFunctionCall:
         assert len(d["arguments"]) == 1
 
 
-class TestBenchmarkTurn:
-    """Tests for BenchmarkTurn dataclass."""
+class TestTurn:
+    """Tests for Turn dataclass."""
 
     def test_basic_creation(self):
-        turn = BenchmarkTurn(query="What is the weather?")
+        turn = Turn(query="What is the weather?")
         assert turn.query == "What is the weather?"
         assert turn.expected_function_calls == []
         assert turn.reference_response == ""
@@ -151,7 +151,7 @@ class TestBenchmarkTurn:
 
     def test_with_expected_calls(self):
         calls = [ExpectedFunctionCall(name="get_weather")]
-        turn = BenchmarkTurn(
+        turn = Turn(
             query="What is the weather?",
             expected_function_calls=calls,
             validator="validate_weather"
@@ -169,7 +169,7 @@ class TestBenchmarkTurn:
             "expected_variable_reads": ["portfolio"],
             "expected_variable_writes": ["last_prices"]
         }
-        turn = BenchmarkTurn.from_dict(data)
+        turn = Turn.from_dict(data)
         assert turn.query == "Get prices for AAPL"
         assert len(turn.expected_function_calls) == 1
         assert turn.validator == "validate_prices"
@@ -181,16 +181,16 @@ class TestBenchmarkTurn:
             "query": "",
             "pre_turn_hook": "setup_game_state"
         }
-        turn = BenchmarkTurn.from_dict(data)
+        turn = Turn.from_dict(data)
         assert turn.pre_turn_hook == "setup_game_state"
 
 
-class TestBenchmarkConversation:
-    """Tests for BenchmarkConversation dataclass."""
+class TestConversation:
+    """Tests for Conversation dataclass."""
 
     def test_creation(self):
-        turns = [BenchmarkTurn(query="Hello")]
-        conv = BenchmarkConversation(id="test_conv", turns=turns)
+        turns = [Turn(query="Hello")]
+        conv = Conversation(id="test_conv", turns=turns)
         assert conv.id == "test_conv"
         assert len(conv.turns) == 1
 
@@ -202,14 +202,14 @@ class TestBenchmarkConversation:
                 {"query": "What is the risk?"}
             ]
         }
-        conv = BenchmarkConversation.from_dict(data)
+        conv = Conversation.from_dict(data)
         assert conv.id == "portfolio_analysis"
         assert len(conv.turns) == 2
         assert conv.turns[0].query == "Analyze my portfolio"
 
     def test_from_dict_default_id(self):
         data = {"turns": []}
-        conv = BenchmarkConversation.from_dict(data)
+        conv = Conversation.from_dict(data)
         assert conv.id == "unnamed_conversation"
 
 

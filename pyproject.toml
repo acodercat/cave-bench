@@ -7,13 +7,9 @@ requires-python = ">=3.12"
 dependencies = [
     "pandas>=2.2.3",
     "cave-agent[all]>=0.6.0",
-    "google-genai>=1.53.0",
     "litellm>=1.80.7",
     "pytest>=9.0.2",
-    "networkx>=3.6.1",
-    "scipy>=1.16.3",
     "anthropic>=0.75.0",
     "python-dotenv>=1.2.1",
     "openai-agents>=0.6.4",
-    "json-repair>=0.55.0",
 ]

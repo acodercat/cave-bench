@@ -1,18 +1,18 @@
 """Benchmark evaluation engine for cave-bench.
 
-This module provides the BenchmarkEvaluator class which can evaluate
+This module provides the Evaluator class which can evaluate
 any agent implementation that conforms to the Agent interface.
 """
 
 import logging
 import ast
 import copy
-from typing import Dict, List, Callable, Set, Optional, Any
+from typing import Dict, List, Callable, Set, Optional
 from core.validation import validate_function_calls, ErrorType, ValidationError, ValidatorResult
 from core.types import (
     ToolCall, TurnMetrics, TurnResult,
     ConversationResult, ScenarioMetrics, ScenarioResult, VariableAccess,
-    BenchmarkTurn, BenchmarkConversation, ExpectedFunctionCall, BenchmarkScenario
+    Turn, Conversation, ExpectedFunctionCall, BenchmarkScenario
 )
 from core.agent import Agent, AgentFactory, AgentToolCall
 
@@ -63,7 +63,7 @@ class VariableAnalyzer(ast.NodeVisitor):
         self.generic_visit(node)
 
 
-class BenchmarkEvaluator:
+class Evaluator:
     """Evaluator for benchmarking agent implementations.
 
     This evaluator works with any agent that implements the Agent interface,
@@ -92,7 +92,7 @@ class BenchmarkEvaluator:
         self,
         scenario: str,
         module,
-        conversations: List[BenchmarkConversation],
+        conversations: List[Conversation],
         json_config: dict | None = None
     ) -> ScenarioResult:
         """
@@ -139,7 +139,7 @@ class BenchmarkEvaluator:
 
     async def _evaluate_conversation(
         self,
-        conversation: BenchmarkConversation,
+        conversation: Conversation,
         scenario: BenchmarkScenario
     ) -> ConversationResult:
         """Evaluate a single conversation within a scenario."""
@@ -201,7 +201,7 @@ class BenchmarkEvaluator:
 
     async def _evaluate_turn(
         self,
-        turn: BenchmarkTurn,
+        turn: Turn,
         agent: Agent,
         validators: Optional[Dict[str, Callable]] = None,
         hooks: Optional[Dict[str, Callable]] = None

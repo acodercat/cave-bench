@@ -1,0 +1,82 @@
+[
+  {
+    "module": "evals.function_calling.weather_query",
+    "requirements": "You are a weather expert. You are given a city and a date, and you need to return the weather data for that city and date.",
+    "conversations": [
+      {
+        "id": "tokyo_weather_conversation",
+        "turns": [
+          {
+            "query": "What is the weather in Tokyo on 2023-04-28? and give me the recommendation",
+            "expected_function_calls": [
+              {
+                "name": "get_weather",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "city",
+                    "value": "Tokyo",
+                    "type": "str"
+                  },
+                  {
+                    "name": "date",
+                    "value": "2023-04-28",
+                    "type": "str"
+                  }
+                ]
+              },
+              {
+                "name": "get_weather_recommendation",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "weather",
+                    "type": "dict"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "query": "What is the weather in London and New York on 2023-04-29?",
+            "expected_function_calls": [
+              {
+                "name": "get_weather",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "city",
+                    "value": "London",
+                    "type": "str"
+                  },
+                  {
+                    "name": "date",
+                    "value": "2023-04-29",
+                    "type": "str"
+                  }
+                ]
+              },
+              {
+                "name": "get_weather",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "city",
+                    "value": "New York",
+                    "type": "str"
+                  },
+                  {
+                    "name": "date",
+                    "value": "2023-04-29",
+                    "type": "str"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "name": "weather_query"
+  }
+]
