@@ -268,8 +268,10 @@ class LitellmAgentWrapper(Agent):
 
             # Check if model wants to call tools
             if choice.finish_reason == "tool_calls" and assistant_message.tool_calls:
-                print(f"Tool calls: {assistant_message.tool_calls}")
-                print(f"Assistant message: {assistant_message}")
+
+                logger.debug(f"Tool calls: {assistant_message.tool_calls}")
+                logger.debug(f"Assistant message: {assistant_message}")
+                
                 # Add assistant message with tool calls to history
                 self._messages.append({
                     "role": "assistant",
@@ -361,6 +363,7 @@ class LitellmAgentWrapper(Agent):
         self._messages = []
         if self._system_prompt:
             self._messages.append({"role": "system", "content": self._system_prompt})
+        self._total_steps = 0
         self._total_token_usage = TokenUsage()
 
 
