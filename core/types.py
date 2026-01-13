@@ -16,6 +16,13 @@ class ToolCall:
     def __repr__(self) -> str:
         return f"ToolCall(function={self.function}, call_id={self.call_id})"
 
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "function": self.function,
+            "arguments": self.arguments,
+            "call_id": self.call_id
+        }
+
 
 @dataclass
 class VariableAccess:

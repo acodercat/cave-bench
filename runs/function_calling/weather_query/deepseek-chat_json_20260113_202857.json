@@ -1,0 +1,197 @@
+{
+  "weather_query": {
+    "scenario": "weather_query",
+    "conversations": [
+      {
+        "id": "tokyo_weather_conversation",
+        "turns": [
+          {
+            "query": "What is the weather in Tokyo on 2023-04-28? and give me the recommendation",
+            "reference_response": "",
+            "actual_response": "Here's the weather information and recommendations for Tokyo on April 28, 2023:\n\n**Weather Data:**\n- **City:** Tokyo\n- **Date:** 2023-04-28\n- **Temperature:** 21\u00b0C (mild spring temperature)\n- **Condition:** Clear skies\n- **Rain Chance:** 5% (very low chance of rain)\n\n**Recommendations:**\n- **Clothing:** Spring clothing, long-sleeve shirt or light sweater\n- **Umbrella Needed:** No (rain chance is very low)\n- **Outdoor Activity:** Suitable for outdoor activities like park walks, cycling, or picnics\n\nIt looks like you'll have perfect weather in Tokyo on that day! With clear skies, mild temperatures, and minimal chance of rain, it's an excellent day for outdoor activities. You can dress comfortably in spring clothing without needing to worry about carrying an umbrella.",
+            "expected_calls": [
+              {
+                "name": "get_weather",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "city",
+                    "required": true,
+                    "value": "Tokyo",
+                    "type": "str"
+                  },
+                  {
+                    "name": "date",
+                    "required": true,
+                    "value": "2023-04-28",
+                    "type": "str"
+                  }
+                ],
+                "strict_args": false
+              },
+              {
+                "name": "get_weather_recommendation",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "weather",
+                    "required": true,
+                    "type": "dict"
+                  }
+                ],
+                "strict_args": false
+              }
+            ],
+            "actual_calls": [
+              {
+                "function": "get_weather",
+                "arguments": {
+                  "city": "Tokyo",
+                  "date": "2023-04-28"
+                },
+                "call_id": "call_00_hAS6mD8ND1EsKNRUOhPfdawR"
+              },
+              {
+                "function": "get_weather_recommendation",
+                "arguments": {
+                  "weather": {
+                    "city": "Tokyo",
+                    "date": "2023-04-28",
+                    "data": {
+                      "temp": 21,
+                      "condition": "Clear",
+                      "rain_chance": 5
+                    }
+                  }
+                },
+                "call_id": "call_00_ePbS6UyGLgRzeXNIVH1OtvV9"
+              }
+            ],
+            "validation_errors": [],
+            "metrics": {
+              "missing_calls": 0,
+              "wrong_argument_types": 0,
+              "wrong_argument_values": 0,
+              "missing_arguments": 0,
+              "steps": 3,
+              "missing_variable_reads": 0,
+              "missing_variable_writes": 0,
+              "prompt_tokens": 3375,
+              "completion_tokens": 372,
+              "total_tokens": 3747
+            },
+            "success": true,
+            "validator_result": true,
+            "code_snippets": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": [],
+            "actual_variable_reads": [],
+            "actual_variable_writes": []
+          },
+          {
+            "query": "What is the weather in London and New York on 2023-04-29?",
+            "reference_response": "",
+            "actual_response": "Here's the weather for London and New York on April 29, 2023:\n\n**London:**\n- **Temperature:** 17\u00b0C (cool spring temperature)\n- **Condition:** Partly Cloudy\n- **Rain Chance:** 20% (low chance of rain)\n\n**New York:**\n- **Temperature:** 22\u00b0C (pleasant spring temperature)\n- **Condition:** Clear skies\n- **Rain Chance:** 5% (very low chance of rain)\n\n**Comparison:**\n- New York will have slightly warmer and clearer weather compared to London\n- London will be cooler with partly cloudy skies and a slightly higher chance of rain\n- Both cities will have generally good spring weather, but New York appears to have more ideal conditions with clear skies and minimal rain chance",
+            "expected_calls": [
+              {
+                "name": "get_weather",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "city",
+                    "required": true,
+                    "value": "London",
+                    "type": "str"
+                  },
+                  {
+                    "name": "date",
+                    "required": true,
+                    "value": "2023-04-29",
+                    "type": "str"
+                  }
+                ],
+                "strict_args": false
+              },
+              {
+                "name": "get_weather",
+                "required": true,
+                "arguments": [
+                  {
+                    "name": "city",
+                    "required": true,
+                    "value": "New York",
+                    "type": "str"
+                  },
+                  {
+                    "name": "date",
+                    "required": true,
+                    "value": "2023-04-29",
+                    "type": "str"
+                  }
+                ],
+                "strict_args": false
+              }
+            ],
+            "actual_calls": [
+              {
+                "function": "get_weather",
+                "arguments": {
+                  "city": "London",
+                  "date": "2023-04-29"
+                },
+                "call_id": "call_00_wVpdK4Wbe0aPuj66RqHkD7A3"
+              },
+              {
+                "function": "get_weather",
+                "arguments": {
+                  "city": "New York",
+                  "date": "2023-04-29"
+                },
+                "call_id": "call_00_QyQK18KEMaQLjaODjIxm1gAv"
+              }
+            ],
+            "validation_errors": [],
+            "metrics": {
+              "missing_calls": 0,
+              "wrong_argument_types": 0,
+              "wrong_argument_values": 0,
+              "missing_arguments": 0,
+              "steps": 3,
+              "missing_variable_reads": 0,
+              "missing_variable_writes": 0,
+              "prompt_tokens": 4913,
+              "completion_tokens": 318,
+              "total_tokens": 5231
+            },
+            "success": true,
+            "validator_result": true,
+            "code_snippets": [],
+            "expected_variable_reads": [],
+            "expected_variable_writes": [],
+            "actual_variable_reads": [],
+            "actual_variable_writes": []
+          }
+        ]
+      }
+    ],
+    "metrics": {
+      "total_turns": 2,
+      "successful_turns": 2,
+      "failed_turns": 0,
+      "total_expected_calls": 4,
+      "total_actual_calls": 4,
+      "missing_calls": 0,
+      "wrong_argument_values": 0,
+      "wrong_argument_types": 0,
+      "missing_arguments": 0,
+      "wrong_argument_names": 0,
+      "total_steps": 6,
+      "success_rate": 1.0,
+      "missing_variable_reads": 0,
+      "missing_variable_writes": 0,
+      "total_prompt_tokens": 8288,
+      "total_completion_tokens": 690,
+      "total_tokens": 8978
+    }
+  }
+}

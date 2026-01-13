@@ -87,23 +87,22 @@ def get_available_flights(departure_date: str, origin_airport: str, destination_
         }
     ]
 
-def check_seat_availability(flight_id: str, seat_class: str = None) -> dict[str, Any]:
+def check_seat_availability(flight_id: str, seat_class: str) -> dict[str, Any]:
     """
     Check seat availability for a specific flight and class.
-    
+
     Parameters:
-    - flight_id (str): Unique identifier for the flight (required).
-    - seat_class (str, optional): Class of seat (economy, premium_economy, business, first). If None, returns data for all seat classes.
-    
+    - flight_id (str): Unique identifier for the flight (e.g., "CX234", "BA28")
+    - seat_class (str): Class of seat to check. Must be one of: "economy", "premium_economy", "business", "first"
+
     Returns:
-    - dict: Dictionary containing seat availability information. Example return formats:
+    - dict: Dictionary containing seat availability information:
        {
-         "economy": {"available": True, "remaining_seats": 42, "price": 3500.0},
-         "premium_economy": {"available": True, "remaining_seats": 12, "price": 4800.0},
-         ...
+         "available": True,
+         "remaining_seats": 42,
+         "price": 3500.0
        }
     """
-    # Simulated availability data
     availability_data = {
         "CX234": {
             "economy": {"available": True, "remaining_seats": 42, "price": 3500.0},
@@ -142,18 +141,10 @@ def check_seat_availability(flight_id: str, seat_class: str = None) -> dict[str,
             "first": {"available": False, "remaining_seats": 0, "price": 9800.0}
         }
     }
-    
-    # Case 1: Only flight_id provided - return all seat classes for that flight
-    if seat_class is None:
-        if flight_id not in availability_data:
-            return {}  # Return empty dict if flight not found
-        return availability_data[flight_id]
-    
-    # Case 2: Both flight_id and seat_class provided - return specific seat class for specific flight
+
     if flight_id in availability_data and seat_class in availability_data[flight_id]:
         return availability_data[flight_id][seat_class]
-    else:
-        return {"available": False, "remaining_seats": 0, "price": 0.0}
+    return {"available": False, "remaining_seats": 0, "price": 0.0}
 
 def get_passenger_information_by_id(passenger_id: str) -> dict[str, Any]:
     """

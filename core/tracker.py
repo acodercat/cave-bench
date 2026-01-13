@@ -1,6 +1,6 @@
 """Function call tracker using Python's profiling hooks."""
 
-import threading
+import sys
 import inspect
 from types import FrameType
 from typing import Any, List, Optional, Type
@@ -8,7 +8,7 @@ from core.types import ToolCall
 
 
 class FunctionCallTracker:
-    """Tracker for function calls using Python's threading.setprofile (thread-safe)."""
+    """Tracker for function calls using Python's sys.setprofile."""
 
     def __init__(self, target_functions: Optional[List[str]] = None) -> None:
         """
@@ -25,11 +25,11 @@ class FunctionCallTracker:
         """Start tracking function calls and returns"""
         self.tool_calls = []
         self.current_call_id = 0
-        threading.setprofile(self._profile_handler)
+        sys.setprofile(self._profile_handler)
 
     def stop(self) -> None:
         """Stop tracking function calls and returns"""
-        threading.setprofile(None)
+        sys.setprofile(None)
 
     def __enter__(self) -> "FunctionCallTracker":
         """Context manager entry - start tracking."""

@@ -29,7 +29,12 @@ DEEPSEEK_TEMPERATURE=0.3
 Run benchmarks using module syntax:
 
 ```bash
-python -m scripts.function_calling  # Function calling benchmarks
+# Function calling benchmarks
+python -m scripts.function_calling           # Run both agent types
+python -m scripts.function_calling -a cave   # CaveAgent (Python code execution)
+python -m scripts.function_calling -a json   # LiteLLM (JSON function calling)
+
+# Other benchmarks
 python -m scripts.data_analysis     # Data analysis benchmarks
 python -m scripts.smart_home        # Smart home benchmarks
 ```

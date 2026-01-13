@@ -8,7 +8,7 @@
           {
             "query": "What is the weather in Tokyo on 2023-04-28? and give me the recommendation",
             "reference_response": "",
-            "actual_response": "Based on the weather data and recommendations for Tokyo on 2023-04-28:\n\n**Weather in Tokyo on 2023-04-28:**\n- Temperature: 21\u00b0C\n- Condition: Clear\n- Rain chance: 5%\n\n**Recommendations:**\n- **Clothing:** Spring clothing, long-sleeve shirt or light sweater\n- **Umbrella needed:** No (False)\n- **Outdoor activity:** Suitable for outdoor activities like park walks or sightseeing\n\nThe weather in Tokyo on April 28, 2023, is pleasant with clear skies, mild temperatures, and very low chance of rain, making it ideal for outdoor activities.",
+            "actual_response": "Based on the weather data for Tokyo on April 28, 2023:\n\n**Weather Conditions:**\n- Temperature: 21\u00b0C (mild spring weather)\n- Condition: Clear skies\n- Rain chance: 5% (very low probability of rain)\n\n**Recommendations:**\n- **Clothing:** Spring clothing, such as a long-sleeve shirt or light sweater\n- **Umbrella:** Not needed (False)\n- **Outdoor Activity:** Suitable for outdoor activities like park walks, cycling, or picnics\n\nThe weather in Tokyo on April 28, 2023, is pleasant with clear skies and a low chance of rain, making it ideal for outdoor activities.",
             "expected_calls": [
               {
                 "name": "get_weather",
@@ -76,9 +76,9 @@
               "steps": 2,
               "missing_variable_reads": 0,
               "missing_variable_writes": 0,
-              "prompt_tokens": 2443,
-              "completion_tokens": 266,
-              "total_tokens": 2709
+              "prompt_tokens": 2423,
+              "completion_tokens": 249,
+              "total_tokens": 2672
             },
             "success": true,
             "validator_result": true,
@@ -93,7 +93,7 @@
           {
             "query": "What is the weather in London and New York on 2023-04-29?",
             "reference_response": "",
-            "actual_response": "**Weather in London on 2023-04-29:**\n- Temperature: 17\u00b0C\n- Condition: Partly Cloudy\n- Rain chance: 20%\n\n**Weather in New York on 2023-04-29:**\n- Temperature: 22\u00b0C\n- Condition: Clear\n- Rain chance: 5%\n\nLondon will be cooler with partly cloudy skies and a 20% chance of rain, while New York will have warmer, clear weather with only a 5% chance of rain.",
+            "actual_response": "**Weather for London on April 29, 2023:**\n- Temperature: 17\u00b0C (cool)\n- Condition: Partly Cloudy\n- Rain chance: 20% (low probability)\n\n**Weather for New York on April 29, 2023:**\n- Temperature: 22\u00b0C (mild)\n- Condition: Clear skies\n- Rain chance: 5% (very low probability)\n\n**Comparison:**\n- New York has warmer and clearer weather (22\u00b0C, Clear) compared to London (17\u00b0C, Partly Cloudy)\n- Both cities have low rain chances, but New York has an even lower chance at 5% vs London's 20%\n- New York's weather is more favorable for outdoor activities",
             "expected_calls": [
               {
                 "name": "get_weather",
@@ -161,14 +161,14 @@
               "steps": 2,
               "missing_variable_reads": 0,
               "missing_variable_writes": 0,
-              "prompt_tokens": 3324,
-              "completion_tokens": 231,
-              "total_tokens": 3555
+              "prompt_tokens": 3290,
+              "completion_tokens": 277,
+              "total_tokens": 3567
             },
             "success": true,
             "validator_result": true,
             "code_snippets": [
-              "# Get weather data for London on 2023-04-29\nlondon_weather = get_weather(\"London\", \"2023-04-29\")\nprint(\"London Weather Data:\")\nprint(london_weather)\n\n# Get weather data for New York on 2023-04-29\nnew_york_weather = get_weather(\"New York\", \"2023-04-29\")\nprint(\"\\nNew York Weather Data:\")\nprint(new_york_weather)"
+              "# Get weather data for London on 2023-04-29\nlondon_weather = get_weather(\"London\", \"2023-04-29\")\nprint(\"London Weather:\")\nprint(london_weather)\n\n# Get weather data for New York on 2023-04-29\nnew_york_weather = get_weather(\"New York\", \"2023-04-29\")\nprint(\"\\nNew York Weather:\")\nprint(new_york_weather)"
             ],
             "expected_variable_reads": [],
             "expected_variable_writes": [],
@@ -193,9 +193,9 @@
       "success_rate": 1.0,
       "missing_variable_reads": 0,
       "missing_variable_writes": 0,
-      "total_prompt_tokens": 5767,
-      "total_completion_tokens": 497,
-      "total_tokens": 6264
+      "total_prompt_tokens": 5713,
+      "total_completion_tokens": 526,
+      "total_tokens": 6239
     }
   }
 }

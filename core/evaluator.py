@@ -14,7 +14,7 @@ from core.types import (
     ConversationResult, ScenarioMetrics, ScenarioResult, VariableAccess,
     Turn, Conversation, ExpectedFunctionCall, BenchmarkScenario
 )
-from core.agent import Agent, AgentFactory, AgentToolCall
+from core.agent import Agent, AgentFactory
 
 
 logger = logging.getLogger('Agent.Evaluator')
@@ -175,7 +175,7 @@ class Evaluator:
     def _calculate_missing_calls_metric(
         self,
         expected_calls: List[ExpectedFunctionCall],
-        actual_calls: List[AgentToolCall]
+        actual_calls: List[ToolCall]
     ) -> int:
         """
         Calculate the number of missing required function calls.
@@ -270,16 +270,6 @@ class Evaluator:
         actual_calls_dict = [call.to_dict() for call in actual_calls]
         self.metrics.total_actual_calls += len(actual_calls)
 
-        # Convert AgentToolCall to ToolCall for validation
-        tool_calls_for_validation = [
-            ToolCall(
-                function=call.function,
-                arguments=call.arguments,
-                call_id=call.call_id
-            )
-            for call in actual_calls
-        ]
-
         # Run validator if specified (after we have actual_calls)
         # Note: validators may require runtime access
         validator_name = turn.validator
@@ -287,13 +277,13 @@ class Evaluator:
             if validator_name not in validators:
                 raise KeyError(f"Validator '{validator_name}' not found. Available validators: {list(validators.keys())}")
             validator_result = validators[validator_name](
-                result.content, agent.runtime, turn, tool_calls_for_validation
+                result.content, agent.runtime, turn, actual_calls
             )
         else:
             validator_result = ValidatorResult(success=True, message="")
 
         # Validate function calls
-        validation_errors = validate_function_calls(tool_calls_for_validation, expected_calls)
+        validation_errors = validate_function_calls(actual_calls, expected_calls)
 
         # Check for missing variable reads/writes
         for expected_variable_read in expected_variable_reads:

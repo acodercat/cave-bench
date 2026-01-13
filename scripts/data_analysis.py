@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from cave_agent.models import LiteLLMModel
-from adapters.cave_agent_adapter import CaveAgentFactory
+from adapters import CaveAgentFactory
 from runner import evaluate
 
 

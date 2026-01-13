@@ -1,4 +1,3 @@
-import pandas as pd
 from typing import Any
 
 
@@ -94,7 +93,7 @@ def get_weather_recommendation(weather):
     condition = weather_data["condition"]
     rain_chance = weather_data["rain_chance"]
     
-    return pd.DataFrame({
+    return {
         "city": weather["city"],
         "date": weather["date"],
         "recommendations": {
@@ -102,7 +101,7 @@ def get_weather_recommendation(weather):
             "umbrella": rain_chance > 50,
             "outdoor_activity": get_activity_recommendation(temp, condition, rain_chance)
         }
-    })
+    }
 
 def get_clothing_recommendation(temperature, rain_chance):
     """Helper function: Get clothing recommendations"""

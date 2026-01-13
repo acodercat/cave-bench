@@ -12,7 +12,8 @@ The agent implements a proper agentic loop:
 from typing import List, Callable, Optional, Any, Dict
 import json
 import logging
-from core.agent import Agent, AgentFactory, AgentResponse, AgentToolCall, TokenUsage
+from core.agent import Agent, AgentFactory, AgentResponse, TokenUsage
+from core.types import ToolCall
 from litellm import acompletion
 
 logger = logging.getLogger('Agent.LitellmAdapter')
@@ -242,7 +243,7 @@ class LitellmAgentWrapper(Agent):
         # Add user message to history
         self._messages.append({"role": "user", "content": query})
 
-        all_tool_calls: List[AgentToolCall] = []
+        all_tool_calls: List[ToolCall] = []
         steps = 0
         total_token_usage = TokenUsage()
 
@@ -298,7 +299,7 @@ class LitellmAgentWrapper(Agent):
                         arguments = {}
 
                     # Record the tool call
-                    agent_tool_call = AgentToolCall(
+                    agent_tool_call = ToolCall(
                         call_id=tool_call.id,
                         function=tool_call.function.name,
                         arguments=arguments

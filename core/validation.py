@@ -213,9 +213,8 @@ def validate_arguments(actual: ToolCall,
     expected_args = expected.arguments
     errors = []
 
-    # Keep track of matched arguments on both sides
+    # Keep track of matched actual arguments
     matched_actual_args = set()
-    matched_expected_args = set()
 
     # First check all expected arguments
     for arg_index, expected_arg in enumerate(expected_args):
@@ -235,7 +234,6 @@ def validate_arguments(actual: ToolCall,
             # Found a matching named parameter
             actual_value = actual_args[expected_name]
             matched_actual_args.add(expected_name)
-            matched_expected_args.add(expected_name)
 
             # Validate value if specified
             if expected_arg.value is not None:
@@ -250,14 +248,13 @@ def validate_arguments(actual: ToolCall,
 
             # Validate type if specified
             if expected_arg.type is not None:
-                expected_type = expected_arg.type
-                actual_type = type(actual_value).__name__
-                if actual_type == "NoneType":
+                if actual_value is None:
                     continue
-                if actual_type != expected_type:
+                if not is_type_compatible(actual_value, expected_arg.type):
+                    actual_type = type(actual_value).__name__
                     errors.append(ValidationError(
                         error_type=ErrorType.WRONG_ARGUMENT_TYPE,
-                        message=f"Call {function_name}(call_index={call_index}): Expected type '{expected_type}', got '{actual_type}'",
+                        message=f"Call {function_name}(call_index={call_index}): Expected type '{expected_arg.type}', got '{actual_type}'",
                         call_index=call_index,
                         arg_name=expected_name
                     ))

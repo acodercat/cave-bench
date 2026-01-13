@@ -2,8 +2,7 @@
 
 import pytest
 from core.evaluator import analyze_variable_access, VariableAnalyzer, Evaluator
-from core.types import VariableAccess, ExpectedFunctionCall
-from core.agent import AgentToolCall
+from core.types import VariableAccess, ExpectedFunctionCall, ToolCall
 
 
 class TestAnalyzeVariableAccess:
@@ -144,8 +143,8 @@ class TestCalculateMissingCallsMetric:
             ExpectedFunctionCall(name="func2", required=True),
         ]
         actual = [
-            AgentToolCall(function="func1", arguments={}, call_id="1"),
-            AgentToolCall(function="func2", arguments={}, call_id="2"),
+            ToolCall(function="func1", arguments={}, call_id="1"),
+            ToolCall(function="func2", arguments={}, call_id="2"),
         ]
 
         missing = evaluator._calculate_missing_calls_metric(expected, actual)
@@ -163,7 +162,7 @@ class TestCalculateMissingCallsMetric:
             ExpectedFunctionCall(name="func2", required=True),
         ]
         actual = [
-            AgentToolCall(function="func1", arguments={}, call_id="1"),
+            ToolCall(function="func1", arguments={}, call_id="1"),
         ]
 
         missing = evaluator._calculate_missing_calls_metric(expected, actual)
@@ -197,7 +196,7 @@ class TestCalculateMissingCallsMetric:
             ExpectedFunctionCall(name="func2", required=False),  # Optional
         ]
         actual = [
-            AgentToolCall(function="func1", arguments={}, call_id="1"),
+            ToolCall(function="func1", arguments={}, call_id="1"),
         ]
 
         missing = evaluator._calculate_missing_calls_metric(expected, actual)
@@ -214,9 +213,9 @@ class TestCalculateMissingCallsMetric:
             ExpectedFunctionCall(name="func1", required=True),
         ]
         actual = [
-            AgentToolCall(function="func1", arguments={}, call_id="1"),
-            AgentToolCall(function="func2", arguments={}, call_id="2"),
-            AgentToolCall(function="func3", arguments={}, call_id="3"),
+            ToolCall(function="func1", arguments={}, call_id="1"),
+            ToolCall(function="func2", arguments={}, call_id="2"),
+            ToolCall(function="func3", arguments={}, call_id="3"),
         ]
 
         missing = evaluator._calculate_missing_calls_metric(expected, actual)
@@ -231,7 +230,7 @@ class TestCalculateMissingCallsMetric:
 
         expected = []
         actual = [
-            AgentToolCall(function="func1", arguments={}, call_id="1"),
+            ToolCall(function="func1", arguments={}, call_id="1"),
         ]
 
         missing = evaluator._calculate_missing_calls_metric(expected, actual)

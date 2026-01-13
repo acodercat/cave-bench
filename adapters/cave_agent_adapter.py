@@ -5,7 +5,8 @@ allowing it to be evaluated using the same pipeline as JSON function calling age
 """
 
 from typing import List, Callable, Optional
-from core.agent import Agent, AgentFactory, AgentResponse, AgentToolCall, TokenUsage
+from core.agent import Agent, AgentFactory, AgentResponse, TokenUsage
+from core.types import ToolCall
 from core.tracker import FunctionCallTracker
 from core.prompts import DEFAULT_AGENT_IDENTITY, DEFAULT_INSTRUCTIONS
 from cave_agent import CaveAgent, LogLevel, Model
@@ -89,15 +90,8 @@ class CaveAgentWrapper(Agent):
         with FunctionCallTracker(target_functions=self._function_names) as tracker:
             result = await self._agent.run(query)
 
-        # Convert tracked calls to AgentToolCall format
-        tool_calls = [
-            AgentToolCall(
-                function=call.function,
-                arguments=call.arguments,
-                call_id=call.call_id
-            )
-            for call in tracker.get_tool_calls()
-        ]
+        # Get tracked tool calls
+        tool_calls = tracker.get_tool_calls()
 
         # Extract token usage from CaveAgent's response
         cave_token_usage = result.token_usage

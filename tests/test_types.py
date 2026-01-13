@@ -1,6 +1,5 @@
 """Tests for core data types."""
 
-import pytest
 from core.types import (
     ToolCall,
     VariableAccess,

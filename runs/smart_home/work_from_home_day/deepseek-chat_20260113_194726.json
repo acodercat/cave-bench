@@ -1,0 +1,120 @@
+{
+  "work_from_home_day": {
+    "scenario": "work_from_home_day",
+    "conversations": [
+      {
+        "id": "work_from_home_day",
+        "turns": [
+          {
+            "query": "I'm starting my work-from-home day in the home office. First, check the office temperature sensor - if it's below 20\u00b0C or above 25\u00b0C, set the thermostat to 22\u00b0C for comfort. Turn on the office light to 80% brightness for productivity. Open the office blinds to 70% to let in natural light but reduce glare. Turn on the office smart plug (connected to my monitor) so my workstation powers up. Enable do-not-disturb on the doorbell so I'm not interrupted. Make sure the robot vacuum is docked and NOT cleaning during work hours.",
+            "reference_response": "",
+            "actual_response": "Perfect! Your work-from-home environment has been successfully set up. Here's a summary of what has been configured:\n\n**Office Environment:**\n- Temperature adjusted: Office was 18.5\u00b0C (below comfort range), thermostat set to 22\u00b0C for optimal comfort\n- Lighting: Office light turned on at 80% brightness for productivity\n- Natural light: Blinds opened to 70% to let in natural light while reducing glare\n- Workstation: Smart plug for monitor turned on, ready for use\n\n**Home Automation:**\n- Doorbell: Do-not-disturb enabled to prevent interruptions during work hours\n- Robot vacuum: Was cleaning but has been paused and returned to dock (now docked with 75% battery)\n\nAll systems are now properly configured for your work-from-home day. The office is at a comfortable temperature with optimal lighting, your workstation is powered up, and you won't be disturbed by doorbell notifications or vacuum cleaning during work hours.",
+            "expected_calls": [],
+            "actual_calls": [],
+            "validation_errors": [],
+            "metrics": {
+              "missing_calls": 0,
+              "wrong_argument_types": 0,
+              "wrong_argument_values": 0,
+              "missing_arguments": 0,
+              "steps": 3,
+              "missing_variable_reads": 0,
+              "missing_variable_writes": 0,
+              "prompt_tokens": 11508,
+              "completion_tokens": 1013,
+              "total_tokens": 12521
+            },
+            "success": true,
+            "validator_result": true,
+            "code_snippets": [
+              "# First, check office temperature sensor\noffice_temp = office_sensor.temperature\nprint(f\"Office temperature: {office_temp}\u00b0C\")\n\n# Check if temperature is below 20\u00b0C or above 25\u00b0C\nif office_temp < 20 or office_temp > 25:\n    print(\"Temperature outside comfort range (20-25\u00b0C). Setting thermostat to 22\u00b0C.\")\n    thermostat.set_temperature(22)\nelse:\n    print(\"Temperature is within comfort range (20-25\u00b0C).\")\n\n# Turn on office light to 80% brightness\noffice_light.turn_on()\noffice_light.set_brightness(80)\nprint(\"Office light turned on at 80% brightness.\")\n\n# Open office blinds to 70%\noffice_blinds.set_position(70)\nprint(\"Office blinds opened to 70%.\")\n\n# Turn on office smart plug (monitor)\noffice_plug.turn_on()\nprint(\"Office smart plug (monitor) turned on.\")\n\n# Enable do-not-disturb on doorbell\ndoorbell.enable_dnd()\nprint(\"Doorbell do-not-disturb enabled.\")\n\n# Check robot vacuum status and ensure it's docked and not cleaning\nvacuum_status = robot_vacuum.get_status()\nprint(f\"Robot vacuum status: cleaning={vacuum_status['is_cleaning']}, docked={vacuum_status['is_docked']}\")\n\nif vacuum_status['is_cleaning']:\n    print(\"Robot vacuum is cleaning. Pausing and returning to dock.\")\n    robot_vacuum.pause()\n    robot_vacuum.return_to_dock()\nelif not vacuum_status['is_docked']:\n    print(\"Robot vacuum is not docked. Returning to dock.\")\n    robot_vacuum.return_to_dock()\nelse:\n    print(\"Robot vacuum is already docked and not cleaning.\")",
+              "# Get current status of all devices to confirm setup\nprint(\"=== WORK-FROM-HOME SETUP STATUS ===\")\n\n# Office temperature and thermostat\noffice_reading = office_sensor.get_reading()\nthermostat_status = thermostat.get_status()\nprint(f\"Office temperature: {office_reading['temperature']}\u00b0C, Humidity: {office_reading['humidity']}%\")\nprint(f\"Thermostat: target={thermostat_status['target_temp']}\u00b0C, mode={thermostat_status['mode']}\")\n\n# Office light\noffice_light_status = office_light.get_status()\nprint(f\"Office light: {'ON' if office_light_status['is_on'] else 'OFF'}, brightness={office_light_status['brightness']}%\")\n\n# Office blinds\noffice_blinds_status = office_blinds.get_status()\nprint(f\"Office blinds: position={office_blinds_status['position']}%\")\n\n# Office smart plug\noffice_plug_status = office_plug.get_status()\nprint(f\"Office smart plug: {'ON' if office_plug_status['is_on'] else 'OFF'}, device={office_plug_status['connected_device']}\")\n\n# Doorbell\ndoorbell_status = doorbell.get_status()\nprint(f\"Doorbell: do-not-disturb={'ENABLED' if doorbell_status['do_not_disturb'] else 'disabled'}\")\n\n# Robot vacuum\nvacuum_status = robot_vacuum.get_status()\nprint(f\"Robot vacuum: cleaning={'YES' if vacuum_status['is_cleaning'] else 'NO'}, docked={'YES' if vacuum_status['is_docked'] else 'NO'}, battery={vacuum_status['battery_level']}%\")\n\nprint(\"=== SETUP COMPLETE ===\")"
+            ],
+            "expected_variable_reads": [],
+            "expected_variable_writes": [],
+            "actual_variable_reads": [],
+            "actual_variable_writes": []
+          },
+          {
+            "query": "I have an important video call starting now. Adjust the office for the call: increase the office light to 100% for better video quality. Close the office blinds to 50% to reduce backlight from the window. Check if any noisy devices are running - if the robot vacuum is cleaning, pause it. If the living room speaker is playing, stop it. Also make sure the doorbell is still in do-not-disturb mode.",
+            "reference_response": "",
+            "actual_response": "Perfect! Your office has been successfully adjusted for the important video call:\n\n**Video Call Optimizations:**\n- **Lighting**: Office light increased to 100% brightness for optimal video quality\n- **Window control**: Blinds adjusted to 50% to reduce backlight and glare from windows\n- **Noise reduction**: Living room speaker was playing \"morning playlist\" and has been stopped to eliminate background noise\n- **Robot vacuum**: Already docked and not cleaning (no action needed)\n- **Interruptions**: Doorbell do-not-disturb mode remains enabled to prevent disruptions\n\nYour environment is now perfectly configured for a professional video call with excellent lighting, minimal background noise, and no interruptions. The office is ready for your important meeting!",
+            "expected_calls": [],
+            "actual_calls": [],
+            "validation_errors": [],
+            "metrics": {
+              "missing_calls": 0,
+              "wrong_argument_types": 0,
+              "wrong_argument_values": 0,
+              "missing_arguments": 0,
+              "steps": 2,
+              "missing_variable_reads": 0,
+              "missing_variable_writes": 0,
+              "prompt_tokens": 9846,
+              "completion_tokens": 518,
+              "total_tokens": 10364
+            },
+            "success": true,
+            "validator_result": true,
+            "code_snippets": [
+              "print(\"=== ADJUSTING FOR VIDEO CALL ===\")\n\n# Increase office light to 100% for better video quality\noffice_light.set_brightness(100)\noffice_light_status = office_light.get_status()\nprint(f\"Office light brightness increased to {office_light_status['brightness']}%\")\n\n# Close office blinds to 50% to reduce backlight\noffice_blinds.set_position(50)\noffice_blinds_status = office_blinds.get_status()\nprint(f\"Office blinds adjusted to {office_blinds_status['position']}%\")\n\n# Check if robot vacuum is cleaning and pause if needed\nvacuum_status = robot_vacuum.get_status()\nif vacuum_status['is_cleaning']:\n    print(\"Robot vacuum was cleaning - pausing it.\")\n    robot_vacuum.pause()\nelse:\n    print(\"Robot vacuum is not cleaning.\")\n\n# Check if living room speaker is playing and stop if needed\nspeaker_status = living_room_speaker.get_status()\nif speaker_status['is_playing']:\n    print(f\"Living room speaker was playing {speaker_status['current_source']} - stopping it.\")\n    living_room_speaker.stop()\nelse:\n    print(\"Living room speaker is not playing.\")\n\n# Verify doorbell is still in do-not-disturb mode\ndoorbell_status = doorbell.get_status()\nif doorbell_status['do_not_disturb']:\n    print(\"Doorbell do-not-disturb mode is still enabled.\")\nelse:\n    print(\"Doorbell do-not-disturb was off - enabling it.\")\n    doorbell.enable_dnd()\n\nprint(\"=== VIDEO CALL SETUP COMPLETE ===\")"
+            ],
+            "expected_variable_reads": [],
+            "expected_variable_writes": [],
+            "actual_variable_reads": [],
+            "actual_variable_writes": []
+          },
+          {
+            "query": "My work day is done! Time to transition to relaxation mode. Turn off the office smart plug (monitor off). Dim the office light to 30% (I'll stay here to read). Open all blinds in the house to enjoy the evening light. Disable do-not-disturb on the doorbell since I can receive visitors now. Check the robot vacuum - if battery is above 60% and dustbin is below 70%, start it cleaning the living room in auto mode since I'm done with calls.",
+            "reference_response": "",
+            "actual_response": "Perfect! Your transition from work mode to relaxation mode is complete. Here's a summary of your current setup:\n\n**Work Day Ended:**\n- Office monitor turned off (smart plug disabled)\n- Office light dimmed to 30% for comfortable reading\n- All blinds throughout the house (office, living room, bedroom) fully opened to 100% to enjoy the evening light\n\n**Home Ready for Evening:**\n- Doorbell do-not-disturb disabled - you can now receive visitors\n- Robot vacuum is actively cleaning the living room in auto mode (battery at 75%, dustbin at 45%)\n\nYour home is now perfectly configured for relaxation. You have soft lighting for reading, plenty of natural evening light throughout the house, and the cleaning is being taken care of automatically while you unwind. The doorbell is ready for any evening visitors. Enjoy your well-deserved relaxation time!",
+            "expected_calls": [],
+            "actual_calls": [],
+            "validation_errors": [],
+            "metrics": {
+              "missing_calls": 0,
+              "wrong_argument_types": 0,
+              "wrong_argument_values": 0,
+              "missing_arguments": 0,
+              "steps": 3,
+              "missing_variable_reads": 0,
+              "missing_variable_writes": 0,
+              "prompt_tokens": 18076,
+              "completion_tokens": 1013,
+              "total_tokens": 19089
+            },
+            "success": true,
+            "validator_result": true,
+            "code_snippets": [
+              "print(\"=== TRANSITIONING TO RELAXATION MODE ===\")\n\n# Turn off office smart plug (monitor off)\noffice_plug.turn_off()\nprint(\"Office smart plug (monitor) turned off.\")\n\n# Dim office light to 30% for reading\noffice_light.set_brightness(30)\noffice_light_status = office_light.get_status()\nprint(f\"Office light dimmed to {office_light_status['brightness']}% for reading.\")\n\n# Open all blinds in the house to enjoy evening light\n# Office blinds\noffice_blinds.open()\noffice_blinds_status = office_blinds.get_status()\nprint(f\"Office blinds opened to {office_blinds_status['position']}%.\")\n\n# Living room blinds\nliving_room_blinds.open()\nliving_room_blinds_status = living_room_blinds.get_status()\nprint(f\"Living room blinds opened to {living_room_blinds_status['position']}%.\")\n\n# Bedroom blinds\nbedroom_blinds.open()\nbedroom_blinds_status = bedroom_blinds.get_status()\nprint(f\"Bedroom blinds opened to {bedroom_blinds_status['position']}%.\")\n\n# Disable do-not-disturb on doorbell\ndoorbell.disable_dnd()\ndoorbell_status = doorbell.get_status()\nprint(f\"Doorbell do-not-disturb {'disabled' if not doorbell_status['do_not_disturb'] else 'still enabled'}.\")\n\n# Check robot vacuum and start cleaning if conditions are met\nvacuum_status = robot_vacuum.get_status()\nprint(f\"Robot vacuum: battery={vacuum_status['battery_level']}%, dustbin={vacuum_status['dustbin_level']}%\")\n\nif vacuum_status['battery_level'] > 60 and vacuum_status['dustbin_level'] < 70:\n    print(\"Conditions met (battery > 60%, dustbin < 70%). Starting cleaning in living room with auto mode.\")\n    robot_vacuum.start_cleaning(room=\"living room\", mode=\"auto\")\nelse:\n    print(f\"Conditions not met for cleaning. Battery > 60%: {vacuum_status['battery_level'] > 60}, Dustbin < 70%: {vacuum_status['dustbin_level'] < 70}\")\n\nprint(\"=== RELAXATION MODE ACTIVATED ===\")",
+              "print(\"=== RELAXATION MODE STATUS CHECK ===\")\n\n# Office status\noffice_plug_status = office_plug.get_status()\noffice_light_status = office_light.get_status()\noffice_blinds_status = office_blinds.get_status()\nprint(f\"Office: Monitor {'OFF' if not office_plug_status['is_on'] else 'ON'}, Light {office_light_status['brightness']}%, Blinds {office_blinds_status['position']}%\")\n\n# Blinds status throughout house\nliving_room_blinds_status = living_room_blinds.get_status()\nbedroom_blinds_status = bedroom_blinds.get_status()\nprint(f\"Blinds: Living room {living_room_blinds_status['position']}%, Bedroom {bedroom_blinds_status['position']}%\")\n\n# Doorbell status\ndoorbell_status = doorbell.get_status()\nprint(f\"Doorbell: do-not-disturb={'ENABLED' if doorbell_status['do_not_disturb'] else 'disabled'}\")\n\n# Robot vacuum status\nvacuum_status = robot_vacuum.get_status()\nprint(f\"Robot vacuum: cleaning={'YES' if vacuum_status['is_cleaning'] else 'NO'}, room={vacuum_status['current_room']}, mode={vacuum_status['cleaning_mode']}, battery={vacuum_status['battery_level']}%\")\n\nprint(\"=== ENJOY YOUR EVENING! ===\")"
+            ],
+            "expected_variable_reads": [],
+            "expected_variable_writes": [],
+            "actual_variable_reads": [],
+            "actual_variable_writes": []
+          }
+        ]
+      }
+    ],
+    "metrics": {
+      "total_turns": 3,
+      "successful_turns": 3,
+      "failed_turns": 0,
+      "total_expected_calls": 0,
+      "total_actual_calls": 0,
+      "missing_calls": 0,
+      "wrong_argument_values": 0,
+      "wrong_argument_types": 0,
+      "missing_arguments": 0,
+      "wrong_argument_names": 0,
+      "total_steps": 8,
+      "success_rate": 1.0,
+      "missing_variable_reads": 0,
+      "missing_variable_writes": 0,
+      "total_prompt_tokens": 39430,
+      "total_completion_tokens": 2544,
+      "total_tokens": 41974
+    }
+  }
+}

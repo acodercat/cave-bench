@@ -1,7 +1,8 @@
 """Tests for agent interfaces."""
 
 import pytest
-from core.agent import TokenUsage, AgentToolCall, AgentResponse
+from core.agent import TokenUsage, AgentResponse
+from core.types import ToolCall
 
 
 class TestTokenUsage:
@@ -49,11 +50,11 @@ class TestTokenUsage:
         }
 
 
-class TestAgentToolCall:
-    """Tests for AgentToolCall dataclass."""
+class TestToolCall:
+    """Tests for ToolCall dataclass."""
 
     def test_creation(self):
-        call = AgentToolCall(
+        call = ToolCall(
             function="get_weather",
             arguments={"city": "London", "unit": "celsius"},
             call_id="call_abc123"
@@ -63,7 +64,7 @@ class TestAgentToolCall:
         assert call.call_id == "call_abc123"
 
     def test_empty_arguments(self):
-        call = AgentToolCall(
+        call = ToolCall(
             function="get_time",
             arguments={},
             call_id="call_xyz"
@@ -71,7 +72,7 @@ class TestAgentToolCall:
         assert call.arguments == {}
 
     def test_to_dict(self):
-        call = AgentToolCall(
+        call = ToolCall(
             function="get_weather",
             arguments={"city": "London"},
             call_id="call_123"
@@ -84,7 +85,7 @@ class TestAgentToolCall:
         }
 
     def test_complex_arguments(self):
-        call = AgentToolCall(
+        call = ToolCall(
             function="analyze_data",
             arguments={
                 "data": [1, 2, 3, 4, 5],
@@ -113,8 +114,8 @@ class TestAgentResponse:
 
     def test_with_tool_calls(self):
         tool_calls = [
-            AgentToolCall(function="get_weather", arguments={"city": "London"}, call_id="1"),
-            AgentToolCall(function="get_forecast", arguments={"city": "London", "days": 5}, call_id="2"),
+            ToolCall(function="get_weather", arguments={"city": "London"}, call_id="1"),
+            ToolCall(function="get_forecast", arguments={"city": "London", "days": 5}, call_id="2"),
         ]
         response = AgentResponse(
             content="Weather info retrieved.",
@@ -155,7 +156,7 @@ class TestAgentResponse:
         assert response.get_result() == "Hello"
 
     def test_get_tool_calls(self):
-        calls = [AgentToolCall(function="func", arguments={}, call_id="1")]
+        calls = [ToolCall(function="func", arguments={}, call_id="1")]
         response = AgentResponse(content="", tool_calls=calls, steps=1)
         assert response.get_tool_calls() == calls
 
@@ -171,12 +172,12 @@ class TestAgentResponse:
     def test_full_response(self):
         """Test a complete response with all fields."""
         calls = [
-            AgentToolCall(
+            ToolCall(
                 function="get_stock_prices",
                 arguments={"symbols": ["AAPL", "GOOGL"]},
                 call_id="call_1"
             ),
-            AgentToolCall(
+            ToolCall(
                 function="calculate_portfolio_value",
                 arguments={"holdings": {"AAPL": 100}},
                 call_id="call_2"

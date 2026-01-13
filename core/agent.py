@@ -9,6 +9,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Dict, Any, List, Optional, Callable
 
+from core.types import ToolCall
+
 
 @dataclass
 class TokenUsage:
@@ -40,25 +42,6 @@ class TokenUsage:
 
 
 @dataclass
-class AgentToolCall:
-    """Represents a tool/function call made by an agent.
-
-    This is a standardized representation that works across different
-    agent implementations (CaveAgent, OpenAI, LiteLLM, etc.).
-    """
-    function: str
-    arguments: Dict[str, Any]
-    call_id: str
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "function": self.function,
-            "arguments": self.arguments,
-            "call_id": self.call_id
-        }
-
-
-@dataclass
 class AgentResponse:
     """Represents the response from an agent execution.
 
@@ -70,7 +53,7 @@ class AgentResponse:
         token_usage: Token usage statistics for this run
     """
     content: str
-    tool_calls: List[AgentToolCall]
+    tool_calls: List[ToolCall]
     steps: int
     code_snippets: List[str] = field(default_factory=list)
     token_usage: TokenUsage = field(default_factory=TokenUsage)
@@ -78,7 +61,7 @@ class AgentResponse:
     def get_result(self) -> str:
         return self.content
 
-    def get_tool_calls(self) -> List[AgentToolCall]:
+    def get_tool_calls(self) -> List[ToolCall]:
         return self.tool_calls
 
     def get_steps(self) -> int:
