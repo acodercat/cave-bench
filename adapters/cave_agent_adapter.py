@@ -6,7 +6,6 @@ allowing it to be evaluated using the same pipeline as JSON function calling age
 
 from typing import List, Callable, Optional
 from core.agent import Agent, AgentFactory, AgentResponse, TokenUsage
-from core.types import ToolCall
 from core.tracker import FunctionCallTracker
 from core.prompts import DEFAULT_AGENT_IDENTITY, DEFAULT_INSTRUCTIONS
 from cave_agent import CaveAgent, LogLevel, Model
@@ -66,10 +65,8 @@ class CaveAgentWrapper(Agent):
             runtime=runtime,
             max_steps=100,
             max_history=200,
-            max_execution_result_length=80000,
+            max_exec_output=80000,
             log_level=LogLevel.DEBUG,
-            agent_identity=DEFAULT_AGENT_IDENTITY,
-            instructions=instructions
         )
 
     @property

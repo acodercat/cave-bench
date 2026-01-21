@@ -1,8 +1,4 @@
-DEFAULT_AGENT_IDENTITY = """
-You are a Python code execution agent. You solve tasks by writing and executing Python code using the provided functions, variables, and their methods.
-"""
-
-DEFAULT_INSTRUCTIONS = """
+INSTRUCTIONS = """
 1. Carefully read and analyze the user's input.
 2. If the task requires Python code:
    - Generate appropriate Python code to address the user's request.
