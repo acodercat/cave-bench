@@ -10,36 +10,50 @@ uv sync
 
 ## Configuration
 
-Copy `.env.example` to `.env` and add your API keys:
+Models are defined in `models.toml` (gitignored — it holds secrets). Copy the
+template and fill in your keys:
 
 ```bash
-cp .env.example .env
+cp models.toml.example models.toml
 ```
 
-```bash
-# .env
-DEEPSEEK_API_KEY=your-api-key
-DEEPSEEK_MODEL_ID=deepseek-chat
-DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
-DEEPSEEK_TEMPERATURE=0.3
+```toml
+# models.toml — each [section] is a selectable model (--model <section>)
+[deepseek]
+api_model = "deepseek-chat"
+api_key = "your-api-key"
+base_url = "https://api.deepseek.com/v1"
+provider = "openai"
+temperature = 0.3
 ```
 
 ## Quick Start
 
-Run benchmarks using module syntax:
-
 ```bash
-# Function calling benchmarks
-python -m scripts.function_calling           # Run both agent types
-python -m scripts.function_calling -a cave   # CaveAgent (Python code execution)
-python -m scripts.function_calling -a json   # LiteLLM (JSON function calling)
+# Function calling benchmarks (model defaults to `deepseek`)
+uv run python -m scripts.function_calling            # both agent types
+uv run python -m scripts.function_calling -a cave    # CaveAgent (Python code execution)
+uv run python -m scripts.function_calling -a json    # LiteLLM (JSON function calling)
 
-# Other benchmarks
-python -m scripts.data_analysis     # Data analysis benchmarks
-python -m scripts.smart_home        # Smart home benchmarks
+# Other suites
+uv run python -m scripts.data_analysis
+uv run python -m scripts.smart_home
+
+# Pick a model, a single benchmark, a named experiment
+uv run python -m scripts.function_calling -m gemini -b flight_booking --exp run1
+
+# Thinking on/off axis (needs a [model.thinking] table in models.toml).
+# The mode is folded into exp_id so on/off runs don't collide.
+uv run python -m scripts.data_analysis -m qwen-thinking --thinking on
+uv run python -m scripts.data_analysis -m qwen-thinking --thinking off
 ```
 
-Edit the `BENCHMARKS` list in each script to select which benchmarks to run.
+Per-model knobs in `models.toml` (all optional, forwarded to litellm): `max_tokens`, `reasoning_effort` (`low|medium|high`), `extra_body` (arbitrary passthrough), and a `[model.thinking]` table mapping `on`/`off` to an `extra_body` fragment. See `models.toml.example` for reasoning-model and thinking-axis templates.
+
+Which benchmarks run per suite is defined in `benchmarks.json`. Results are
+written to `runs/<suite>/<exp_id>/<benchmark>.json`. Reuse the same `--exp`
+to **resume** (already-evaluated scenarios are skipped); pass `--no-skip` to
+force a clean re-run.
 
 ## Benchmark Structure
 

@@ -1,89 +1,63 @@
-"""Function Calling Benchmark Runner"""
+"""Function Calling Benchmark Runner.
+
+Examples:
+    uv run python -m scripts.function_calling                       # both agents, model=deepseek
+    uv run python -m scripts.function_calling -a cave -m gemini     # CaveAgent only, gemini
+    uv run python -m scripts.function_calling -b flight_booking     # one benchmark
+    uv run python -m scripts.function_calling --exp run1            # custom exp_id (resumable)
+    uv run python -m scripts.function_calling --no-skip             # force clean re-run
+"""
 
 import argparse
 import asyncio
-import json
-import os
-from datetime import datetime
-from pathlib import Path
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
-from cave_agent.models import LiteLLMModel
-from adapters import CaveAgentFactory, LitellmAgentFactory, LitellmModel
+from scripts._common import (
+    get_model,
+    make_cave_factory,
+    make_json_factory,
+    resolve_benchmarks,
+    load_scenarios,
+    output_path,
+)
 from runner import evaluate
 
-
-# Configuration
-MODEL_ID = os.getenv("DEEPSEEK_MODEL_ID", "deepseek-chat")
-API_KEY = os.getenv("DEEPSEEK_API_KEY")
-BASE_URL = os.getenv("DEEPSEEK_BASE_URL")
-TEMPERATURE = float(os.getenv("DEEPSEEK_TEMPERATURE", "0.3"))
-
-BENCHMARKS = [
-    "weather_query",
-    "flight_booking",
-]
+SUITE = "function_calling"
 
 
-async def run_cave():
-    """Run evaluation with CaveAgent (Python code execution)."""
-    model = LiteLLMModel(
-        model_id=MODEL_ID,
-        api_key=API_KEY,
-        base_url=BASE_URL,
-        temperature=TEMPERATURE,
-        custom_llm_provider='openai'
-    )
-    factory = CaveAgentFactory(model)
+async def main(agent_type: str, model_name: str, exp: str, only: str, no_skip: bool, thinking: str):
+    cfg = get_model(model_name)
+    benchmarks = resolve_benchmarks(SUITE, only)
+    exp_id = exp or model_name
+    if thinking:
+        exp_id = f"{exp_id}_think-{thinking}"
 
-    for name in BENCHMARKS:
-        print(f"\n{'='*60}\nBenchmark: {name} (cave)\n{'='*60}")
+    runs = []
+    if agent_type in ("cave", "all"):
+        runs.append(("cave", make_cave_factory(cfg, thinking)))
+    if agent_type in ("json", "all"):
+        runs.append(("json", make_json_factory(cfg, thinking)))
 
-        scenarios = json.loads(Path(f"./evals/function_calling/{name}.json").read_text())
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        output = f"./runs/function_calling/{name}/{MODEL_ID}_cave_{timestamp}.json"
-
-        await evaluate(factory, scenarios, output)
-
-
-async def run_json():
-    """Run evaluation with LiteLLM (JSON function calling)."""
-    model = LitellmModel(
-        model_id=MODEL_ID,
-        api_key=API_KEY,
-        base_url=BASE_URL,
-        temperature=TEMPERATURE,
-        provider='openai'
-    )
-    factory = LitellmAgentFactory(model)
-
-    for name in BENCHMARKS:
-        print(f"\n{'='*60}\nBenchmark: {name} (json)\n{'='*60}")
-
-        scenarios = json.loads(Path(f"./evals/function_calling/{name}.json").read_text())
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        output = f"./runs/function_calling/{name}/{MODEL_ID}_json_{timestamp}.json"
-
-        await evaluate(factory, scenarios, output)
-
-
-async def main(agent_type: str):
-    if agent_type in ('cave', 'all'):
-        await run_cave()
-    if agent_type in ('json', 'all'):
-        await run_json()
+    for tag, factory in runs:
+        for name in benchmarks:
+            print(f"\n{'='*60}\nBenchmark: {name} ({tag})\n{'='*60}")
+            scenarios = load_scenarios(SUITE, name)
+            output = output_path(SUITE, name, f"{exp_id}_{tag}")
+            await evaluate(factory, scenarios, output, resume=not no_skip)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Function Calling Benchmark Runner")
-    parser.add_argument(
-        '--agent', '-a',
-        choices=['cave', 'json', 'all'],
-        default='all',
-        help='Agent type: cave (Python code), json (JSON function calling), or all (default)'
-    )
+    parser.add_argument("--agent", "-a", choices=["cave", "json", "all"], default="all",
+                        help="Agent type: cave (Python code), json (JSON function calling), or all")
+    parser.add_argument("--model", "-m", default="deepseek",
+                        help="Model section name from models.toml (default: deepseek)")
+    parser.add_argument("--benchmark", "-b", default=None,
+                        help="Run a single benchmark by name (default: all in suite)")
+    parser.add_argument("--exp", default=None,
+                        help="Experiment id for output dir; reuse to resume (default: model name)")
+    parser.add_argument("--no-skip", action="store_true",
+                        help="Delete existing output and re-run from scratch")
+    parser.add_argument("--thinking", choices=["on", "off"], default=None,
+                        help="Select the model's thinking variant (needs a [model.thinking] table)")
     args = parser.parse_args()
-    asyncio.run(main(args.agent))
+    asyncio.run(main(args.agent, args.model, args.exp, args.benchmark, args.no_skip, args.thinking))

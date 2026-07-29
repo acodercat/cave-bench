@@ -1,0 +1,58 @@
+# Model registry for cave-bench.
+#
+# Copy this file to `models.toml` and fill in real keys. `models.toml` is
+# gitignored because it holds secrets; this `.example` is the committed template.
+#
+# Each [section] is one selectable model. Reference it by section name:
+#   uv run python -m scripts.function_calling --model deepseek
+#
+# Fields:
+#   api_model         (required) identifier sent to the provider API (the model id)
+#   api_key           (required)
+#   base_url          (optional) custom endpoint; omit for the provider default
+#   provider          (optional) litellm provider, default "openai"
+#   temperature       (optional) default 0.3
+#   max_tokens        (optional) max completion tokens
+#   reasoning_effort  (optional) "low" | "medium" | "high" (reasoning models)
+#   extra_body        (optional) arbitrary provider passthrough (inline table)
+#   thinking          (optional) table of mode -> extra_body fragment, selected
+#                     by `--thinking on|off` and merged over extra_body at build
+
+[deepseek]
+api_model = "deepseek-chat"
+api_key = "your-api-key"
+base_url = "https://api.deepseek.com/v1"
+provider = "openai"
+temperature = 0.3
+
+[gemini]
+api_model = "gemini-2.5-flash"
+api_key = "your-api-key"
+provider = "gemini"
+temperature = 0.3
+
+[anthropic]
+api_model = "claude-sonnet-4-6"
+api_key = "your-api-key"
+provider = "anthropic"
+temperature = 0.3
+
+# Reasoning model: budget tokens + effort (temperature it can't use is dropped
+# automatically by litellm.drop_params).
+[gpt5-reasoning]
+api_model = "gpt-5"
+api_key = "your-api-key"
+base_url = "https://api.openai.com/v1"
+max_tokens = 16384
+reasoning_effort = "medium"
+
+# Thinking on/off axis (e.g. a self-hosted SGLang/Qwen endpoint). `--thinking on`
+# merges the `on` fragment onto extra_body; `--thinking off` merges `off`.
+[qwen-thinking]
+api_model = "qwen3"
+api_key = "your-api-key"
+base_url = "http://localhost:8000/v1"
+[qwen-thinking.thinking.on]
+chat_template_kwargs = { enable_thinking = true }
+[qwen-thinking.thinking.off]
+chat_template_kwargs = { enable_thinking = false }

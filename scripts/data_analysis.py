@@ -1,50 +1,52 @@
-"""Data Analysis Benchmark Runner"""
+"""Data Analysis Benchmark Runner (CaveAgent).
 
+Examples:
+    uv run python -m scripts.data_analysis                      # model=deepseek
+    uv run python -m scripts.data_analysis -m gemini --exp run1
+    uv run python -m scripts.data_analysis -b comparative_analysis --no-skip
+"""
+
+import argparse
 import asyncio
-import json
-import os
-from datetime import datetime
-from pathlib import Path
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
-from cave_agent.models import LiteLLMModel
-from adapters import CaveAgentFactory
+from scripts._common import (
+    get_model,
+    make_cave_factory,
+    resolve_benchmarks,
+    load_scenarios,
+    output_path,
+)
 from runner import evaluate
 
-
-# Configuration
-MODEL_ID = os.getenv("DEEPSEEK_MODEL_ID", "deepseek-chat")
-API_KEY = os.getenv("DEEPSEEK_API_KEY")
-BASE_URL = os.getenv("DEEPSEEK_BASE_URL")
-TEMPERATURE = float(os.getenv("DEEPSEEK_TEMPERATURE", "0.3"))
-
-BENCHMARKS = [
-    "comparative_analysis",
-]
+SUITE = "data_analysis"
 
 
-async def run_evaluation():
-    model = LiteLLMModel(
-        model_id=MODEL_ID,
-        api_key=API_KEY,
-        base_url=BASE_URL,
-        temperature=TEMPERATURE,
-        custom_llm_provider='openai'
-    )
-    factory = CaveAgentFactory(model)
+async def main(model_name: str, exp: str, only: str, no_skip: bool, thinking: str):
+    cfg = get_model(model_name)
+    factory = make_cave_factory(cfg, thinking)
+    benchmarks = resolve_benchmarks(SUITE, only)
+    exp_id = exp or model_name
+    if thinking:
+        exp_id = f"{exp_id}_think-{thinking}"
 
-    for name in BENCHMARKS:
+    for name in benchmarks:
         print(f"\n{'='*60}\nBenchmark: {name}\n{'='*60}")
-
-        scenarios = json.loads(Path(f"./evals/data_analysis/{name}.json").read_text())
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        output = f"./runs/data_analysis/{name}/{MODEL_ID}_{timestamp}.json"
-
-        await evaluate(factory, scenarios, output)
+        scenarios = load_scenarios(SUITE, name)
+        output = output_path(SUITE, name, exp_id)
+        await evaluate(factory, scenarios, output, resume=not no_skip)
 
 
 if __name__ == "__main__":
-    asyncio.run(run_evaluation())
+    parser = argparse.ArgumentParser(description="Data Analysis Benchmark Runner")
+    parser.add_argument("--model", "-m", default="deepseek",
+                        help="Model section name from models.toml (default: deepseek)")
+    parser.add_argument("--benchmark", "-b", default=None,
+                        help="Run a single benchmark by name (default: all in suite)")
+    parser.add_argument("--exp", default=None,
+                        help="Experiment id for output dir; reuse to resume (default: model name)")
+    parser.add_argument("--no-skip", action="store_true",
+                        help="Delete existing output and re-run from scratch")
+    parser.add_argument("--thinking", choices=["on", "off"], default=None,
+                        help="Select the model's thinking variant (needs a [model.thinking] table)")
+    args = parser.parse_args()
+    asyncio.run(main(args.model, args.exp, args.benchmark, args.no_skip, args.thinking))

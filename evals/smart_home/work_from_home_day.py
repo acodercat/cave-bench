@@ -10,7 +10,7 @@ Tests:
 """
 
 from typing import List
-from cave_agent import Variable, PythonRuntime, Type
+from cave_agent import Variable, IPythonRuntime, Type
 from core.validation import ValidatorResult
 from core.types import Turn, ToolCall
 from .types import Light, Thermostat, Lock, Camera, Speaker, Blinds, TemperatureSensor, SmartPlug, RobotVacuum, Doorbell
@@ -60,7 +60,7 @@ security_camera = Camera("Front Camera", "Front Door", is_on=True)
 
 def validate_work_start(
     response: str,
-    runtime: PythonRuntime,
+    runtime: IPythonRuntime,
     turn: Turn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:
@@ -134,7 +134,7 @@ def validate_work_start(
 
 def validate_video_call_setup(
     response: str,
-    runtime: PythonRuntime,
+    runtime: IPythonRuntime,
     turn: Turn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:
@@ -194,7 +194,7 @@ def validate_video_call_setup(
 
 def validate_work_end(
     response: str,
-    runtime: PythonRuntime,
+    runtime: IPythonRuntime,
     turn: Turn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:

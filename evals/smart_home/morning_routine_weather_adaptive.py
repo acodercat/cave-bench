@@ -9,7 +9,7 @@ Tests:
 """
 
 from typing import List
-from cave_agent import Variable, PythonRuntime, Type
+from cave_agent import Variable, IPythonRuntime, Type
 from core.validation import ValidatorResult
 from core.types import Turn, ToolCall
 from .types import Light, Thermostat, Lock, Blinds, CoffeeMaker, RobotVacuum, GarageDoor, TemperatureSensor
@@ -48,7 +48,7 @@ garage_door = GarageDoor("Garage Door", "Garage", is_open=True)  # Left open
 
 def validate_morning_climate_check(
     response: str,
-    runtime: PythonRuntime,
+    runtime: IPythonRuntime,
     turn: Turn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:
@@ -87,7 +87,7 @@ def validate_morning_climate_check(
 
 def validate_morning_prep(
     response: str,
-    runtime: PythonRuntime,
+    runtime: IPythonRuntime,
     turn: Turn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:
@@ -139,7 +139,7 @@ def validate_morning_prep(
 
 def validate_leaving_for_work(
     response: str,
-    runtime: PythonRuntime,
+    runtime: IPythonRuntime,
     turn: Turn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:

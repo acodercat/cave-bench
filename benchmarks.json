@@ -1,0 +1,13 @@
+{
+  "function_calling": [
+    "weather_query",
+    "flight_booking"
+  ],
+  "data_analysis": [
+    "comparative_analysis"
+  ],
+  "smart_home": [
+    "evening_home_routine",
+    "work_from_home_day"
+  ]
+}

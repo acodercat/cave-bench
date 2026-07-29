@@ -10,6 +10,8 @@ from core.validation import (
     normalize_value,
     is_type_compatible,
     calculate_mismatch_cost,
+    is_finite_number,
+    compare_numeric,
 )
 from core.types import ToolCall, ExpectedFunctionCall, ExpectedArgument
 
@@ -369,3 +371,74 @@ class TestValidateFunctionCalls:
         errors = validate_function_calls(actual, expected)
         # 72.0 should match 72 due to normalization
         assert len(errors) == 0
+
+
+class TestIsFiniteNumber:
+    """Tests for is_finite_number guard."""
+
+    def test_accepts_int_and_float(self):
+        assert is_finite_number(3) is True
+        assert is_finite_number(3.14) is True
+        assert is_finite_number(-0.0) is True
+
+    def test_rejects_bool(self):
+        # bool is an int subclass but must not count as numeric
+        assert is_finite_number(True) is False
+        assert is_finite_number(False) is False
+
+    def test_rejects_none_nan_inf(self):
+        assert is_finite_number(None) is False
+        assert is_finite_number(float("nan")) is False
+        assert is_finite_number(float("inf")) is False
+        assert is_finite_number(float("-inf")) is False
+
+    def test_rejects_non_numeric(self):
+        assert is_finite_number("3") is False
+        assert is_finite_number([1]) is False
+
+
+class TestCompareNumeric:
+    """Tests for compare_numeric signed/NaN-safe comparison."""
+
+    def test_within_absolute_tolerance(self):
+        assert compare_numeric(72.0, 72, tolerance=0.0) is True
+        assert compare_numeric(72.05, 72, tolerance=0.1) is True
+        assert compare_numeric(72.2, 72, tolerance=0.1) is False
+
+    def test_signed_difference(self):
+        # +12 vs -12 must fail — sign carries meaning
+        assert compare_numeric(12, -12, tolerance=0.1) is False
+
+    def test_decimals_mode(self):
+        assert compare_numeric(2.7505, 2.75, decimals=2) is True
+        assert compare_numeric(2.76, 2.75, decimals=2) is False
+
+    def test_nan_none_nonnumeric_actual_fail(self):
+        assert compare_numeric(float("nan"), 1.0, tolerance=0.1) is False
+        assert compare_numeric(None, 1.0, tolerance=0.1) is False
+        assert compare_numeric("1.0", 1.0, tolerance=0.1) is False
+        assert compare_numeric(True, 1.0, tolerance=0.1) is False
+
+    def test_requires_exactly_one_of_tolerance_decimals(self):
+        with pytest.raises(ValueError):
+            compare_numeric(1, 1)
+        with pytest.raises(ValueError):
+            compare_numeric(1, 1, tolerance=0.1, decimals=2)
+
+    def test_expected_must_be_finite(self):
+        with pytest.raises(ValueError):
+            compare_numeric(1.0, float("nan"), tolerance=0.1)
+
+
+class TestValidatorResultVariablesNotSet:
+    """ValidatorResult gained a variables_not_set field (default False)."""
+
+    def test_default_false_backcompat(self):
+        r = ValidatorResult(True, "")
+        assert r.variables_not_set is False
+        r2 = ValidatorResult(False, "wrong value")
+        assert r2.variables_not_set is False
+
+    def test_explicit_flag(self):
+        r = ValidatorResult(False, "not populated", variables_not_set=True)
+        assert r.variables_not_set is True

@@ -13,6 +13,7 @@ ENV/
 
 # Configuration files with secrets
 .env
+models.toml
 
 # logs
 *.log
@@ -54,3 +55,6 @@ dmypy.json
 
 # Claude code
 .claude/
+
+# Local recovery snapshots (not source)
+recovered/

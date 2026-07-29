@@ -9,7 +9,7 @@ Tests CaveAgent's ability to:
 """
 
 from typing import List
-from cave_agent import Variable, PythonRuntime, Type
+from cave_agent import Variable, IPythonRuntime, Type
 from core.validation import ValidatorResult
 from core.types import Turn, ToolCall
 from .types import Light, Thermostat, Lock, Camera, Speaker
@@ -46,7 +46,7 @@ living_room_speaker = Speaker("Living Room Speaker", "Living Room", is_on=False)
 
 def validate_arrival_check(
     response: str,
-    runtime: PythonRuntime,
+    runtime: IPythonRuntime,
     turn: Turn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:
@@ -88,7 +88,7 @@ def validate_arrival_check(
 
 def validate_evening_setup(
     response: str,
-    runtime: PythonRuntime,
+    runtime: IPythonRuntime,
     turn: Turn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:
@@ -139,7 +139,7 @@ def validate_evening_setup(
 
 def validate_bedtime_routine(
     response: str,
-    runtime: PythonRuntime,
+    runtime: IPythonRuntime,
     turn: Turn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:

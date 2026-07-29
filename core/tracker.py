@@ -20,6 +20,8 @@ class FunctionCallTracker:
         self.tool_calls: List[ToolCall] = []
         self.current_call_id: int = 0
         self.target_functions = target_functions
+        # Set form for O(1) membership and ancestor-frame checks in the hook.
+        self._targets = set(target_functions) if target_functions is not None else None
 
     def start(self) -> None:
         """Start tracking function calls and returns"""
@@ -53,9 +55,21 @@ class FunctionCallTracker:
         # Get function name
         func_name = frame.f_code.co_name
 
-        # If target_functions is specified, only track those functions
-        if self.target_functions is not None and func_name not in self.target_functions:
-            return
+        targets = self._targets
+        if targets is not None:
+            # Only track the configured tool functions.
+            if func_name not in targets:
+                return
+            # Skip tool calls made *inside* another tracked tool: when a tool's
+            # body calls another tool, sys.setprofile still fires for that inner
+            # call even though the agent did not initiate it. Record only the
+            # outermost (agent-initiated) call — i.e. when no ancestor frame is
+            # itself a tracked tool.
+            parent = frame.f_back
+            while parent is not None:
+                if parent.f_code.co_name in targets:
+                    return
+                parent = parent.f_back
 
         # Increment call ID for this function call
         self.current_call_id += 1

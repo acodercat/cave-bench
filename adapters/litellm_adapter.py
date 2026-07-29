@@ -41,11 +41,11 @@ def function_to_schema(func: Callable) -> Dict[str, Any]:
     """
     try:
         from agents import function_tool
-    except ImportError:
+    except ImportError as exc:
         raise ImportError(
             "The 'agents' package is required for function_to_schema. "
             "Install it with: pip install openai-agents"
-        )
+        ) from exc
 
     tool = function_tool(func, strict_mode=False)
     return {
@@ -71,7 +71,10 @@ class LitellmModel:
         api_key: str,
         provider: str,
         temperature: Optional[float] = None,
-        base_url: Optional[str] = None
+        base_url: Optional[str] = None,
+        max_tokens: Optional[int] = None,
+        reasoning_effort: Optional[str] = None,
+        extra_body: Optional[Dict[str, Any]] = None,
     ):
         """Initialize the LiteLLM model configuration.
 
@@ -81,12 +84,18 @@ class LitellmModel:
             provider: LiteLLM provider name (e.g., 'openai', 'deepseek')
             temperature: Optional temperature setting
             base_url: Optional custom API base URL
+            max_tokens: Optional max completion tokens
+            reasoning_effort: Optional reasoning effort ('low'|'medium'|'high')
+            extra_body: Optional provider-specific passthrough (e.g. thinking flags)
         """
         self.model_id = model_id
         self.api_key = api_key
         self.base_url = base_url
         self.provider = provider
         self.temperature = temperature
+        self.max_tokens = max_tokens
+        self.reasoning_effort = reasoning_effort
+        self.extra_body = extra_body or None
 
 
 class LitellmAgentWrapper(Agent):
@@ -183,7 +192,7 @@ class LitellmAgentWrapper(Agent):
             return json.dumps(result) if not isinstance(result, str) else result
         except Exception as e:
             logger.error(f"Tool execution failed: {function_name}({arguments}): {e}")
-            return f"Error: {str(e)}"
+            return f"Error: {e}"
 
     async def _call_model(self) -> Any:
         """Make an API call to the model.
@@ -191,9 +200,15 @@ class LitellmAgentWrapper(Agent):
         Returns:
             The LiteLLM response object
         """
+        # Per-model knobs from the registry (reasoning/thinking config), only
+        # the ones that are set. Replaces the old hardcoded gemini special-case.
         extra_params = {}
-        if "gemini" in self._model.model_id.lower():
-            extra_params["reasoning_effort"] = "low"
+        if self._model.max_tokens is not None:
+            extra_params["max_tokens"] = self._model.max_tokens
+        if self._model.reasoning_effort:
+            extra_params["reasoning_effort"] = self._model.reasoning_effort
+        if self._model.extra_body:
+            extra_params["extra_body"] = self._model.extra_body
 
         return await acompletion(
             model=self._model.model_id,
@@ -255,7 +270,7 @@ class LitellmAgentWrapper(Agent):
             except Exception as e:
                 logger.error(f"LiteLLM API call failed: {e}")
                 return AgentResponse(
-                    content=f"Error: {str(e)}",
+                    content=f"Error: {e}",
                     tool_calls=all_tool_calls,
                     steps=steps,
                     token_usage=total_token_usage

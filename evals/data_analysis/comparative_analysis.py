@@ -11,8 +11,8 @@ Tests:
 import os
 from typing import List
 import pandas as pd
-from cave_agent import Variable, PythonRuntime
-from core.validation import ValidatorResult
+from cave_agent import Variable, IPythonRuntime
+from core.validation import ValidatorResult, compare_numeric, is_finite_number
 from core.types import Turn, ToolCall
 
 
@@ -31,7 +31,7 @@ googl_df = pd.read_csv(os.path.join(_data_dir, "GOOGL.csv"), parse_dates=["Date"
 
 def validate_total_returns(
     response: str,
-    runtime: PythonRuntime,
+    runtime: IPythonRuntime,
     turn: Turn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:
@@ -42,27 +42,31 @@ def validate_total_returns(
         better = runtime.retrieve("better_performer")
 
         errors = []
+        unset = []
 
         # Expected values
         expected_aapl = (aapl_df["Close"].iloc[-1] - aapl_df["Close"].iloc[0]) / aapl_df["Close"].iloc[0] * 100
         expected_googl = (googl_df["Close"].iloc[-1] - googl_df["Close"].iloc[0]) / googl_df["Close"].iloc[0] * 100
         expected_better = "AAPL" if expected_aapl > expected_googl else "GOOGL"
 
+        # 1% relative tolerance, NaN/None/non-numeric-safe (no divide-by-zero).
         if aapl_return is None:
-            errors.append("aapl_total_return not calculated")
-        elif abs(aapl_return - expected_aapl) / expected_aapl > 0.01:
-            errors.append(f"aapl_total_return: {aapl_return:.2f}%, expected {expected_aapl:.2f}%")
+            unset.append("aapl_total_return")
+        elif not compare_numeric(aapl_return, expected_aapl, tolerance=abs(expected_aapl) * 0.01):
+            errors.append(f"aapl_total_return: {aapl_return}, expected {expected_aapl:.2f}%")
 
         if googl_return is None:
-            errors.append("googl_total_return not calculated")
-        elif abs(googl_return - expected_googl) / expected_googl > 0.01:
-            errors.append(f"googl_total_return: {googl_return:.2f}%, expected {expected_googl:.2f}%")
+            unset.append("googl_total_return")
+        elif not compare_numeric(googl_return, expected_googl, tolerance=abs(expected_googl) * 0.01):
+            errors.append(f"googl_total_return: {googl_return}, expected {expected_googl:.2f}%")
 
         if better is None:
-            errors.append("better_performer not set")
+            unset.append("better_performer")
         elif better.upper() != expected_better:
             errors.append(f"better_performer: '{better}', expected '{expected_better}'")
 
+        if unset:
+            return ValidatorResult(False, f"Variables not set: {', '.join(unset)}", variables_not_set=True)
         if errors:
             return ValidatorResult(False, "; ".join(errors))
 
@@ -74,7 +78,7 @@ def validate_total_returns(
 
 def validate_merged_data(
     response: str,
-    runtime: PythonRuntime,
+    runtime: IPythonRuntime,
     turn: Turn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:
@@ -83,7 +87,7 @@ def validate_merged_data(
         merged = runtime.retrieve("merged_df")
 
         if merged is None:
-            return ValidatorResult(False, "merged_df not created")
+            return ValidatorResult(False, "merged_df not created", variables_not_set=True)
 
         if not isinstance(merged, pd.DataFrame):
             return ValidatorResult(False, f"merged_df should be DataFrame, got {type(merged).__name__}")
@@ -112,7 +116,7 @@ def validate_merged_data(
 
 def validate_daily_returns(
     response: str,
-    runtime: PythonRuntime,
+    runtime: IPythonRuntime,
     turn: Turn,
     actual_calls: List[ToolCall]
 ) -> ValidatorResult:
@@ -122,9 +126,10 @@ def validate_daily_returns(
         corr = runtime.retrieve("correlation")
 
         errors = []
+        unset = []
 
         if merged is None:
-            errors.append("merged_df not found")
+            unset.append("merged_df")
         elif not isinstance(merged, pd.DataFrame):
             errors.append(f"merged_df should be DataFrame, got {type(merged).__name__}")
         else:
@@ -134,12 +139,17 @@ def validate_daily_returns(
                 errors.append("googl_return column not added")
 
         if corr is None:
-            errors.append("correlation not calculated")
-        elif not isinstance(corr, (int, float)):
-            errors.append(f"correlation should be numeric, got {type(corr).__name__}")
+            unset.append("correlation")
+        elif not is_finite_number(corr):
+            # isinstance(x, float) alone lets NaN through — NaN fails no
+            # range check (nan < -1 and nan > 1 are both False), so a NaN
+            # correlation would silently validate as correct.
+            errors.append(f"correlation should be a finite number, got {corr!r}")
         elif corr < -1 or corr > 1:
             errors.append(f"correlation should be between -1 and 1, got {corr}")
 
+        if unset:
+            return ValidatorResult(False, f"Variables not set: {', '.join(unset)}", variables_not_set=True)
         if errors:
             return ValidatorResult(False, "; ".join(errors))
 

@@ -1,8 +1,78 @@
-"""Function call validation logic for evaluating agent behavior."""
+"""Function call validation logic for evaluating agent behavior.
 
+This module also exposes NaN-safe numeric comparison helpers
+(`is_finite_number`, `compare_numeric`) that custom validators should use
+instead of hand-rolling `abs(a - b) > tol` — the hand-rolled form silently
+passes NaN (`abs(nan - x) > tol` is False) and divides-by-zero on relative
+tolerances. `compare_numeric` compares the **signed** difference, so values
+whose sign carries meaning (returns, deltas, z-scores) fail when flipped.
+"""
+
+import math
 from enum import Enum
 from typing import List, Optional, NamedTuple
 from core.types import ToolCall, ExpectedFunctionCall
+
+
+try:
+    import numpy as np
+    _NUMPY_NUMERIC: tuple = (np.integer, np.floating)
+except ImportError:
+    _NUMPY_NUMERIC = ()
+
+
+def is_finite_number(value) -> bool:
+    """Return True iff `value` is a finite int/float (or numpy numeric).
+
+    Rejects None, bool, NaN, +/-inf, strings, lists, and any non-numeric type.
+    Use this as a NaN/None guard before any arithmetic comparison — without it,
+    `abs(nan - x) > tol` is False, causing NaN to silently pass validation.
+    """
+    if value is None or isinstance(value, bool):
+        return False
+    if not isinstance(value, (int, float, *_NUMPY_NUMERIC)):
+        return False
+    return math.isfinite(float(value))
+
+
+def compare_numeric(
+    actual,
+    expected,
+    *,
+    tolerance: Optional[float] = None,
+    decimals: Optional[int] = None,
+) -> bool:
+    """Signed numeric equality within tolerance.
+
+    Returns True iff `actual` is a finite number within tolerance of `expected`.
+    Returns False (never raises) for None, NaN, +/-inf, bool, or non-numeric
+    `actual` — so wrong-type and NaN agent outputs always fail validation.
+
+    Use this in every validator instead of hand-rolling `abs(a - b) > tol`.
+    Critically, this compares the **signed** difference: `+12` vs `-12` is a
+    failure (the sign carries meaning for returns, deltas, z-scores, etc.).
+
+    Specify exactly one of `tolerance` or `decimals`:
+      - tolerance=0.1  -> absolute tolerance of +/-0.1
+      - decimals=2     -> derives tolerance = 0.6 * 10^(-decimals) = 0.006,
+                          i.e. the value must round to the same 2-dp number.
+    For a relative tolerance (e.g. within 1%), pass
+    `tolerance=abs(expected) * 0.01`.
+    """
+    if (tolerance is None) == (decimals is None):
+        raise ValueError(
+            "compare_numeric: pass exactly one of `tolerance=` or `decimals=`"
+        )
+    if tolerance is None:
+        tolerance = 0.6 * (10 ** (-decimals))
+
+    if not is_finite_number(expected):
+        raise ValueError(
+            f"compare_numeric: `expected` must be a finite number, got {expected!r}"
+        )
+    if not is_finite_number(actual):
+        return False
+    return abs(float(actual) - float(expected)) <= tolerance
 
 
 class ErrorType(Enum):
@@ -17,6 +87,10 @@ class ErrorType(Enum):
 class ValidatorResult(NamedTuple):
     success: bool
     message: str
+    # Distinguishes "agent never populated the required runtime variables"
+    # (an infrastructure / refusal signal) from "agent computed values but
+    # they're wrong" (a substantive failure). Defaults False for back-compat.
+    variables_not_set: bool = False
 
 # Define a validation error structure
 class ValidationError(NamedTuple):
@@ -217,7 +291,7 @@ def validate_arguments(actual: ToolCall,
     matched_actual_args = set()
 
     # First check all expected arguments
-    for arg_index, expected_arg in enumerate(expected_args):
+    for expected_arg in expected_args:
         expected_name = expected_arg.name
 
         is_required = expected_arg.required
@@ -262,7 +336,7 @@ def validate_arguments(actual: ToolCall,
     # Only check for unexpected arguments if strict_args is enabled
     if expected.strict_args:
         if expected_args:  # If there are expected arguments, check if there are any unexpected actual arguments
-            for actual_arg_name in actual_args.keys():
+            for actual_arg_name in actual_args:
                 if actual_arg_name not in matched_actual_args:
                     errors.append(ValidationError(
                         error_type=ErrorType.UNEXPECTED_ARGUMENT,

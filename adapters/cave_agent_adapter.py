@@ -8,8 +8,8 @@ from typing import List, Callable, Optional
 from core.agent import Agent, AgentFactory, AgentResponse, TokenUsage
 from core.tracker import FunctionCallTracker
 from core.prompts import DEFAULT_AGENT_IDENTITY, DEFAULT_INSTRUCTIONS
-from cave_agent import CaveAgent, LogLevel, Model
-from cave_agent.runtime import PythonRuntime, Function, Variable, Type
+from cave_agent import CaveAgent, Model
+from cave_agent.runtime import IPythonRuntime, Function, Variable, Type
 
 
 class CaveAgentWrapper(Agent):
@@ -44,16 +44,18 @@ class CaveAgentWrapper(Agent):
         self._variables = variables or []
         self._types = types or []
 
-        # Build instructions
-        instructions = DEFAULT_INSTRUCTIONS
+        # Task instructions = agent identity + this scenario's description/requirements.
+        # (cave_agent slots: `instructions` = task/identity, `system_instructions`
+        # = the generic how-to-operate block.)
+        instructions = DEFAULT_AGENT_IDENTITY
         if description:
-            instructions = instructions + "\nTASK DESCRIPTION: \n" + description + "\n"
+            instructions += "\nTASK DESCRIPTION:\n" + description + "\n"
         if requirements:
-            instructions = instructions + "\nTASK REQUIREMENTS: \n" + requirements
+            instructions += "\nTASK REQUIREMENTS:\n" + requirements
 
         # Create runtime with wrapped functions
         wrapped_functions = [Function(f) for f in functions]
-        runtime = PythonRuntime(
+        runtime = IPythonRuntime(
             functions=wrapped_functions,
             variables=self._variables,
             types=self._types
@@ -64,13 +66,13 @@ class CaveAgentWrapper(Agent):
             model=model,
             runtime=runtime,
             max_steps=100,
-            max_history=200,
+            instructions=instructions,
+            system_instructions=DEFAULT_INSTRUCTIONS,
             max_exec_output=80000,
-            log_level=LogLevel.DEBUG,
         )
 
     @property
-    def runtime(self) -> PythonRuntime:
+    def runtime(self) -> IPythonRuntime:
         """Get the Python runtime for accessing variables."""
         return self._agent.runtime
 

@@ -58,18 +58,6 @@ class AgentResponse:
     code_snippets: List[str] = field(default_factory=list)
     token_usage: TokenUsage = field(default_factory=TokenUsage)
 
-    def get_result(self) -> str:
-        return self.content
-
-    def get_tool_calls(self) -> List[ToolCall]:
-        return self.tool_calls
-
-    def get_steps(self) -> int:
-        return self.steps
-
-    def get_token_usage(self) -> TokenUsage:
-        return self.token_usage
-
 
 class Agent(ABC):
     """Abstract base class for agent implementations.
@@ -88,7 +76,6 @@ class Agent(ABC):
         Returns:
             AgentResponse containing the result, tool calls, and metrics
         """
-        pass
 
     @property
     def runtime(self) -> Optional[Any]:
@@ -124,4 +111,3 @@ class AgentFactory(ABC):
         Returns:
             An Agent instance ready for evaluation
         """
-        pass

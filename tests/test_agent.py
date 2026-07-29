@@ -1,6 +1,5 @@
 """Tests for agent interfaces."""
 
-import pytest
 from core.agent import TokenUsage, AgentResponse
 from core.types import ToolCall
 
@@ -151,23 +150,6 @@ class TestAgentResponse:
         assert response.token_usage.completion_tokens == 200
         assert response.token_usage.total_tokens == 700
 
-    def test_get_result(self):
-        response = AgentResponse(content="Hello", tool_calls=[], steps=1)
-        assert response.get_result() == "Hello"
-
-    def test_get_tool_calls(self):
-        calls = [ToolCall(function="func", arguments={}, call_id="1")]
-        response = AgentResponse(content="", tool_calls=calls, steps=1)
-        assert response.get_tool_calls() == calls
-
-    def test_get_steps(self):
-        response = AgentResponse(content="", tool_calls=[], steps=5)
-        assert response.get_steps() == 5
-
-    def test_get_token_usage(self):
-        usage = TokenUsage(prompt_tokens=100, completion_tokens=50, total_tokens=150)
-        response = AgentResponse(content="", tool_calls=[], steps=1, token_usage=usage)
-        assert response.get_token_usage() == usage
 
     def test_full_response(self):
         """Test a complete response with all fields."""

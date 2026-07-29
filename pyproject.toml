@@ -6,10 +6,14 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "pandas>=2.2.3",
-    "cave-agent[all]>=0.6.0",
+    "cave-agent[all]>=0.7.5",
     "litellm>=1.80.7",
     "pytest>=9.0.2",
-    "anthropic>=0.75.0",
-    "python-dotenv>=1.2.1",
     "openai-agents>=0.6.4",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Keep recovered snapshots and generated runs out of collection/import paths;
+# duplicate test module basenames under recovered/ otherwise crash collection.
+norecursedirs = ["recovered", "runs", ".venv", "*.egg-info"]

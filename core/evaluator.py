@@ -63,6 +63,27 @@ class VariableAnalyzer(ast.NodeVisitor):
         self.generic_visit(node)
 
 
+def _error_turn_result(turn: Turn, error_msg: str) -> TurnResult:
+    """TurnResult for a turn that could not be evaluated (infra error).
+
+    `error` is set so downstream consumers (resume skip-logic in runner.py)
+    treat this as a retryable infrastructure failure, not a model failure.
+    """
+    return TurnResult(
+        query=turn.query,
+        reference_response=turn.reference_response,
+        actual_response="",
+        expected_calls=[c.to_dict() for c in turn.expected_function_calls],
+        actual_calls=[],
+        validation_errors=[f"Infrastructure error: {error_msg}"],
+        metrics=TurnMetrics(),
+        success=False,
+        error=error_msg,
+        expected_variable_reads=turn.expected_variable_reads,
+        expected_variable_writes=turn.expected_variable_writes,
+    )
+
+
 class Evaluator:
     """Evaluator for benchmarking agent implementations.
 
@@ -158,14 +179,51 @@ class Evaluator:
             requirements=scenario.requirements
         )
 
-        # Process each turn
+        # A turn that raises (API outage, validator bug) must not discard the
+        # turns that already succeeded, and must not be recorded as a model
+        # failure: it gets `error` set, which marks the whole result
+        # retryable for the resume logic (core.results). Turns after the
+        # error are skipped — the conversation context is broken, so
+        # evaluating them would not be a fair measurement.
         turn_results = []
+        aborted: Optional[str] = None
         for turn in conversation.turns:
-            result = await self._evaluate_turn(
-                turn, agent, scenario.validators, scenario.hooks
-            )
+            if aborted is not None:
+                turn_results.append(_error_turn_result(
+                    turn, f"skipped: earlier turn in conversation errored ({aborted})"
+                ))
+                continue
+            try:
+                result = await self._evaluate_turn(
+                    turn, agent, scenario.validators, scenario.hooks
+                )
+            except Exception as e:
+                aborted = f"{type(e).__name__}: {e}"
+                logger.error(f"Turn errored in conversation {conversation.id}: {aborted}")
+                result = _error_turn_result(turn, aborted)
             turn_results.append(result)
-            self.metrics.total_steps += result.metrics.steps
+
+        # Metrics are accounted here, once per recorded turn, so exception
+        # paths cannot double-count or drop a turn.
+        for r in turn_results:
+            self.metrics.total_turns += 1
+            if r.success:
+                self.metrics.successful_turns += 1
+            else:
+                self.metrics.failed_turns += 1
+            self.metrics.total_expected_calls += len(r.expected_calls)
+            self.metrics.total_actual_calls += len(r.actual_calls)
+            m = r.metrics
+            self.metrics.total_steps += m.steps
+            self.metrics.total_prompt_tokens += m.prompt_tokens
+            self.metrics.total_completion_tokens += m.completion_tokens
+            self.metrics.total_tokens += m.total_tokens
+            self.metrics.missing_calls += m.missing_calls
+            self.metrics.wrong_argument_types += m.wrong_argument_types
+            self.metrics.wrong_argument_values += m.wrong_argument_values
+            self.metrics.missing_arguments += m.missing_arguments
+            self.metrics.missing_variable_reads += m.missing_variable_reads
+            self.metrics.missing_variable_writes += m.missing_variable_writes
 
         return ConversationResult(
             id=conversation.id,
@@ -231,11 +289,20 @@ class Evaluator:
                 query = hook_result
                 logger.debug(f"Pre-turn hook modified query to: {query[:100]}...")
 
-        # Initialize metrics
-        turn_metrics = TurnMetrics()
+        # A turn must carry at least one validation mechanism — a custom
+        # validator, expected function calls, or expected variable access.
+        # A turn with none of them would silently auto-pass, inflating
+        # success rates on a spec typo, so fail loudly instead.
+        if (not turn.validator and not expected_calls
+                and not expected_variable_reads and not expected_variable_writes):
+            raise KeyError(
+                "Turn declares no validation mechanism (validator / "
+                f"expected_function_calls / expected_variable_*): {query[:80]!r}"
+            )
 
-        self.metrics.total_expected_calls += len(expected_calls)
-        self.metrics.total_turns += 1
+        # Initialize metrics (aggregated into ScenarioMetrics by the
+        # conversation loop, once per recorded turn)
+        turn_metrics = TurnMetrics()
 
         # Run the agent
         result = await agent.run(query)
@@ -247,9 +314,6 @@ class Evaluator:
         turn_metrics.prompt_tokens = token_usage.prompt_tokens
         turn_metrics.completion_tokens = token_usage.completion_tokens
         turn_metrics.total_tokens = token_usage.total_tokens
-        self.metrics.total_prompt_tokens += token_usage.prompt_tokens
-        self.metrics.total_completion_tokens += token_usage.completion_tokens
-        self.metrics.total_tokens += token_usage.total_tokens
 
         # Analyze code snippets for variable access (only for agents that produce code)
         code_snippets = result.code_snippets
@@ -268,7 +332,6 @@ class Evaluator:
         # Get function calls from agent response
         actual_calls = result.tool_calls
         actual_calls_dict = [call.to_dict() for call in actual_calls]
-        self.metrics.total_actual_calls += len(actual_calls)
 
         # Run validator if specified (after we have actual_calls)
         # Note: validators may require runtime access
@@ -306,32 +369,22 @@ class Evaluator:
 
         # Calculate missing calls metric
         turn_metrics.missing_calls = self._calculate_missing_calls_metric(expected_calls, actual_calls)
-        self.metrics.missing_calls += turn_metrics.missing_calls
 
         # Count error types
         for error in validation_errors:
             if error.error_type == ErrorType.WRONG_ARGUMENT_TYPE:
-                self.metrics.wrong_argument_types += 1
                 turn_metrics.wrong_argument_types += 1
             elif error.error_type == ErrorType.WRONG_ARGUMENT_VALUE:
-                self.metrics.wrong_argument_values += 1
                 turn_metrics.wrong_argument_values += 1
             elif error.error_type == ErrorType.MISSING_ARGUMENT:
-                self.metrics.missing_arguments += 1
                 turn_metrics.missing_arguments += 1
             elif error.error_type == ErrorType.MISSING_VARIABLE_READ:
-                self.metrics.missing_variable_reads += 1
                 turn_metrics.missing_variable_reads += 1
             elif error.error_type == ErrorType.MISSING_VARIABLE_WRITE:
-                self.metrics.missing_variable_writes += 1
                 turn_metrics.missing_variable_writes += 1
 
         # Determine turn success (ensure native Python bool for JSON serialization)
         success = bool(not validation_errors and validator_result.success)
-        if success:
-            self.metrics.successful_turns += 1
-        else:
-            self.metrics.failed_turns += 1
 
         return TurnResult(
             query=query,
@@ -342,7 +395,7 @@ class Evaluator:
             validation_errors=error_messages,
             metrics=turn_metrics,
             success=success,
-            validator_result=bool(validator_result.success),
+            variables_not_set=bool(getattr(validator_result, "variables_not_set", False)),
             code_snippets=code_snippets,
             expected_variable_reads=expected_variable_reads,
             expected_variable_writes=expected_variable_writes,

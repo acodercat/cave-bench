@@ -206,7 +206,12 @@ class TurnResult:
     validation_errors: List[str]
     metrics: TurnMetrics
     success: bool
-    validator_result: bool = True
+    # True when the custom validator reports the agent never populated the
+    # required runtime variables (refusal / infra), vs computed-but-wrong.
+    variables_not_set: bool = False
+    # Infrastructure error (API/DB) that aborted this turn; None when the turn
+    # ran normally (even if it failed validation).
+    error: Optional[str] = None
     code_snippets: List[str] = field(default_factory=list)
     expected_variable_reads: List[str] = field(default_factory=list)
     expected_variable_writes: List[str] = field(default_factory=list)

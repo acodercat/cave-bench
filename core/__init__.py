@@ -24,6 +24,8 @@ from core.validation import (
     validate_arguments,
     normalize_value,
     is_type_compatible,
+    is_finite_number,
+    compare_numeric,
 )
 from core.prompts import DEFAULT_AGENT_IDENTITY, DEFAULT_INSTRUCTIONS
 
@@ -54,6 +56,8 @@ __all__ = [
     "validate_arguments",
     "normalize_value",
     "is_type_compatible",
+    "is_finite_number",
+    "compare_numeric",
     # Prompts (defaults)
     "DEFAULT_AGENT_IDENTITY",
     "DEFAULT_INSTRUCTIONS",
