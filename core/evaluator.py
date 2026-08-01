@@ -7,7 +7,8 @@ any agent implementation that conforms to the Agent interface.
 import logging
 import ast
 import copy
-from typing import Dict, List, Callable, Set, Optional
+import inspect
+from typing import Any, Dict, List, Callable, Set, Optional
 from core.validation import validate_function_calls, ErrorType, ValidationError, ValidatorResult
 from core.types import (
     ToolCall, TurnMetrics, TurnResult,
@@ -82,6 +83,60 @@ def _error_turn_result(turn: Turn, error_msg: str) -> TurnResult:
         expected_variable_reads=turn.expected_variable_reads,
         expected_variable_writes=turn.expected_variable_writes,
     )
+
+
+
+class _ValidatorRuntimeView:
+    """Synchronous variable view handed to validators.
+
+    cave-agent 0.7.5 made ``Runtime.retrieve`` a coroutine function, while
+    benchmark validators are deliberately ordinary synchronous callables. Values
+    are therefore collected (and awaited) by the evaluator before validation and
+    exposed here through the historical synchronous ``retrieve`` contract.
+    Without this a validator receives a coroutine and fails with an attribute
+    error on whatever it tries to read from the "value".
+    """
+
+    def __init__(self, runtime, values: Dict[str, Any]):
+        self._runtime = runtime
+        self._values = values
+
+    def retrieve(self, name: str) -> Any:
+        if name not in self._values:
+            raise KeyError(
+                f"Variable {name!r} was not present in the runtime snapshot. "
+                f"Available variables: {list(self._values)}"
+            )
+        return self._values[name]
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._runtime, name)
+
+
+async def _snapshot_runtime(runtime, variables) -> Optional["_ValidatorRuntimeView"]:
+    """Await every runtime variable once, so validators can read them synchronously.
+
+    The scenario's declared `variables` are the contract and drive the snapshot.
+    Anything the agent created at runtime is picked up as well: cave-agent exposes
+    no public enumeration API (`describe_variables` returns formatted prose), so
+    its internal registry is the only source for those, and this is the single
+    place that touches it.
+    """
+    if runtime is None:
+        return None
+
+    names = [var.name for var in variables or []]
+    managed = getattr(runtime, "_variables", None)
+    if isinstance(managed, dict):
+        names.extend(managed)
+
+    values: Dict[str, Any] = {}
+    for name in dict.fromkeys(names):
+        value = runtime.retrieve(name)
+        if inspect.isawaitable(value):
+            value = await value
+        values[name] = value
+    return _ValidatorRuntimeView(runtime, values)
 
 
 class Evaluator:
@@ -195,7 +250,7 @@ class Evaluator:
                 continue
             try:
                 result = await self._evaluate_turn(
-                    turn, agent, scenario.validators, scenario.hooks
+                    turn, agent, scenario.validators, scenario.hooks, fresh_variables
                 )
             except Exception as e:
                 aborted = f"{type(e).__name__}: {e}"
@@ -262,7 +317,8 @@ class Evaluator:
         turn: Turn,
         agent: Agent,
         validators: Optional[Dict[str, Callable]] = None,
-        hooks: Optional[Dict[str, Callable]] = None
+        hooks: Optional[Dict[str, Callable]] = None,
+        variables: Optional[List[Any]] = None,
     ) -> TurnResult:
         """Evaluate a single turn within a conversation and return detailed metrics."""
         if validators is None:
@@ -339,8 +395,9 @@ class Evaluator:
         if validator_name:
             if validator_name not in validators:
                 raise KeyError(f"Validator '{validator_name}' not found. Available validators: {list(validators.keys())}")
+            validator_runtime = await _snapshot_runtime(agent.runtime, variables)
             validator_result = validators[validator_name](
-                result.content, agent.runtime, turn, actual_calls
+                result.content, validator_runtime, turn, actual_calls
             )
         else:
             validator_result = ValidatorResult(success=True, message="")

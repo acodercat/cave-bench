@@ -19,9 +19,18 @@ import litellm
 from core.llm import ModelConfig, ModelRegistry
 
 # Both agent paths route through litellm; drop_params lets one config drive
-# heterogeneous models (e.g. a reasoning model that rejects `temperature`)
-# without per-model branching — unsupported params are dropped, not errored.
+# heterogeneous models without per-model branching — unsupported params are
+# dropped, not errored. It only covers models litellm has metadata for, though:
+# behind a custom gateway it cannot know what the model rejects, so a model that
+# refuses `temperature` still 400s. That case is handled by
+# `ModelConfig.supports_temperature` / `_temperature` below.
 litellm.drop_params = True
+
+# A benchmark sweep is long and every scenario costs an API call, so a single
+# transient fault (rate limit, 5xx, a proxy closing an idle tunnel) should not
+# be recorded as a model failure. litellm retries on its own classification of
+# retryable errors; set here rather than per-call so both agent paths inherit it.
+litellm.num_retries = 3
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 MODELS_TOML = PROJECT_ROOT / "models.toml"
@@ -33,11 +42,25 @@ def get_model(name: str) -> ModelConfig:
     return ModelRegistry.load(MODELS_TOML).get(name)
 
 
+def _temperature(cfg: ModelConfig) -> Optional[float]:
+    """The temperature to send, or None for models that reject the parameter.
+
+    Both agent paths hand this straight to litellm, which omits a None. Reasoning
+    models reject the parameter, and so do a few others; see
+    `ModelConfig.supports_temperature` for why `litellm.drop_params` is not enough.
+    """
+    if cfg.reasoning or not cfg.supports_temperature:
+        return None
+    return cfg.temperature
+
+
 def _model_params(cfg: ModelConfig, thinking_mode: Optional[str]) -> Dict[str, Any]:
     """Optional litellm params shared by both agent paths (only the set ones)."""
     params: Dict[str, Any] = {}
     if cfg.max_tokens is not None:
         params["max_tokens"] = cfg.max_tokens
+    if cfg.timeout is not None:
+        params["timeout"] = cfg.timeout
     if cfg.reasoning_effort:
         params["reasoning_effort"] = cfg.reasoning_effort
     extra_body = cfg.resolve_extra_body(thinking_mode)
@@ -59,7 +82,7 @@ def make_cave_factory(cfg: ModelConfig, thinking_mode: Optional[str] = None):
         model_id=cfg.api_model,
         api_key=cfg.api_key,
         base_url=cfg.base_url,
-        temperature=cfg.temperature,
+        temperature=_temperature(cfg),
         custom_llm_provider=cfg.provider,
         **_model_params(cfg, thinking_mode),
     )
@@ -75,7 +98,7 @@ def make_json_factory(cfg: ModelConfig, thinking_mode: Optional[str] = None):
         model_id=cfg.api_model,
         api_key=cfg.api_key,
         base_url=cfg.base_url,
-        temperature=cfg.temperature,
+        temperature=_temperature(cfg),
         provider=cfg.provider,
         max_tokens=params.get("max_tokens"),
         reasoning_effort=params.get("reasoning_effort"),

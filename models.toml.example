@@ -7,12 +7,18 @@
 #   uv run python -m scripts.function_calling --model deepseek
 #
 # Fields:
-#   api_model         (required) identifier sent to the provider API (the model id)
+#   api_model         (required) identifier sent to the provider API. `model_id`
+#                     is accepted as an alias, so a config shared with air-bench
+#                     loads unchanged.
 #   api_key           (required)
 #   base_url          (optional) custom endpoint; omit for the provider default
 #   provider          (optional) litellm provider, default "openai"
 #   temperature       (optional) default 0.3
+#   reasoning         (optional) true for a reasoning model; suppresses temperature
+#   supports_temperature (optional) set false for a NON-reasoning model that still
+#                     rejects `temperature` (see the claude-sonnet-5 note below)
 #   max_tokens        (optional) max completion tokens
+#   timeout           (optional) per-request timeout in seconds
 #   reasoning_effort  (optional) "low" | "medium" | "high" (reasoning models)
 #   extra_body        (optional) arbitrary provider passthrough (inline table)
 #   thinking          (optional) table of mode -> extra_body fragment, selected
@@ -37,14 +43,30 @@ api_key = "your-api-key"
 provider = "anthropic"
 temperature = 0.3
 
-# Reasoning model: budget tokens + effort (temperature it can't use is dropped
-# automatically by litellm.drop_params).
+# Reasoning model: budget tokens + effort. `reasoning = true` suppresses
+# `temperature`, which such models reject.
+#
+# Do not rely on litellm.drop_params for this. It only drops parameters litellm
+# knows a given model lacks, which it cannot know behind a custom gateway — the
+# request then still fails with a 400 (verified).
 [gpt5-reasoning]
 api_model = "gpt-5"
 api_key = "your-api-key"
 base_url = "https://api.openai.com/v1"
+reasoning = true
 max_tokens = 16384
 reasoning_effort = "medium"
+
+# A model that rejects `temperature` without being a reasoning model. Marking it
+# `reasoning = true` would suppress the parameter but misdescribe the model, so
+# say what is actually true instead.
+[claude-sonnet-5]
+api_model = "claude-sonnet-5"
+api_key = "your-api-key"
+base_url = "https://your-openai-compatible-gateway/v1"
+supports_temperature = false
+max_tokens = 65536
+timeout = 900.0
 
 # Thinking on/off axis (e.g. a self-hosted SGLang/Qwen endpoint). `--thinking on`
 # merges the `on` fragment onto extra_body; `--thinking off` merges `off`.

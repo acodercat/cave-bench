@@ -8,6 +8,7 @@ from typing import List, Callable, Optional
 from core.agent import Agent, AgentFactory, AgentResponse, TokenUsage
 from core.tracker import FunctionCallTracker
 from core.prompts import DEFAULT_AGENT_IDENTITY, DEFAULT_INSTRUCTIONS
+from core.security import security_checker
 from cave_agent import CaveAgent, Model
 from cave_agent.runtime import IPythonRuntime, Function, Variable, Type
 
@@ -58,7 +59,8 @@ class CaveAgentWrapper(Agent):
         runtime = IPythonRuntime(
             functions=wrapped_functions,
             variables=self._variables,
-            types=self._types
+            types=self._types,
+            security_checker=security_checker,
         )
 
         # Create the underlying CaveAgent
